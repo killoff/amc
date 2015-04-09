@@ -1,0 +1,41 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php if ($_item = $block->getItem()): ?>
+<table cellspacing="0" class="qty-table">
+    <tr>
+        <td><?php echo __('Ordered') ?></td>
+        <td><strong><?php echo $_item->getQtyOrdered()*1 ?></strong></td>
+    </tr>
+    <?php if ((float) $_item->getQtyInvoiced()): ?>
+    <tr>
+        <td><?php echo __('Invoiced') ?></td>
+        <td><strong><?php echo $_item->getQtyInvoiced()*1 ?></strong></td>
+    </tr>
+    <?php endif; ?>
+    <?php if ((float) $_item->getQtyShipped()): ?>
+    <tr>
+        <td><?php echo __('Shipped') ?></td>
+        <td><strong><?php echo $_item->getQtyShipped()*1 ?></strong></td>
+    </tr>
+    <?php endif; ?>
+    <?php if ((float) $_item->getQtyRefunded()): ?>
+    <tr>
+        <td><?php echo __('Refunded') ?></td>
+        <td><strong><?php echo $_item->getQtyRefunded()*1 ?></strong></td>
+    </tr>
+    <?php endif; ?>
+    <?php if ((float) $_item->getQtyCanceled()): ?>
+    <tr>
+        <td><?php echo __('Canceled') ?></td>
+        <td><strong><?php echo $_item->getQtyCanceled()*1 ?></strong></td>
+    </tr>
+    <?php endif; ?>
+</table>
+<?php endif; ?>

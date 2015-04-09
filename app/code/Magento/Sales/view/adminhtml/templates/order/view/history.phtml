@@ -1,0 +1,68 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<div id="order_history_block">
+    <?php if ($block->canAddComment()):?>
+    <div id="history_form">
+        <div><?php echo __('Add Order Comments') ?></div>
+        <div>
+            <label for="history_status"><?php echo __('Status') ?></label>
+            <select name="history[status]" id="history_status">
+            <?php foreach ($block->getStatuses() as $_code => $_label): ?>
+                <option value="<?php echo $_code ?>"<?php if ($_code == $block->getOrder()->getStatus()): ?> selected="selected"<?php endif; ?>><?php echo $_label ?></option>
+            <?php endforeach; ?>
+            </select>
+        </div>
+        <div>
+            <label for="history_comment"><?php echo __('Comment') ?></label>
+            <textarea name="history[comment]" rows="3" cols="5" id="history_comment"></textarea>
+        </div>
+        <div class="clearfix">
+            <div class="order-history-comments-options">
+                <?php if ($block->canSendCommentEmail()): ?>
+                <input name="history[is_customer_notified]" type="checkbox" id="history_notify" value="1" /><label for="history_notify"> <?php echo __('Notify Customer by Email') ?></label><br />
+                <?php endif; ?>
+                <input name="history[is_visible_on_front]" type="checkbox" id="history_visible" value="1" /><label for="history_visible"> <?php echo __('Visible on Frontend') ?></label>
+            </div>
+            <div class="actions">
+                <?php echo $block->getChildHtml('submit_button') ?>
+            </div>
+        </div>
+    </div>
+    <?php endif;?>
+    <ul class="note-list">
+    <?php foreach ($block->getOrder()->getStatusHistoryCollection(true) as $_item): ?>
+        <li>
+            <span class="note-list-date"><?php echo $block->formatDate($_item->getCreatedAtDate(), \IntlDateFormatter::MEDIUM) ?></span>
+            <span class="note-list-time"><?php echo $block->formatTime($_item->getCreatedAtDate(), \IntlDateFormatter::MEDIUM) ?></span>
+            <span class="note-list-status"><?php echo $_item->getStatusLabel() ?></span>
+            <span class="note-list-customer">
+                <?php echo __('Customer') ?>
+                <?php if ($block->isCustomerNotificationNotApplicable($_item)): ?>
+                    <span class="note-list-customer-notapplicable"><?php echo __('Notification Not Applicable') ?></span>
+                <?php elseif ($_item->getIsCustomerNotified()): ?>
+                    <span class="note-list-customer-notified"><?php echo __('Notified') ?></span>
+                <?php else: ?>
+                    <span class="note-list-customer-not-notified"><?php echo __('Not Notified') ?></span>
+                <?php endif; ?>
+            </span>
+            <?php if ($_item->getComment()): ?>
+                <div class="note-list-comment"><?php echo $block->escapeHtml($_item->getComment(), ['b', 'br', 'strong', 'i', 'u']) ?></div>
+            <?php endif; ?>
+        </li>
+    <?php endforeach; ?>
+    </ul>
+    <script>
+require(['prototype'], function(){
+
+        if($('order_status'))$('order_status').update('<?php echo $block->getOrder()->getStatusLabel() ?>');
+
+});
+</script>
+</div>

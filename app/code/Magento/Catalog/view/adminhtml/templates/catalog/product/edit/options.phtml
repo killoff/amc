@@ -1,0 +1,49 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php /** @var $block \Magento\Catalog\Block\Adminhtml\Product\Edit\Tab\Options */ ?>
+
+<div class="fieldset-wrapper" id="product-custom-options-wrapper">
+    <div class="fieldset-wrapper-title">
+        <strong class="title">
+            <span><?php echo __('Custom Options') ?></span>
+        </strong>
+    </div>
+    <div class="fieldset-wrapper-content" id="product-custom-options-content">
+        <fieldset class="fieldset">
+            <div class="messages">
+                <div class="message message-error" id="dynamic-price-warning" style="display: none;">
+                    <div class="message-inner">
+                        <div class="message-content"><?php echo __('Bundle with dynamic pricing cannot include custom defined options. Options will not be saved.') ?></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="product_options_container">
+                <div id="product_options_container_top"></div>
+                <?php echo $block->getOptionsBoxHtml() ?>
+            </div>
+
+            <div class="actions">
+                <?php echo $block->getChildHtml('import_button') ?>
+                <?php echo $block->getAddButtonHtml() ?>
+            </div>
+        </fieldset>
+    </div>
+</div>
+
+<script>
+require(['jquery'], function($){
+    var priceType = $('#price_type');
+    var priceWarning = $('#dynamic-price-warning');
+    if (priceType && priceType.val() == 0 && priceWarning) {
+        priceWarning.show();
+    }
+});
+</script>

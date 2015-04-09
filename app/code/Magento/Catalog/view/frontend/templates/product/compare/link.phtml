@@ -1,0 +1,22 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/* @var $block \Magento\Catalog\Block\Product\Compare\Sidebar */
+?>
+<?php
+$_helper = $this->helper('Magento\Catalog\Helper\Product\Compare');
+$count = $_helper->getItemCount();
+?>
+<?php if ($count > 0): ?>
+    <li class="item link compare">
+        <a class="action compare" href="<?php echo $_helper->getListUrl() ?>" title="<?php echo __('Compare Products') ?>">
+            <?php echo __('Compare Products') ?>
+            <span class="counter qty"><?php echo($count == 1) ? __('1 item') : __('%1 items', $count) ?></span>
+        </a>
+    </li>
+<?php endif; ?>

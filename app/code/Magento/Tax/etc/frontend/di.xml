@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+    <type name="Magento\Tax\Model\Calculation">
+        <arguments>
+            <argument name="customerAccountManagement" xsi:type="object">Magento\Customer\Api\AccountManagementInterface\Proxy</argument>
+            <argument name="customerGroupManagement" xsi:type="object">Magento\Customer\Api\GroupManagementInterface\Proxy</argument>
+            <argument name="customerGroupRepository" xsi:type="object">Magento\Customer\Api\GroupRepositoryInterface\Proxy</argument>
+            <argument name="customerRepository" xsi:type="object">Magento\Customer\Api\CustomerRepositoryInterface\Proxy</argument>
+        </arguments>
+    </type>
+</config>

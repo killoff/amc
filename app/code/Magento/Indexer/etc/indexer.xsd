@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="config">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="indexer" type="indexerType" minOccurs="1" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="uniqueIndexertId">
+            <xs:annotation>
+                <xs:documentation>
+                    Indexer Id must be unique.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="indexer" />
+            <xs:field xpath="@id" />
+            <xs:field xpath="@view_id" />
+        </xs:unique>
+        <xs:unique name="uniqueViewId">
+            <xs:annotation>
+                <xs:documentation>
+                    Indexer Id must be unique.
+                </xs:documentation>
+            </xs:annotation>
+            <xs:selector xpath="indexer" />
+            <xs:field xpath="@view_id" />
+        </xs:unique>
+    </xs:element>
+
+    <xs:complexType name="indexerType">
+        <xs:annotation>
+            <xs:documentation>
+                Indexer declaration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="title" type="translatableType" />
+            <xs:element name="description" type="translatableType" />
+        </xs:sequence>
+        <xs:attribute name="id" type="xs:string" use="required" />
+        <xs:attribute name="view_id" type="viewIdType" use="required" />
+        <xs:attribute name="class" type="classType" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="translatableType">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="translate" use="optional" fixed="true" type="xs:boolean"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:simpleType name="viewIdType">
+        <xs:annotation>
+            <xs:documentation>
+                View ID can contain only [a-zA-Z0-9_].
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z0-9_]+" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="classType">
+        <xs:annotation>
+            <xs:documentation>
+                Class name can contain only [a-zA-Z\].
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[a-zA-Z\\]+" />
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

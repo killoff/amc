@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\App\AreaList">
+        <arguments>
+            <argument name="areas" xsi:type="array">
+                <item name="webapi_rest" xsi:type="array">
+                    <item name="frontName" xsi:type="string">rest</item>
+                </item>
+                <item name="webapi_soap" xsi:type="array">
+                    <item name="frontName" xsi:type="string">soap</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\Xml\Generator" shared="false" />
+    <type name="Magento\Framework\Xml\Parser" shared="false" />
+    <type name="Magento\Framework\Code\Scanner\DirectoryScanner" shared="false" />
+    <type name="Magento\Server\Reflection" shared="false" />
+    <type name="Magento\Framework\Reflection\DataObjectProcessor">
+        <arguments>
+            <argument name="cache" xsi:type="object">Magento\Framework\App\Cache\Type\Webapi</argument>
+        </arguments>
+    </type>
+    <type name="Magento\Integration\Model\ConfigBasedIntegrationManager">
+        <plugin name="webapiSetup" type="Magento\Webapi\Model\Plugin\Manager" />
+    </type>
+</config>

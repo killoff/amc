@@ -1,0 +1,90 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/* @var $block \Magento\Wishlist\Block\Customer\Sidebar */
+?>
+<?php
+$count = $block->getItemCount();
+$wishlistHelper = $this->helper('Magento\Wishlist\Helper\Data');
+?>
+<?php if ($wishlistHelper->isAllow()) : ?>
+    <?php $imageBlock =  $block->getLayout()->createBlock('Magento\Catalog\Block\Product\Image');?>
+    <div class="block block-wishlist">
+        <div class="block-title">
+            <strong><?php echo $block->getTitle(); ?></strong>
+            <?php if ($count > 0): ?>
+                <span class="counter"><?php echo($count == 1) ? __('1 item') : __('%1 items', $count) ?></span>
+            <?php endif; ?>
+        </div>
+        <div class="block-content">
+            <strong class="subtitle"><?php echo __('Last Added Items') ?></strong>
+            <?php if ($block->hasWishlistItems()): ?>
+                <ol class="product-items" id="wishlist-sidebar">
+                    <?php $iterator = 1; ?>
+                    <?php foreach ($block->getWishlistItems() as $item): ?>
+                        <?php $product = $item->getProduct(); ?>
+                        <?php echo($iterator++ == 1) ? '<li class="product-item">' : '</li><li class="product-item">' ?>
+                        <div class="product-item-info">
+                            <a class="product-item-photo" href="<?php echo $block->getProductUrl($item) ?>"
+                               title="<?php echo $block->escapeHtml($product->getName()) ?>">
+                                <?php echo $imageBlock->init($product, 'wishlist_sidebar_block')->toHtml() ?>
+                            </a>
+                            <div class="product-item-details">
+                                <strong class="product-item-name">
+                                    <a href="<?php echo $block->getProductUrl($item) ?>"
+                                       class="product-item-link"><?php echo $block->escapeHtml($product->getName()) ?></a>
+                                </strong>
+                                <?php
+                                    echo $block->getProductPriceHtml(
+                                        $product,
+                                        \Magento\Catalog\Pricing\Price\ConfiguredPriceInterface::CONFIGURED_PRICE_CODE,
+                                        \Magento\Framework\Pricing\Render::ZONE_ITEM_LIST,
+                                        ['item' => $item]
+                                    );
+                                ?>
+                                <div class="product-item-actions">
+                                    <?php if ($product->isSaleable() && $product->isVisibleInSiteVisibility()): ?>
+                                    <div class="actions-primary">
+                                    <?php if ($product->getTypeInstance()->hasRequiredOptions($product)): ?>
+                                        <a href="<?php echo $block->getItemAddToCartUrl($item) ?>"
+                                           class="action tocart primary"><span><?php echo __('Add to Cart') ?></span></a>
+                                    <?php else: ?>
+                                        <?php
+                                            $postDataHelper = $this->helper('Magento\Framework\Data\Helper\PostHelper');
+                                            $postData = $postDataHelper->getPostData($block->getItemAddToCartUrl($item), ['product' => $product->getEntityId()])
+                                        ?>
+                                            <button type="button" class="action tocart primary" data-post='<?php echo $postData; ?>'><span><?php echo __('Add to Cart') ?></span></button>
+                                        <?php endif; ?>
+                                    </div>
+                                    <?php endif; ?>
+                                    <div class="actions-secondary">
+                                        <a href="#" data-post='<?php echo $block->getItemRemoveParams($item) ?>'
+                                           title="<?php echo __('Remove This Item') ?>"
+                                           class="btn-remove action delete">
+                                            <span><?php echo __('Remove This Item') ?></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php echo($iterator == count($block->getWishlistItems()) + 1) ? '</li>' : '' ?>
+                    <?php endforeach; ?>
+                </ol>
+                <div class="actions-toolbar">
+                    <div class="primary">
+                        <a class="action details"
+                           href="<?php echo $this->helper('Magento\Wishlist\Helper\Data')->getListUrl() ?>"
+                           title="<?php echo __('Go to Wish List') ?>"><span><?php echo __('Go to Wish List') ?></span></a>
+                    </div>
+                </div>
+            <?php else: ?>
+                <div class="empty"><?php echo __('You have no items in your wish list.') ?></div>
+            <?php endif ?>
+        </div>
+    </div>
+<?php endif ?>

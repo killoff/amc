@@ -1,0 +1,173 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Template for \Magento\Backend\Block\Widget\Grid
+ *
+ *  getId()
+ *  getCollection()
+ *  getColumns()
+ *  getPagerVisibility()
+ *  getVarNamePage()
+ *
+ */
+/* @var $block \Magento\Backend\Block\Widget\Grid */
+$numColumns = sizeof($block->getColumns());
+?>
+<?php if ($block->getCollection()): ?>
+<?php if ($block->canDisplayContainer()): ?>
+    <?php if ($block->getGridHeader()): ?>
+        <div class="page-title-wrapper">
+            <h1 class="page-title"><?php echo $block->getGridHeader(); ?></h1>
+        </div>
+    <?php endif ?>
+
+    <div id="<?php echo $block->getId() ?>" data-grid-id="<?php echo $block->getId() ?>">
+        <?php else: ?>
+            <?php echo $block->getLayout()->getMessagesBlock()->getGroupedHtml() ?>
+        <?php endif; ?>
+        <?php if ($block->getPagerVisibility() || $block->getExportTypes() || $block->getChildBlock('grid.columnSet')->getFilterVisibility()): ?>
+            <div class="grid-actions">
+                <?php if ($block->getChildBlock('grid.export')): ?>
+                    <div class="export">
+                        <?php echo $block->getChildHtml('grid.export'); ?>
+                    </div>
+                <?php endif; ?>
+                <div class="filter-actions">
+                    <?php echo $block->getMainButtonsHtml() ?>
+                </div>
+                <?php if ($block->getPagerVisibility()): ?>
+                    <div class="pager">
+                        <?php $countRecords = $block->getCollection()->getSize(); ?>
+                        <span class="pages-total-found"><?php echo __('Total %1 records found', $countRecords) ?></span>
+                        <span id="<?php echo $block->getHtmlId() ?>-total-count"
+                              class="total-count no-display"<?php echo $block->getUiId('total-count') ?>>
+                            <?php echo $countRecords ?>
+                        </span>
+                        <label class="view-pages">
+                            <?php echo __('View') ?>
+                            <select name="<?php echo $block->getVarNameLimit() ?>"
+                                    onchange="<?php echo $block->getJsObjectName() ?>.loadByElement(this)" <?php echo $block->getUiId('per-page') ?>
+                                    class="select">
+                                <option value="20"<?php if ($block->getCollection()->getPageSize() == 20): ?>
+                                    selected="selected"<?php endif; ?>>20
+                                </option>
+                                <option value="30"<?php if ($block->getCollection()->getPageSize() == 30): ?>
+                                    selected="selected"<?php endif; ?>>30
+                                </option>
+                                <option value="50"<?php if ($block->getCollection()->getPageSize() == 50): ?>
+                                    selected="selected"<?php endif; ?>>50
+                                </option>
+                                <option value="100"<?php if ($block->getCollection()->getPageSize() == 100): ?>
+                                    selected="selected"<?php endif; ?>>100
+                                </option>
+                                <option value="200"<?php if ($block->getCollection()->getPageSize() == 200): ?>
+                                    selected="selected"<?php endif; ?>>200
+                                </option>
+                            </select>
+                            <?php echo __('per page') ?>
+                        </label>
+                    </div>
+                <?php endif ?>
+            </div>
+        <?php endif; ?>
+        <?php if ($block->getChildBlock('grid.massaction') && $block->getChildBlock('grid.massaction')->isAvailable()): ?>
+            <?php echo $block->getChildHtml('grid.massaction') ?>
+        <?php endif ?>
+
+        <?php if ($block->getGridCssClass()): ?>
+            <div class="grid-container">
+                <table class="<?php echo $block->getGridCssClass() ?>" id="<?php echo $block->getId() ?>_table">
+                    <!-- Rendering column set -->
+                    <?php echo $block->getChildHtml('grid.columnSet'); ?>
+                </table>
+            </div>
+        <?php else: ?>
+            <div class="grid">
+                <div class="hor-scroll">
+                    <table class="data" id="<?php echo $block->getId() ?>_table">
+                        <!-- Rendering column set -->
+                        <?php echo $block->getChildHtml('grid.columnSet'); ?>
+                    </table>
+                </div>
+                <?php if ($block->getPagerVisibility()): ?>
+                    <div class="pager">
+                        <label class="page"><?php echo __('Page') ?></label>
+
+                        <?php $_curPage = $block->getCollection()->getCurPage() ?>
+                        <?php $_lastPage = $block->getCollection()->getLastPageNumber() ?>
+
+                        <?php if ($_curPage > 1): ?>
+                            <a href="#" title="<?php echo __('Previous page') ?>" class="action-previous"
+                               onclick="<?php echo $block->getJsObjectName() ?>.setPage('<?php echo($_curPage - 1) ?>');return false;"><span><?php echo __('Previous page') ?></span></a>
+                        <?php else: ?>
+                            <span class="action-previous disabled"><span><?php echo __('Previous page') ?></span></span>
+                        <?php endif; ?>
+
+                        <input type="text" name="<?php echo $block->getVarNamePage() ?>" value="<?php echo $_curPage ?>"
+                               class="input-text page"
+                               onkeypress="<?php echo $block->getJsObjectName() ?>.inputPage(event, '<?php echo $_lastPage ?>')" <?php echo $block->getUiId('current-page') ?> />
+
+                        <span class="pages-total">
+                            <?php echo __('of %1', $block->getCollection()->getLastPageNumber()) ?></span>
+                        </span>
+
+                        <?php if ($_curPage < $_lastPage): ?>
+                            <a href="#" title="<?php echo __('Next page') ?>" class="action-next"
+                               onclick="<?php echo $block->getJsObjectName() ?>.setPage('<?php echo($_curPage + 1) ?>');return false;"><span><?php echo __('Next page') ?></span></a>
+                        <?php else: ?>
+                            <span class="action-next disabled"><span><?php echo __('Next page') ?></span></span>
+                        <?php endif; ?>
+                        <?php if ($block->getChildBlock('grid.bottom.links')): ?>
+                            <?php echo $block->getChildHtml('grid.bottom.links') ?>
+                        <?php endif; ?>
+                    </div>
+                <?php endif ?>
+            </div>
+        <?php endif ?>
+        <?php if ($block->canDisplayContainer()): ?>
+    </div>
+    <script>
+        var deps = ['mage/adminhtml/grid'];
+
+    <?php if (strpos($block->getRowClickCallback(), 'order.') !== false): ?>
+    deps.push('Magento_Sales/order/create/form')
+    <?php endif; ?>
+
+        require(deps, function(){
+            <?php //TODO: getJsObjectName and getRowClickCallback has unexpected behavior. Should be removed ?>
+
+            <?php echo $block->getJsObjectName() ?> = new varienGrid('<?php echo $block->getId() ?>', '<?php echo $block->getGridUrl() ?>', '<?php echo $block->getVarNamePage() ?>', '<?php echo $block->getVarNameSort() ?>', '<?php echo $block->getVarNameDir() ?>', '<?php echo $block->getVarNameFilter() ?>');
+            <?php echo $block->getJsObjectName() ?>.useAjax = <?php echo $block->getUseAjax() ? 'true' : 'false' ?>;
+            <?php if ($block->getRowClickCallback()): ?>
+            <?php echo $block->getJsObjectName() ?>.rowClickCallback = <?php echo $block->getRowClickCallback() ?>;
+            <?php endif; ?>
+            <?php if ($block->getCheckboxCheckCallback()): ?>
+            <?php echo $block->getJsObjectName() ?>.checkboxCheckCallback = <?php echo $block->getCheckboxCheckCallback() ?>;
+            <?php endif; ?>
+            <?php if ($block->getSortableUpdateCallback()): ?>
+            <?php echo $block->getJsObjectName() ?>.sortableUpdateCallback = <?php echo $block->getSortableUpdateCallback()?>;
+            <?php endif; ?>
+            <?php echo $block->getJsObjectName() ?>.bindSortable();
+            <?php if ($block->getRowInitCallback()): ?>
+            <?php echo $block->getJsObjectName() ?>.initRowCallback = <?php echo $block->getRowInitCallback() ?>;
+            <?php echo $block->getJsObjectName() ?>.initGridRows();
+            <?php endif; ?>
+            <?php if ($block->getChildBlock('grid.massaction') && $block->getChildBlock('grid.massaction')->isAvailable()): ?>
+            <?php echo $block->getChildBlock('grid.massaction')->getJavaScript() ?>
+            <?php endif ?>
+            <?php echo $block->getAdditionalJavaScript(); ?>
+        });
+</script>
+<?php endif; ?>
+    <?php if ($block->getChildBlock('grid.js')): ?>
+        <?php echo $block->getChildHtml('grid.js'); ?>
+    <?php endif; ?>
+<?php endif ?>

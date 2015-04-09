@@ -1,0 +1,77 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Last order sidebar
+ *
+ * @see \Magento\Sale\Block\Reorder\Sidebar
+ */
+?>
+<?php $_items = $block->getItems()?>
+<?php if ($_items): ?>
+<div class="block block-reorder">
+    <div class="block-title">
+        <strong id="block-reorder-heading" role="heading" aria-level="2"><?php echo __('My Orders') ?></strong>
+    </div>
+    <div class="block-content" aria-labelledby="block-reorder-heading">
+        <form method="post" class="form reorder" action="<?php echo $block->getFormActionUrl() ?>" id="reorder-validate-detail">
+            <strong class="subtitle"><?php echo __('Last Ordered Items') ?></strong>
+            <ol id="cart-sidebar-reorder" class="product-items product-items-names">
+            <?php $_showAddButtonFlag = false ?>
+            <?php foreach ($_items as $_item): ?>
+                <li class="product-item">
+                    <?php if ($block->isItemAvailableForReorder($_item)): ?>
+                        <?php $_showAddButtonFlag = true ?>
+                        <div class="field item choice">
+                            <label class="label" for="reorder-item-<?php echo $_item->getId() ?>"><span><?php echo __('Add to Cart') ?></span></label>
+                            <div class="control">
+                                <input type="checkbox" name="order_items[]" id="reorder-item-<?php echo $_item->getId() ?>" value="<?php echo $_item->getId() ?>" title="<?php echo __('Add to Cart') ?>"
+                                       class="checkbox" data-validate='{"validate-one-checkbox-required-by-name": true}'/>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <strong class="product-item-name">
+                        <a href="<?php echo $_item->getProduct()->getProductUrl() ?>"
+                           class="product-item-link"><?php echo $block->escapeHtml($_item->getName()) ?></a>
+                    </strong>
+                </li>
+            <?php endforeach; ?>
+            </ol>
+            <div id="cart-sidebar-reorder-advice-container"></div>
+            <div class="actions-toolbar">
+                <?php if ($_showAddButtonFlag): ?>
+                    <div class="primary">
+                        <button type="submit" title="<?php echo __('Add to Cart') ?>" class="action tocart primary">
+                            <span><?php echo __('Add to Cart') ?></span>
+                        </button>
+                    </div>
+                <?php endif; ?>
+                <div class="secondary">
+                    <a class="action view" href="<?php echo $block->getUrl('customer/account') ?>">
+                        <span><?php echo __('View All'); ?></span>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+    <?php echo $block->getPagerHtml(); ?>
+    <script>
+require(["jquery", "mage/mage"], function(jQuery){
+
+jQuery('#reorder-validate-detail').mage('validation', {
+    errorPlacement: function(error, element) {
+        error.appendTo('#cart-sidebar-reorder-advice-container');
+    }
+});
+
+});
+</script>
+</div>
+<?php endif ?>

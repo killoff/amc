@@ -1,0 +1,60 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * @var $block \Magento\Theme\Block\Html\Notices
+ */
+?>
+<?php if ($block->displayNoscriptNotice()): ?>
+    <noscript>
+        <div class="message global noscript">
+            <div class="content">
+                <p>
+                    <strong><?php echo __('JavaScript seems to be disabled in your browser.'); ?></strong>
+                    <span><?php echo __('Enable JavaScript in your browser to get the best experience on our website!'); ?></span>
+                </p>
+            </div>
+        </div>
+    </noscript>
+<?php endif; ?>
+<?php if ($block->displayNoLocalStorageNotice()): ?>
+    <div class="notice global site local_storage" style="display: none;">
+        <div class="content">
+            <p>
+                <strong><?php echo __('Local Storage seems to be disabled in your browser.'); ?></strong><br />
+                <?php echo __('Enable Local Storage in your browser to get the best experience on our website!'); ?>
+            </p>
+        </div>
+    </div>
+    <script>
+require(['jquery'], function(jQuery){
+
+        // <![CDATA[
+        (function($) {
+            var test = 'test';
+            try {
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+            } catch(e) {
+                $(".notice.global.site.local_storage").show();
+            }
+        })(jQuery);
+        // ]]>
+
+});
+</script>
+<?php endif; ?>
+<?php if ($block->displayDemoNotice()): ?>
+    <div class="message global demo">
+        <div class="content">
+            <p><?php echo __('This is demo store. All orders will not be transferred.') ?></p>
+        </div>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
+    <preference for="Magento\Framework\View\Element\UiComponent\ConfigBuilderInterface" type="Magento\Ui\ContentType\Builder\ConfigJson" />
+    <preference for="Magento\Framework\View\Element\UiComponent\ConfigStorageBuilderInterface" type="Magento\Ui\ContentType\Builder\ConfigStorageJson" />
+    <preference for="Magento\Framework\View\Element\UiComponent\ConfigInterface" type="Magento\Ui\Context\Configuration" />
+    <preference for="Magento\Framework\View\Element\UiComponent\ConfigStorageInterface" type="Magento\Ui\Context\ConfigurationStorage" />
+    <preference for="Magento\Ui\Component\Control\ActionPoolInterface" type="Magento\Ui\Component\Control\ActionPool" />
+    <type name="Magento\Ui\Component\Filter\FilterPool">
+        <arguments>
+            <argument name="filters" xsi:type="array">
+                <item name="filter_input" xsi:type="string">Magento\Ui\Component\Filter\Type\Input</item>
+                <item name="filter_select" xsi:type="string">Magento\Ui\Component\Filter\Type\Select</item>
+                <item name="filter_range" xsi:type="string">Magento\Ui\Component\Filter\Type\Range</item>
+                <item name="filter_date" xsi:type="string">Magento\Ui\Component\Filter\Type\Date</item>
+                <item name="filter_store" xsi:type="string">Magento\Ui\Component\Filter\Type\Store</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

@@ -1,0 +1,259 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/**
+ * Template for \Magento\Backend\Block\Widget\Grid
+ *
+ *  getId()
+ *  getCollection()
+ *  getColumns()
+ *  getPagerVisibility()
+ *  getVarNamePage()
+ */
+$numColumns = sizeof($block->getColumns());
+
+/**
+ * @var \Magento\Backend\Block\Widget\Grid\Extended $block
+ */
+?>
+<?php if ($block->getCollection()): ?>
+    <?php if ($block->canDisplayContainer()): ?>
+    <?php if ($block->getGridHeader()): ?>
+        <div class="page-title-wrapper">
+            <h1 class="page-title"><?php echo $block->getGridHeader(); ?></h1>
+        </div>
+    <?php endif ?>
+
+    <div id="<?php echo $block->getId() ?>">
+    <?php else: ?>
+        <?php echo $block->getLayout()->getMessagesBlock()->getGroupedHtml() ?>
+    <?php endif; ?>
+    <?php if ($block->getPagerVisibility() || $block->getExportTypes() || $block->getFilterVisibility()): ?>
+        <div class="grid-actions">
+            <?php if ($block->getExportTypes()): ?>
+                <div class="export">
+                    <label for="<?php echo $block->getId() ?>_export"
+                           class="label"><?php echo __('Export to:') ?></label>
+                    <select name="<?php echo $block->getId() ?>_export" id="<?php echo $block->getId() ?>_export"
+                            class="select">
+                        <?php foreach ($block->getExportTypes() as $_type): ?>
+                            <option value="<?php echo $_type->getUrl() ?>"><?php echo $_type->getLabel() ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?php echo $block->getExportButtonHtml() ?>
+                </div>
+            <?php endif; ?>
+            <div class="filter-actions">
+                <?php echo $block->getMainButtonsHtml() ?>
+            </div>
+            <?php if ($block->getPagerVisibility()): ?>
+                <div class="pager">
+                    <span class="pages-total-found">
+                        <?php echo __('Total %1 records found', $block->getCollection()->getSize()) ?>
+                    </span>
+                    <span id="<?php echo $block->getHtmlId() ?>-total-count"
+                          class="no-display"><?php echo $block->getCollection()->getSize() ?></span>
+                    <label class="view-pages">
+                        <?php echo __('View') ?>
+                        <select name="<?php echo $block->getVarNameLimit() ?>"
+                                onchange="<?php echo $block->getJsObjectName() ?>.loadByElement(this)" class="select">
+                            <option value="20"<?php if ($block->getCollection()->getPageSize() == 20): ?>
+                                selected="selected"<?php endif; ?>>20
+                            </option>
+                            <option value="30"<?php if ($block->getCollection()->getPageSize() == 30): ?>
+                                selected="selected"<?php endif; ?>>30
+                            </option>
+                            <option value="50"<?php if ($block->getCollection()->getPageSize() == 50): ?>
+                                selected="selected"<?php endif; ?>>50
+                            </option>
+                            <option value="100"<?php if ($block->getCollection()->getPageSize() == 100): ?>
+                                selected="selected"<?php endif; ?>>100
+                            </option>
+                            <option value="200"<?php if ($block->getCollection()->getPageSize() == 200): ?>
+                                selected="selected"<?php endif; ?>>200
+                            </option>
+                        </select>
+                        <?php echo __('per page') ?>
+                    </label>
+                </div>
+            <?php endif ?>
+        </div>
+    <?php endif; ?>
+    <?php if ($block->getMassactionBlock() && $block->getMassactionBlock()->isAvailable()): ?>
+        <?php echo $block->getMassactionBlockHtml() ?>
+    <?php endif ?>
+    <div class="grid">
+        <div class="hor-scroll">
+            <table class="data" id="<?php echo $block->getId() ?>_table">
+                <?php
+                /* This part is commented to remove all <col> tags from the code. */
+                /* foreach ($block->getColumns() as $_column): ?>
+                <col <?php echo $_column->getHtmlProperty() ?> />
+                <?php endforeach; */
+                ?>
+                <?php if ($block->getHeadersVisibility() || $block->getFilterVisibility()): ?>
+                    <thead>
+                    <?php if ($block->getHeadersVisibility()): ?>
+                        <tr class="headings">
+                            <?php foreach ($block->getColumns() as $_column): ?>
+                                <th<?php echo $_column->getHeaderHtmlProperty() ?>>
+                                    <span><?php echo $_column->getHeaderHtml() ?></span>
+                                </th>
+                            <?php endforeach; ?>
+                        </tr>
+                    <?php endif; ?>
+                    <?php if ($block->getFilterVisibility()): ?>
+                        <tr class="filter">
+                            <?php $i = 0;
+                            foreach ($block->getColumns() as $_column): ?>
+                                <th<?php echo $_column->getHeaderHtmlProperty() ?>><?php echo $_column->getFilterHtml() ?></th>
+                            <?php endforeach; ?>
+                        </tr>
+                    <?php endif ?>
+                    </thead>
+                <?php endif; ?>
+                <?php if ($block->getCountTotals()): ?>
+                    <tfoot>
+                    <tr class="totals">
+                        <?php foreach ($block->getColumns() as $_column): ?>
+                            <th class="<?php echo $_column->getCssProperty() ?>">
+                                <?php echo($_column->hasTotalsLabel()) ? $_column->getTotalsLabel() : $_column->getRowField($_column->getGrid()->getTotals()) ?>
+                            </th>
+                        <?php endforeach; ?>
+                    </tr>
+                    </tfoot>
+                <?php endif; ?>
+
+                <tbody>
+                <?php if (($block->getCollection()->getSize() > 0) && (!$block->getIsCollapsed())): ?>
+                    <?php foreach ($block->getCollection() as $_index => $_item): ?>
+                        <tr title="<?php echo $block->getRowUrl($_item) ?>"<?php if ($_class = $block->getRowClass($_item)): ?>
+                            class="<?php echo $_class; ?>"<?php endif; ?> ><?php
+                            $i = 0;
+                            foreach ($block->getColumns() as $_column):
+                                if ($block->shouldRenderCell($_item, $_column)):
+                                    $_rowspan = $block->getRowspan($_item, $_column);
+                                    ?>
+                                <td <?php echo($_rowspan ? 'rowspan="' . $_rowspan . '" ' : '') ?>class="<?php echo $_column->getCssProperty() ?> <?php echo ++$i == $numColumns ? 'last' : '' ?>">
+                                    <?php echo(($_html = $_column->getRowField($_item)) != '' ? $_html : '&nbsp;') ?>
+                                    </td><?php
+                                    if ($block->shouldRenderEmptyCell($_item, $_column)):
+                                        ?>
+                                        <td colspan="<?php echo $block->getEmptyCellColspan($_item) ?>"
+                                            class="last"><?php echo $block->getEmptyCellLabel() ?></td><?php
+                                    endif;
+                                endif;
+                            endforeach; ?>
+                        </tr>
+                        <?php if ($_multipleRows = $block->getMultipleRows($_item)): ?>
+                            <?php foreach ($_multipleRows as $_i): ?>
+                                <tr>
+                                    <?php $i = 0;
+                                    foreach ($block->getMultipleRowColumns($_i) as $_column): ?>
+                                        <td class="<?php echo $_column->getCssProperty() ?> <?php echo ++$i == $numColumns - 1 ? 'last' : '' ?>">
+                                            <?php echo(($_html = $_column->getRowField($_i)) != '' ? $_html : '&nbsp;') ?>
+                                        </td>
+                                    <?php endforeach; ?>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+
+                        <?php if ($block->shouldRenderSubTotal($_item)): ?>
+                            <tr class="subtotals">
+                                <?php $i = 0;
+                                foreach ($block->getSubTotalColumns() as $_column): ?>
+                                    <td class="<?php echo $_column->getCssProperty() ?> <?php echo ++$i == $numColumns ? 'last' : '' ?>">
+                                        <?php echo($_column->hasSubtotalsLabel() ? $_column->getSubtotalsLabel() :
+                                            $_column->getRowField($block->getSubTotalItem($_item))
+                                        );
+                                        ?>
+                                    </td>
+                                <?php endforeach; ?>
+                            </tr>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php elseif ($block->getEmptyText()): ?>
+                    <tr>
+                        <td class="<?php echo $block->getEmptyTextClass() ?>"
+                            colspan="<?php echo $numColumns ?>"><?php echo $block->getEmptyText() ?></td>
+                    </tr>
+                <?php endif; ?>
+                </tbody>
+            </table>
+        </div>
+        <?php if ($block->getPagerVisibility()): ?>
+            <div class="pager">
+                <label class="page"><?php echo __('Page') ?></label>
+
+                <?php $_curPage = $block->getCollection()->getCurPage() ?>
+                <?php $_lastPage = $block->getCollection()->getLastPageNumber() ?>
+
+                <?php if ($_curPage > 1): ?>
+                    <a href="#" title="<?php echo __('Previous page') ?>" class="action-previous"
+                       onclick="<?php echo $block->getJsObjectName() ?>.setPage('<?php echo($_curPage - 1) ?>');return false;"><span><?php echo __('Previous page') ?></span></a>
+                <?php else: ?>
+                    <span class="action-previous disabled"><span><?php echo __('Previous page') ?></span></span>
+                <?php endif; ?>
+
+                <input type="text" name="<?php echo $block->getVarNamePage() ?>" value="<?php echo $_curPage ?>"
+                       class="input-text page"
+                       onkeypress="<?php echo $block->getJsObjectName() ?>.inputPage(event, '<?php echo $_lastPage ?>')"/>
+
+                <span class="pages-total">
+                    <?php echo __('of %1', $block->getCollection()->getLastPageNumber()) ?>
+                </span>
+
+                <?php if ($_curPage < $_lastPage): ?>
+                    <a href="#" title="<?php echo __('Next page') ?>" class="action-next"
+                       onclick="<?php echo $block->getJsObjectName() ?>.setPage('<?php echo($_curPage + 1) ?>');return false;"><span><?php echo __('Next page') ?></span></a>
+                <?php else: ?>
+                    <span class="action-next disabled"><span><?php echo __('Next page') ?></span></span>
+                <?php endif; ?>
+                <?php if ($block->getChildBlock('grid.bottom.links')): ?>
+                    <?php echo $block->getChildHtml('grid.bottom.links') ?>
+                <?php endif; ?>
+            </div>
+        <?php endif ?>
+    </div>
+    <?php if ($block->canDisplayContainer()): ?>
+</div>
+<script>
+    var deps = ['mage/adminhtml/grid'];
+
+    <?php if (strpos($block->getRowClickCallback(), 'order.') !== false): ?>
+    deps.push('Magento_Sales/order/create/form')
+    <?php endif; ?>
+
+    require(deps, function(){
+        <?php //TODO: getJsObjectName and getRowClickCallback has unexpected behavior. Should be removed ?>
+
+        //<![CDATA[
+    <?php echo $block->getJsObjectName() ?> = new varienGrid('<?php echo $block->getId() ?>', '<?php echo $block->getGridUrl() ?>', '<?php echo $block->getVarNamePage() ?>', '<?php echo $block->getVarNameSort() ?>', '<?php echo $block->getVarNameDir() ?>', '<?php echo $block->getVarNameFilter() ?>');
+    <?php echo $block->getJsObjectName() ?>.useAjax = '<?php echo $block->getUseAjax() ?>';
+    <?php if ($block->getRowClickCallback()): ?>
+    <?php echo $block->getJsObjectName() ?>.rowClickCallback = <?php echo $block->getRowClickCallback() ?>;
+    <?php endif; ?>
+    <?php if ($block->getCheckboxCheckCallback()): ?>
+    <?php echo $block->getJsObjectName() ?>.checkboxCheckCallback = <?php echo $block->getCheckboxCheckCallback() ?>;
+    <?php endif; ?>
+    <?php if ($block->getRowInitCallback()): ?>
+    <?php echo $block->getJsObjectName() ?>.initRowCallback = <?php echo $block->getRowInitCallback() ?>;
+    <?php echo $block->getJsObjectName() ?>.initGridRows();
+    <?php endif; ?>
+    <?php if ($block->getMassactionBlock() && $block->getMassactionBlock()->isAvailable()): ?>
+    <?php echo $block->getMassactionBlock()->getJavaScript() ?>
+    <?php endif ?>
+    <?php echo $block->getAdditionalJavaScript(); ?>
+    //]]>
+
+});
+</script>
+<?php endif; ?>
+<?php endif ?>

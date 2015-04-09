@@ -1,0 +1,78 @@
+<?php
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+/** @var $block \Magento\Checkout\Block\Cart\Sidebar */
+?>
+
+<?php $_cartQty = (float) $block->getSummaryCount() ?>
+<div data-block="minicart" class="minicart-wrapper">
+    <a class="action showcart" href="<?php echo $block->getShoppingCartUrl(); ?>">
+        <span class="text"><?php echo __('My Cart'); ?></span>
+        <span class="counter qty<?php echo($_cartQty > 0) ? '' : ' empty'; ?>">
+            <span class="counter-number">
+                <?php echo $_cartQty;?>
+            </span>
+            <span class="counter-label">
+                <?php echo $block->getSummaryText($_cartQty); ?>
+            </span>
+        </span>
+    </a>
+    <?php if ($block->getIsNeedToDisplaySideBar()): ?>
+        <div class="block block-minicart<?php echo($_cartQty > 0) ? '' : ' empty'; ?>"
+             data-mage-init='{"dropdownDialog":{
+                "appendTo":"[data-block=minicart]",
+                "triggerTarget":".showcart",
+                "timeout": "2000",
+                "closeOnMouseLeave": false,
+                "closeOnEscape": true,
+                "triggerClass":"active",
+                "parentClass":"active",
+                "buttons":[]}}'>
+            <div id="minicart-content-wrapper">
+                <?php echo $block->getChildHtml('minicart_content') ?>
+            </div>
+        </div>
+    <?php endif ?>
+    <script type="text/x-magento-init">
+    {
+        "[data-block='minicart']": {
+            "sidebar": {
+                "targetElement": "div.block.block-minicart",
+                "url": {
+                    "checkout": "<?php echo $block->getCheckoutUrl();?>",
+                    "update": "<?php echo $block->getUpdateItemQtyUrl(); ?>",
+                    "remove": "<?php echo $block->getRemoveItemUrl(); ?>"
+                },
+                "button": {
+                    "checkout": "#top-cart-btn-checkout",
+                    "remove": "#mini-cart a.action.delete",
+                    "close": "#btn-minicart-close"
+                },
+                "showcart": {
+                    "parent": "span.counter",
+                    "qty": "span.counter-number",
+                    "label": "span.counter-label"
+                },
+                "minicart": {
+                    "list": "#mini-cart",
+                    "content": "#minicart-content-wrapper",
+                    "qty": "div.items-total",
+                    "subtotal": "div.subtotal span.price"
+                },
+                "item": {
+                    "qty": ":input.cart-item-qty",
+                    "button": ":button.update-cart-item"
+                },
+                "confirmMessage": "<?php echo __('Are you sure you would like to remove this item from the shopping cart?') ?>"
+            }
+        }
+    }
+    </script>
+</div>
+
+

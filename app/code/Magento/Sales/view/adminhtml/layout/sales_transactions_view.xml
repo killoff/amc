@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../../lib/internal/Magento/Framework/View/Layout/etc/page_configuration.xsd">
+    <update handle="sales_transaction_child_block"/>
+    <body>
+        <referenceContainer name="content">
+            <block class="Magento\Sales\Block\Adminhtml\Transactions\Detail" name="sales_transactions.detail" template="transactions/detail.phtml">
+                <block class="Magento\Sales\Block\Adminhtml\Transactions\Detail\Grid" name="sales_transactions.detail.grid" as="detail_grid"/>
+                <block class="Magento\Sales\Block\Adminhtml\Transactions" name="sales_transactions.grid.container" as="child_grid"/>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

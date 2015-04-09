@@ -1,0 +1,43 @@
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<address>
+    <!-- ko foreach: {
+        data: formatPreviews([
+            "prefix firstname middlename lastname suffix",
+            "company",
+            "street",
+            {
+                items: "city region_id postcode",
+                separator: ", "
+            },
+            "country_id",
+            {
+                items: "telephone",
+                prefix: "T: "
+            },
+            {
+                items: "fax",
+                prefix: "F: "
+            },
+            {
+                items: "vat_id",
+                prefix: "VAT: "
+            }
+        ]),
+        as: 'preview' 
+    } -->
+
+        <!-- ko if: $parent.hasPreview(preview) -->
+            <span data-bind="text: $parent.buildPreview(preview)"></span><br>
+        <!-- /ko -->
+    
+    <!-- /ko -->
+
+    <!-- ko if: noPreview -->
+        <span data-bind="text: label"></span><br>
+    <!-- /ko -->
+</address>
