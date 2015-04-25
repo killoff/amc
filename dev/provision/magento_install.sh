@@ -10,6 +10,7 @@ php bin/magento setup:install --base_url=http://m2.loc/ \
 --admin_email=admin@example.com \
 --admin_user=admin \
 --admin_password=123123q \
+--admin_use_security_key=0 \
 --language=en_US \
 --currency=USD \
 --timezone=America/Chicago \
