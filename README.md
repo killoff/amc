@@ -9,8 +9,8 @@
 
 ### How to install
 
-1. git clone git@github.com:maximgubar/amc.git
-2. composer install (in th project root dir)
-3. vagrant up (in th project root dir)
+1. ```git clone git@github.com:maximgubar/amc.git```
+2. ```composer install``` (in the project root dir)
+3. ```vagrant up``` (in the project root dir)
 
 After allthis steps were done, project should be accessible from the browser by http://m2.loc/
