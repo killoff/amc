@@ -82,3 +82,4 @@ find . -type d -exec chmod 700 {} \; && find . -type f -exec chmod 600 {} \;
 chmod 777 -R /vagrant/app/etc /vagrant/var /vagrant/pub/static /vagrant/dev/provision/magento_install.sh
 
 /vagrant/dev/provision/magento_install.sh
+/vagrant/dev/provision/magento_disable_modules.sh
