@@ -1,4 +1,7 @@
-
+textarea.protocol-output {
+    width: 100%;
+    height: 250px;
+}
 .breadcrumb {
     font-size: 12px;
 }

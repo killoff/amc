@@ -7,7 +7,7 @@ require([
 {
     $(function()
     {
-        $('a[data-selector="dmitro"]').click(function(e) {
+        $('a[data-selector="protocol-opener"]').click(function(e) {
             e.preventDefault();
             var wrapper = $('#protocol-dialog').length > 0
                 ? $('#protocol-dialog')
@@ -28,20 +28,17 @@ require([
                     $(this).closest('.ui-dialog').addClass('ui-dialog-active');
                     var topMargin = $(this).closest('.ui-dialog').children('.ui-dialog-titlebar').outerHeight() + 45;
                     $(this).closest('.ui-dialog').css('margin-top', topMargin);
+                    // todo: loading mask not displayed?
                     $(this).html($('.loading-mask').show());
-                    console.log($);
-//                    $('#protocol-dialog').load('/admin/protocol/index/load/', {protocol_id: 123}, function(response) {
-//
-//                    });
                     $.get('/admin/protocol/index/load/', {protocol_id: 2}, function(response) {
                         $('#protocol-dialog').html(response);
                     });
                 },
                 close: function () {
                     $(this).closest('.ui-dialog').removeClass('ui-dialog-active');
+                    $('#protocol-form').val($('#protocol').val()).show();
                 }
             });
-
             wrapper.on('dialogclose', function () {
             });
 

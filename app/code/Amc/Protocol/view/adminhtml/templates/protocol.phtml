@@ -1,7 +1,6 @@
+<textarea id="protocol" class="protocol-output"></textarea>
 <div id="breadcrumb" class="breadcrumb"></div>
-<textarea id="protocol"></textarea>
-<ul class="collection" id="protocol-items">
-</ul>
+<ul class="collection" id="protocol-items" />
 
 <script>
 
@@ -17,8 +16,6 @@ require([
 
         var metadata = <?php echo $this->getItemsMetadataJson(); ?>;
         var children = <?php echo $this->getItemsChildrenJson(); ?>;
-console.log(metadata);
-console.log(children);
         function createSelection(field, start, end)
         {
             if( field.createTextRange ) {
@@ -76,10 +73,6 @@ console.log(children);
         function selectRow (rowId)
         {
             var _this = navigator.keynavigator;
-            console.log(_this);
-
-            console.log(rowId);
-            console.log($('li[row-id="' + rowId + '"]'));
             var li = $('li[row-id="' + rowId + '"]');
             if (hasChildren(rowId)) {
                 renderChildren(rowId);
@@ -155,7 +148,7 @@ console.log(children);
 
         navigator = $('ul#protocol-items li').keynavigator({
             cycle: false,
-            activeClass: 'alert-success',
+            activeClass: 'active',
             useCache: false,
             //                onBeforeActive: function($el) {
             //                    $el.toggleClass(this.options.activeClass);
@@ -208,12 +201,7 @@ console.log(children);
 
         $('#protocol-items').trigger("click");
         navigator.keynavigator.setActive($('ul#protocol-items li').first());
-
-
     });
 });
-
-
-
 
 </script>
