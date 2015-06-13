@@ -53,9 +53,9 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'label' => __(''),
                 'title' => __(''),
                 'required' => false,
+//                'values' => [1 => 'first',2 => 'second']
             ]
         );
-
         $form->setAction($this->getUrl('*/*/save'));
         $form->setUseContainer(true);
         $this->setForm($form);

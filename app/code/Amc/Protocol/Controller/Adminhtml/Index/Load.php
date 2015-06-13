@@ -10,8 +10,8 @@ class Load extends \Magento\Backend\App\Action
                 'Amc\Protocol\Block\Adminhtml\Protocol',
                 'amc.protocol.ui'
             )->setIndex(
-                    $this->getRequest()->getParam('index')
-                )->toHtml()
+                $this->getRequest()->getParam('index')
+            )->toHtml()
         );
     }
 }

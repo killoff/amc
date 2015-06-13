@@ -3,9 +3,8 @@ namespace Amc\Protocol\Model\Resource;
 
 use Magento\Framework\Model\Resource\Db\AbstractDb;
 
-class Hypertext extends AbstractDb
+class Protocol extends AbstractDb
 {
-
     /**
      * Initialize resource model
      *
@@ -16,7 +15,7 @@ class Hypertext extends AbstractDb
         $this->_init('protocol', 'protocol_id');
     }
 
-    public function saveProtocol($protocol, $rows)
+    public function saveHypertext($protocol, $rows)
     {
         if (empty($rows)) {
             return 0;
@@ -32,7 +31,6 @@ class Hypertext extends AbstractDb
                 'action' => $row['action'],
             ];
         }
-//        print_r($data);
         return $this->_getWriteAdapter()->insertMultiple($this->getTable('protocol_rows'), $data);
     }
 

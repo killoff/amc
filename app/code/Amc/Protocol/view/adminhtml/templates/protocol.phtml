@@ -1,6 +1,6 @@
 <div id="breadcrumb" class="breadcrumb"></div>
 <textarea id="protocol"></textarea>
-<ul class="nav nav-pills nav-stacked" id="protocol-items">
+<ul class="collection" id="protocol-items">
 </ul>
 
 <script>
@@ -61,14 +61,14 @@ console.log(children);
 
             var parentParentId = getParentId(parentId);
             if (parentParentId !== false) {
-                html += '<li row-id="' + parentParentId + '" active-id="' + parentId + '">&hellip;</li>';
+                html += '<li class="collection-item" row-id="' + parentParentId + '" active-id="' + parentId + '">&hellip;</li>';
             }
 
             var _children = children[parentId];
             for (var i = 0; i < _children.length; i++) {
                 var row = getRowMetadata(_children[i]);
                 var icon = hasChildren(row.row_id) ? '&nbsp;&rsaquo;&nbsp;' : '&nbsp;&darr;&nbsp;';
-                html += '<li row-id="' + row.row_id + '">' + icon + row.title + '</li>';
+                html += '<li class="collection-item" row-id="' + row.row_id + '">' + icon + row.title + '</li>';
             }
             $('#protocol-items').html(html);
         }
