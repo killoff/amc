@@ -7,15 +7,15 @@ class Protocol extends \Magento\Backend\Block\Template
 {
     protected $_template = 'protocol.phtml';
 
-    /** @var \Amc\Protocol\Model\Resource\Hypertext */
-    private $hypertext;
+    /** @var \Amc\Protocol\Model\Resource\Protocol */
+    private $protocol;
 
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
-        \Amc\Protocol\Model\Resource\Hypertext $hypertext,
+        \Amc\Protocol\Model\Resource\Protocol $protocol,
         array $data = []
     ) {
-        $this->hypertext = $hypertext;
+        $this->protocol = $protocol;
         parent::__construct($context, $data);
     }
 
@@ -25,7 +25,7 @@ class Protocol extends \Magento\Backend\Block\Template
     protected function _construct()
     {
         parent::_construct();
-        $items = $this->hypertext->getProtocolItems(11);
+        $items = $this->protocol->getProtocolItems(2);
 //        print_r($items);
 //        return;
 

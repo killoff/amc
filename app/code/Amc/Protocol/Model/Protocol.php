@@ -3,17 +3,18 @@ namespace Amc\Protocol\Model;
 
 use Magento\Framework\Model\AbstractModel;
 
-class Hypertext extends AbstractModel
+/**
+ * @method \Amc\Protocol\Model\Resource\Protocol _getResource()
+ * @method \Amc\Protocol\Model\Protocol setName()
+ */
+class Protocol extends AbstractModel
 {
-    /** @var \Amc\Protocol\Model\Resource\Hypertext */
-    protected $_resource;
-
     /**
      * Prefix of model events names
      *
      * @var string
      */
-    protected $_eventPrefix = 'protocol_hypertext';
+    protected $_eventPrefix = 'amc_protocol';
 
     /**
      * Initialize resource model
@@ -22,16 +23,16 @@ class Hypertext extends AbstractModel
      */
     protected function _construct()
     {
-        $this->_init('Amc\Protocol\Model\Resource\Hypertext');
+        $this->_init('Amc\Protocol\Model\Resource\Protocol');
     }
 
-    public function saveProtocol($text)
+    public function saveHypertext($text)
     {
         $rows = $this->parseHypertext($text);
-        $this->getResource()->saveProtocol($this, $rows);
+        $this->_getResource()->saveHypertext($this, $rows);
     }
 
-    public  function parseHypertext($text)
+    private function parseHypertext($text)
     {
         $result = [];
         $i = 1;

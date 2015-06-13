@@ -21,7 +21,7 @@ class Index extends \Magento\Backend\Block\Widget\Form\Container
         parent::_construct();
         $this->buttonList->remove('back');
         $this->buttonList->remove('reset');
-        $this->buttonList->update('save', 'label', __('Save Hypertext'));
+        $this->buttonList->update('save', 'label', __('Save Protocol'));
     }
 
     /**

@@ -1,26 +1,25 @@
 <?php
 namespace Amc\Protocol\Controller\Adminhtml\Index;
 
-use Magento\Framework\App\Action\Action;
-
 class Save extends \Magento\Backend\App\Action
 {
-    private $hypertext;
+    private $protocol;
 
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
-        \Amc\Protocol\Model\HypertextFactory $hypertext
+        \Amc\Protocol\Model\ProtocolFactory $protocol
     ) {
         parent::__construct($context);
-        $this->hypertext = $hypertext;
+        $this->protocol = $protocol;
     }
 
 
     public function execute()
     {
-        $protocol = $this->hypertext->create();
+        /** @var \Amc\Protocol\Model\Protocol $protocol */
+        $protocol = $this->protocol->create();
         $protocol->setName($this->_request->getParam('name'));
         $protocol->save();
-        $protocol->saveProtocol($this->_request->getParam('text'));
+        $protocol->saveHypertext($this->_request->getParam('text'));
     }
 }

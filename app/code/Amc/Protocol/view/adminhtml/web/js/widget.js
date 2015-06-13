@@ -9,7 +9,6 @@ require([
     {
         $('a[data-selector="dmitro"]').click(function(e) {
             e.preventDefault();
-
             var wrapper = $('#protocol-dialog').length > 0
                 ? $('#protocol-dialog')
                 : $('<div id="protocol-dialog"/>').appendTo('body');
@@ -30,8 +29,12 @@ require([
                     var topMargin = $(this).closest('.ui-dialog').children('.ui-dialog-titlebar').outerHeight() + 45;
                     $(this).closest('.ui-dialog').css('margin-top', topMargin);
                     $(this).html($('.loading-mask').show());
-                    $('#protocol-dialog').load('/index.php/admin/protocol/index/load/', {protocol_id: 123}, function(response) {
-
+                    console.log($);
+//                    $('#protocol-dialog').load('/admin/protocol/index/load/', {protocol_id: 123}, function(response) {
+//
+//                    });
+                    $.get('/admin/protocol/index/load/', {protocol_id: 2}, function(response) {
+                        $('#protocol-dialog').html(response);
                     });
                 },
                 close: function () {
