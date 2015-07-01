@@ -18,7 +18,7 @@ echo "done"
 
 # install Apache and PHP
 echo "Installing Apache and PHP"
-apt-get install -y php-apc php5 php5-cli php5-curl php5-mhash php5-gd php5-intl php5-mcrypt php5-gd php5-mysql php-pear php5-sqlite php5-dev php5-memcached >> /tmp/vagrant_log 2>&1
+apt-get install -y php-apc php5 php5-cli php5-curl php5-mhash php5-gd php5-intl php5-mcrypt php5-gd php5-mysql php-pear php5-sqlite php5-dev php5-memcached php5-xdebug >> /tmp/vagrant_log 2>&1
 echo "done"
 
 echo "Installing Memcached"
@@ -41,7 +41,7 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/apache2/ssl/apa
 
 cp /vagrant/dev/provision/php.ini /etc/php5/apache2/php.ini
 cp /vagrant/dev/provision/php.ini /etc/php5/cli/php.ini
-# cp /vagrant/dev/provision/xdebug.ini /etc/php5/apache2/conf.d/20-xdebug.ini
+cp /vagrant/dev/provision/xdebug.ini /etc/php5/apache2/conf.d/20-xdebug.ini
 sed -i 's/\(APACHE_RUN_USER=\)www-data/\1vagrant/g' /etc/apache2/envvars
 chown vagrant:www-data /var/lock/apache2
 service apache2 restart
@@ -79,7 +79,7 @@ echo "done"
 
 echo "Setting Up Folders Perms"
 find . -type d -exec chmod 700 {} \; && find . -type f -exec chmod 600 {} \;
-chmod 777 -R /vagrant/app/etc /vagrant/var /vagrant/pub/static /vagrant/dev/provision/magento_install.sh
+chmod 777 -R /vagrant/app/etc /vagrant/var /vagrant/pub/static /vagrant/bin /vagrant/dev/provision/magento_install.sh
 
 /vagrant/dev/provision/magento_install.sh
 /vagrant/dev/provision/magento_disable_modules.sh
