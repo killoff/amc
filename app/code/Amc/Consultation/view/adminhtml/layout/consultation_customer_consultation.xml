@@ -34,8 +34,8 @@
                 <block class="Magento\Backend\Block\Widget\Grid\Column" as="user_name">
                     <arguments>
                         <argument name="header" xsi:type="string" translate="true">User Name</argument>
-                        <argument name="id" xsi:type="string">user_name</argument>
-                        <argument name="index" xsi:type="string">user_name</argument>
+                        <argument name="id" xsi:type="string">username</argument>
+                        <argument name="index" xsi:type="string">username</argument>
                     </arguments>
                 </block>
                 <block class="Magento\Backend\Block\Widget\Grid\Column" as="comment">

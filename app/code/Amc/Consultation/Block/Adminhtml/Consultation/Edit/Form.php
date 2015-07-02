@@ -49,7 +49,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         );
 
         $customer = $this->getCustomer();
-        $fullName = $customer->getLastname() . ' ' . $customer->getFirstname();
+        $fullName = implode(' ', [$customer->getLastname(), $customer->getFirstname(), $customer->getMiddlename()]);
         $fieldset = $form->addFieldset(
             'base_fieldset',
             ['legend' => __('Consultation for %1', $fullName), 'class' => 'fieldset-wide']

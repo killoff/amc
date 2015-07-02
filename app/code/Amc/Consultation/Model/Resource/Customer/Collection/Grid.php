@@ -27,6 +27,11 @@ class Grid extends \Magento\Framework\Model\Resource\Db\Collection\AbstractColle
     protected $_catalogAttrFactory;
 
     /**
+     * @var \Magento\Catalog\Model\Resource\Product\CollectionFactory
+     */
+    protected $_productCollectionFactory;
+
+    /**
      * @var bool
      */
     protected $_isProductNameJoined = false;
@@ -54,6 +59,7 @@ class Grid extends \Magento\Framework\Model\Resource\Db\Collection\AbstractColle
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Catalog\Model\Resource\ConfigFactory $catalogConfFactory,
         \Magento\Catalog\Model\Entity\AttributeFactory $catalogAttrFactory,
+        \Magento\Catalog\Model\Resource\Product\CollectionFactory $productCollectionFactory,
         $connection = null,
         \Magento\Framework\Model\Resource\Db\AbstractDb $resource = null
     )
@@ -62,6 +68,7 @@ class Grid extends \Magento\Framework\Model\Resource\Db\Collection\AbstractColle
         $this->_storeManager = $storeManager;
         $this->_catalogConfFactory = $catalogConfFactory;
         $this->_catalogAttrFactory = $catalogAttrFactory;
+        $this->_productCollectionFactory = $productCollectionFactory;
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $connection, $resource);
     }
 
@@ -127,7 +134,7 @@ class Grid extends \Magento\Framework\Model\Resource\Db\Collection\AbstractColle
                 $storeId .
                 ' AND product_name_table.attribute_id=' .
                 $attribute->getId(),
-                ['product_name' => 'value']
+                []
             );
 
             $this->_isProductNameJoined = true;
@@ -143,9 +150,105 @@ class Grid extends \Magento\Framework\Model\Resource\Db\Collection\AbstractColle
             $this->getSelect()->join(
                 ['user_table' => $this->getTable('admin_user')],
                 'user_table.user_id=main_table.user_id',
-                ['user_name' => 'username']
+                ['username']
             );
             $this->_isUserTableJoined = true;
+        }
+    }
+
+    /**
+     * Add select order
+     *
+     * @param   string $field
+     * @param   string $direction
+     * @return  \Magento\Framework\Data\Collection\Db
+     */
+    public function setOrder($field, $direction = self::SORT_ORDER_DESC)
+    {
+        if ($field == 'product_name') {
+            return $this->setOrderByProductName($direction);
+        }
+        return parent::setOrder($field, $direction);
+    }
+
+    /**
+     * Add field filter to collection
+     *
+     * @param string|array $field
+     * @param null|string|array $condition
+     * @see self::_getConditionSql for $condition
+     * @return \Magento\Framework\Data\Collection\Db
+     */
+    public function addFieldToFilter($field, $condition = null)
+    {
+        switch ($field) {
+            case 'product_name':
+                $value = (string)$condition['like'];
+                $value = trim(trim($value, "'"), "%");
+                return $this->addProductNameFilter($value);
+        }
+        return parent::addFieldToFilter($field, $condition);
+    }
+
+    /**
+     * Adds filter on product name
+     *
+     * @param string $productName
+     * @return $this
+     */
+    public function addProductNameFilter($productName)
+    {
+        $this->_joinProductNameTable();
+        $this->getSelect()->where('INSTR(product_name_table.value, ?)', $productName);
+
+        return $this;
+    }
+
+    /**
+     * Sets ordering by product name
+     *
+     * @param string $dir
+     * @return $this
+     */
+    public function setOrderByProductName($dir)
+    {
+        $this->_joinProductNameTable();
+        $this->getSelect()->order('product_name_table.value ' . $dir);
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function _afterLoad()
+    {
+        parent::_afterLoad();
+
+        $this->_assignProductNames();
+
+        return $this;
+    }
+
+    /**
+     * @return void
+     */
+    protected function _assignProductNames()
+    {
+        /** @var \Magento\Catalog\Model\Resource\Product\Collection $productCollection */
+        $productCollection = $this->_productCollectionFactory->create();
+        $productCollection->addAttributeToSelect(['name']);
+
+        foreach ($this as $item) {
+            $product = $productCollection->getItemById($item->getProductId());
+            if ($product) {
+                if (!$product->isInStock()) {
+                    $this->removeItemByKey($item->getId());
+                } else {
+                    $item->setProductName($product->getName());
+                }
+            } else {
+                $item->isDeleted(true);
+            }
         }
     }
 }
