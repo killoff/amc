@@ -12,7 +12,6 @@ use Magento\Sales\Model\AbstractModel;
 /**
  * @method \Magento\Sales\Model\Resource\Order\Creditmemo\Comment _getResource()
  * @method \Magento\Sales\Model\Resource\Order\Creditmemo\Comment getResource()
- * @method \Magento\Sales\Model\Order\Creditmemo\Comment setCreatedAt(string $value)
  */
 class Comment extends AbstractModel implements CreditmemoCommentInterface
 {
@@ -35,7 +34,7 @@ class Comment extends AbstractModel implements CreditmemoCommentInterface
      * @param AttributeValueFactory $customAttributeFactory
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Framework\Model\Resource\AbstractResource $resource
-     * @param \Magento\Framework\Data\Collection\Db $resourceCollection
+     * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -46,7 +45,7 @@ class Comment extends AbstractModel implements CreditmemoCommentInterface
         AttributeValueFactory $customAttributeFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Model\Resource\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\Db $resourceCollection = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct(
@@ -74,6 +73,8 @@ class Comment extends AbstractModel implements CreditmemoCommentInterface
     /**
      * Declare Creditmemo instance
      *
+     * @codeCoverageIgnore
+     *
      * @param \Magento\Sales\Model\Order\Creditmemo $creditmemo
      * @return $this
      */
@@ -85,6 +86,8 @@ class Comment extends AbstractModel implements CreditmemoCommentInterface
 
     /**
      * Retrieve Creditmemo instance
+     *
+     * @codeCoverageIgnore
      *
      * @return \Magento\Sales\Model\Order\Creditmemo
      */
@@ -106,6 +109,7 @@ class Comment extends AbstractModel implements CreditmemoCommentInterface
         return $this->_storeManager->getStore();
     }
 
+    //@codeCoverageIgnoreStart
     /**
      * Returns comment
      *
@@ -124,6 +128,14 @@ class Comment extends AbstractModel implements CreditmemoCommentInterface
     public function getCreatedAt()
     {
         return $this->getData(CreditmemoCommentInterface::CREATED_AT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCreatedAt($createdAt)
+    {
+        return $this->setData(CreditmemoCommentInterface::CREATED_AT, $createdAt);
     }
 
     /**
@@ -156,7 +168,6 @@ class Comment extends AbstractModel implements CreditmemoCommentInterface
         return $this->getData(CreditmemoCommentInterface::PARENT_ID);
     }
 
-    //@codeCoverageIgnoreStart
     /**
      * {@inheritdoc}
      */

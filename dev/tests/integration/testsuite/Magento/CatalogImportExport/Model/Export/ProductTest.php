@@ -70,17 +70,11 @@ class ProductTest extends \PHPUnit_Framework_TestCase
      */
     public function testExportStockItemAttributesAreFilled()
     {
-        $filesystemMock = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $fileWrite = $this->getMock('Magento\Framework\Filesystem\File\Write', [], [], '', false);
         $directoryMock = $this->getMock('Magento\Framework\Filesystem\Directory\Write', [], [], '', false);
-
-        $filesystemMock->expects($this->once())->method('getDirectoryWrite')->will($this->returnValue($directoryMock));
-
         $directoryMock->expects($this->any())->method('getParentDirectory')->will($this->returnValue('some#path'));
-
         $directoryMock->expects($this->any())->method('isWritable')->will($this->returnValue(true));
-
         $directoryMock->expects($this->any())->method('isFile')->will($this->returnValue(true));
-
         $directoryMock->expects(
             $this->any()
         )->method(
@@ -88,6 +82,10 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         )->will(
             $this->returnValue('some string read from file')
         );
+        $directoryMock->expects($this->once())->method('openFile')->will($this->returnValue($fileWrite));
+
+        $filesystemMock = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $filesystemMock->expects($this->once())->method('getDirectoryWrite')->will($this->returnValue($directoryMock));
 
         $exportAdapter = new \Magento\ImportExport\Model\Export\Adapter\Csv($filesystemMock);
 
@@ -124,5 +122,51 @@ class ProductTest extends \PHPUnit_Framework_TestCase
                 "Stock item attribute {$stockItemAttribute} value is empty string"
             );
         }
+    }
+
+    /**
+     * Verifies if exception processing works properly
+     *
+     * @magentoDataFixture Magento/CatalogImportExport/_files/product_export_data.php
+     */
+    public function testExceptionInGetExportData()
+    {
+        $exception = new \Exception('Error');
+
+        $rowCustomizerMock = $this->getMockBuilder('Magento\CatalogImportExport\Model\Export\RowCustomizerInterface')
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $loggerMock = $this->getMockBuilder('\Psr\Log\LoggerInterface')->getMock();
+
+        $directoryMock = $this->getMock('Magento\Framework\Filesystem\Directory\Write', [], [], '', false);
+        $directoryMock->expects($this->any())->method('getParentDirectory')->will($this->returnValue('some#path'));
+        $directoryMock->expects($this->any())->method('isWritable')->will($this->returnValue(true));
+
+        $filesystemMock = $this->getMock('Magento\Framework\Filesystem', [], [], '', false);
+        $filesystemMock->expects($this->once())->method('getDirectoryWrite')->will($this->returnValue($directoryMock));
+
+        $exportAdapter = new \Magento\ImportExport\Model\Export\Adapter\Csv($filesystemMock);
+
+        $rowCustomizerMock->expects($this->once())->method('prepareData')->willThrowException($exception);
+        $loggerMock->expects($this->once())->method('critical')->with($exception);
+
+        $collection = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            '\Magento\Catalog\Model\Resource\Product\Collection'
+        );
+
+        /** @var \Magento\CatalogImportExport\Model\Export\Product $model */
+        $model = \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->create(
+            'Magento\CatalogImportExport\Model\Export\Product',
+            [
+                'rowCustomizer' => $rowCustomizerMock,
+                'logger' => $loggerMock,
+                'collection' => $collection
+            ]
+        );
+
+
+        $data = $model->setWriter($exportAdapter)->export();
+        $this->assertEmpty($data);
     }
 }

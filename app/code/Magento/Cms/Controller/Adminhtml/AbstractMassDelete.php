@@ -1,12 +1,12 @@
 <?php
 /**
- *
  * Copyright © 2015 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
 namespace Magento\Cms\Controller\Adminhtml;
 
 use Magento\Framework\Model\Resource\Db\Collection\AbstractCollection;
+use Magento\Framework\Controller\ResultFactory;
 
 /**
  * Class AbstractMassDelete
@@ -21,7 +21,7 @@ class AbstractMassDelete extends \Magento\Backend\App\Action
     /**
      * Redirect url
      */
-    const REDIRECT_URL = '*/*/index';
+    const REDIRECT_URL = '*/*/';
 
     /**
      * Resource collection
@@ -45,32 +45,27 @@ class AbstractMassDelete extends \Magento\Backend\App\Action
      */
     public function execute()
     {
-        $data = $this->getRequest()->getParam('massaction', '[]');
-        $data = json_decode($data, true);
+        $selected = $this->getRequest()->getParam('selected');
+        $excluded = $this->getRequest()->getParam('excluded');
 
-        if (isset($data['all_selected']) && $data['all_selected'] === true) {
-            if (!empty($data['excluded'])) {
-                $this->excludedDelete($data['excluded']);
+        try {
+            if (isset($excluded)) {
+                if (!empty($excluded)) {
+                    $this->excludedDelete($excluded);
+                } else {
+                    $this->deleteAll();
+                }
+            } elseif (!empty($selected)) {
+                $this->selectedDelete($selected);
             } else {
-                $this->deleteAll();
+                $this->messageManager->addError(__('Please select item(s).'));
             }
-        } elseif (!empty($data['selected'])) {
-            $this->selectedDelete($data['selected']);
-        } else {
-            $this->messageManager->addError(__('Please select item(s).'));
+        } catch (\Exception $e) {
+            $this->messageManager->addError($e->getMessage());
         }
 
-        return $this->getDefaultResult();
-    }
-
-    /**
-     * {@inheritdoc}
-     *
-     * @return \Magento\Backend\Model\View\Result\Redirect
-     */
-    public function getDefaultResult()
-    {
-        $resultRedirect = $this->resultRedirectFactory->create();
+        /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
+        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
         return $resultRedirect->setPath(static::REDIRECT_URL);
     }
 

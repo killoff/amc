@@ -14,7 +14,6 @@ use Magento\Sales\Model\AbstractModel;
  *
  * @method \Magento\Sales\Model\Resource\Order\Status\History _getResource()
  * @method \Magento\Sales\Model\Resource\Order\Status\History getResource()
- * @method \Magento\Sales\Model\Order\Status\History setCreatedAt(string $value)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
 class History extends AbstractModel implements OrderStatusHistoryInterface
@@ -50,7 +49,7 @@ class History extends AbstractModel implements OrderStatusHistoryInterface
      * @param AttributeValueFactory $customAttributeFactory
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \Magento\Framework\Model\Resource\AbstractResource $resource
-     * @param \Magento\Framework\Data\Collection\Db $resourceCollection
+     * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -61,7 +60,7 @@ class History extends AbstractModel implements OrderStatusHistoryInterface
         AttributeValueFactory $customAttributeFactory,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \Magento\Framework\Model\Resource\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\Db $resourceCollection = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         parent::__construct(
@@ -127,6 +126,8 @@ class History extends AbstractModel implements OrderStatusHistoryInterface
     /**
      * Retrieve order instance
      *
+     * @codeCoverageIgnore
+     *
      * @return \Magento\Sales\Model\Order
      */
     public function getOrder()
@@ -176,6 +177,7 @@ class History extends AbstractModel implements OrderStatusHistoryInterface
         return $this;
     }
 
+    //@codeCoverageIgnoreStart
     /**
      * Returns comment
      *
@@ -194,6 +196,14 @@ class History extends AbstractModel implements OrderStatusHistoryInterface
     public function getCreatedAt()
     {
         return $this->getData(OrderStatusHistoryInterface::CREATED_AT);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCreatedAt($createdAt)
+    {
+        return $this->setData(OrderStatusHistoryInterface::CREATED_AT, $createdAt);
     }
 
     /**
@@ -256,7 +266,6 @@ class History extends AbstractModel implements OrderStatusHistoryInterface
         return $this->getData(OrderStatusHistoryInterface::STATUS);
     }
 
-    //@codeCoverageIgnoreStart
     /**
      * {@inheritdoc}
      */

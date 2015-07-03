@@ -27,7 +27,7 @@
             padding-left: 0;
         }
     }
-    &.table-info {
+    &.admin__table-primary {
         th {
             border-top: 0;
         }
@@ -91,6 +91,9 @@
         background: @dashboard-tabs__background-color;
         font-size: @dashboard__font-size__base;
     }
+    .ui-tabs-panel {
+        border-top: 1px solid @color-gray68;
+    }
 }
 
 //
@@ -128,8 +131,8 @@
 }
 
 .dashboard-totals-list {
+    &:extend(.abs-clearfix all);
     display: table;
-    .extend__clearfix();
     .extend__list-reset-styles();
     width: 100%;
 }
@@ -162,7 +165,7 @@
 
 .dashboard-store-stats {
     .ui-tabs {
-        .extend__clearfix();
+        &:extend(.abs-clearfix all);
         margin-bottom: 0;
         position: relative;
         &:before {
