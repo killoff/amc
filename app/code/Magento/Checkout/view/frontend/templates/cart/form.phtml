@@ -38,7 +38,7 @@
     <div class="cart main actions">
         <?php if ($block->getContinueShoppingUrl()): ?>
             <a class="action continue"
-               href="<?php echo $block->getContinueShoppingUrl() ?>"
+               href="<?php echo $block->escapeUrl($block->getContinueShoppingUrl()) ?>"
                title="<?php echo $block->escapeHtml(__('Continue Shopping')); ?>">
                 <span><?php echo __('Continue Shopping') ?></span>
             </a>
@@ -57,9 +57,9 @@
                 class="action update">
             <span><?php echo __('Update Shopping Cart'); ?></span>
         </button>
-        <!--[if lt IE 8]>
         <input type="hidden" value="" id="update_cart_action_container" />
-        <![endif]-->
     </div>
 </form>
+<?php echo $block->getChildHtml('checkout.cart.order.actions') ?>
 <?php echo $block->getChildHtml('shopping.cart.table.after'); ?>
+

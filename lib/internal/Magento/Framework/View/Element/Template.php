@@ -7,7 +7,6 @@ namespace Magento\Framework\View\Element;
 
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\Filesystem;
-use Magento\Framework\View\Template\Html\Minifier;
 
 /**
  * Base html block
@@ -190,7 +189,7 @@ class Template extends AbstractBlock
     /**
      * Get absolute path to template
      *
-     * @param null $template
+     * @param string|null $template
      * @return string
      */
     public function getTemplateFile($template = null)

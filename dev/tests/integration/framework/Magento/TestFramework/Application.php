@@ -5,12 +5,11 @@
  */
 namespace Magento\TestFramework;
 
-use Magento\Framework\Code\Generator\FileResolver;
 use Magento\Framework\Autoload\AutoloaderInterface;
 use Magento\Framework\Filesystem;
 use Magento\Framework\App\Filesystem\DirectoryList;
 use Magento\Framework\App\DeploymentConfig;
-use Magento\Framework\Config\ConfigOptionsList;
+use Magento\Framework\Config\ConfigOptionsListConstants;
 use Magento\Framework\App\DeploymentConfig\Reader;
 
 /**
@@ -117,28 +116,50 @@ class Application
     protected $dirList;
 
     /**
+     * Config file for integration tests
+     *
+     * @var string
+     */
+    private $globalConfigFile;
+
+    /**
+     * Defines whether load test extension attributes or not
+     *
+     * @var bool
+     */
+    private $loadTestExtensionAttributes;
+
+    /**
      * Constructor
      *
      * @param \Magento\Framework\Shell $shell
      * @param string $installDir
      * @param array $installConfigFile
+     * @param string $globalConfigFile
      * @param string $globalConfigDir
      * @param string $appMode
      * @param AutoloaderInterface $autoloadWrapper
+     * @param bool|null $loadTestExtensionAttributes
      */
     public function __construct(
         \Magento\Framework\Shell $shell,
         $installDir,
         $installConfigFile,
+        $globalConfigFile,
         $globalConfigDir,
         $appMode,
-        AutoloaderInterface $autoloadWrapper
+        AutoloaderInterface $autoloadWrapper,
+        $loadTestExtensionAttributes = false
     ) {
+        if (getcwd() != BP . '/dev/tests/integration') {
+            chdir(BP . '/dev/tests/integration');
+        }
         $this->_shell = $shell;
         $this->installConfigFile = $installConfigFile;
         $this->_globalConfigDir = realpath($globalConfigDir);
         $this->_appMode = $appMode;
         $this->installDir = $installDir;
+        $this->loadTestExtensionAttributes = $loadTestExtensionAttributes;
 
         $customDirs = $this->getCustomDirs();
         $this->dirList = new \Magento\Framework\App\Filesystem\DirectoryList(BP, $customDirs);
@@ -148,9 +169,11 @@ class Application
             \Magento\Framework\App\State::PARAM_MODE => $appMode
         ];
         $driverPool = new \Magento\Framework\Filesystem\DriverPool;
-        $this->_factory = new \Magento\TestFramework\ObjectManagerFactory($this->dirList, $driverPool);
+        $configFilePool = new \Magento\Framework\Config\File\ConfigFilePool;
+        $this->_factory = new \Magento\TestFramework\ObjectManagerFactory($this->dirList, $driverPool, $configFilePool);
 
         $this->_configDir = $this->dirList->getPath(DirectoryList::CONFIG);
+        $this->globalConfigFile = $globalConfigFile;
     }
 
     /**
@@ -162,20 +185,31 @@ class Application
     {
         if (null === $this->_db) {
             if ($this->isInstalled()) {
-                $reader = new Reader($this->dirList);
+                $configPool = new \Magento\Framework\Config\File\ConfigFilePool();
+                $reader = new Reader($this->dirList, $configPool);
                 $deploymentConfig = new DeploymentConfig($reader, []);
-                $dbConfig = $deploymentConfig->getConfigData(ConfigOptionsList::KEY_DB);
-                $dbInfo = $dbConfig['connection']['default'];
-                $host = $dbInfo['host'];
-                $user = $dbInfo['username'];
-                $password = $dbInfo['password'];
-                $dbName = $dbInfo['dbname'];
+                $host = $deploymentConfig->get(
+                    ConfigOptionsListConstants::CONFIG_PATH_DB_CONNECTION_DEFAULT .
+                    '/' . ConfigOptionsListConstants::KEY_HOST
+                );
+                $user = $deploymentConfig->get(
+                    ConfigOptionsListConstants::CONFIG_PATH_DB_CONNECTION_DEFAULT .
+                    '/' . ConfigOptionsListConstants::KEY_USER
+                );
+                $password = $deploymentConfig->get(
+                    ConfigOptionsListConstants::CONFIG_PATH_DB_CONNECTION_DEFAULT .
+                    '/' . ConfigOptionsListConstants::KEY_PASSWORD
+                );
+                $dbName = $deploymentConfig->get(
+                    ConfigOptionsListConstants::CONFIG_PATH_DB_CONNECTION_DEFAULT .
+                    '/' . ConfigOptionsListConstants::KEY_NAME
+                );
             } else {
                 $installConfig = $this->getInstallConfig();
-                $host = $installConfig['db_host'];
-                $user = $installConfig['db_user'];
-                $password = $installConfig['db_password'];
-                $dbName = $installConfig['db_name'];
+                $host = $installConfig['db-host'];
+                $user = $installConfig['db-user'];
+                $password = $installConfig['db-password'];
+                $dbName = $installConfig['db-name'];
             }
             $this->_db = new Db\Mysql(
                 $host,
@@ -299,20 +333,28 @@ class Application
         $objectManager->addSharedInstance($logger, 'Magento\Framework\Logger\Monolog');
         $sequenceBuilder = $objectManager->get('\Magento\TestFramework\Db\Sequence\Builder');
         $objectManager->addSharedInstance($sequenceBuilder, 'Magento\SalesSequence\Model\Builder');
-
         Helper\Bootstrap::setObjectManager($objectManager);
-
-        $objectManager->configure(
-            [
-                'preferences' => [
-                    'Magento\Framework\App\State' => 'Magento\TestFramework\App\State',
-                    'Magento\Framework\Mail\TransportInterface' => 'Magento\TestFramework\Mail\TransportInterfaceMock',
-                    'Magento\Framework\Mail\Template\TransportBuilder'
-                        => 'Magento\TestFramework\Mail\Template\TransportBuilderMock',
-                ],
+        $objectManagerConfiguration = [
+            'preferences' => [
+                'Magento\Framework\App\State' => 'Magento\TestFramework\App\State',
+                'Magento\Framework\Mail\TransportInterface' => 'Magento\TestFramework\Mail\TransportInterfaceMock',
+                'Magento\Framework\Mail\Template\TransportBuilder'
+                    => 'Magento\TestFramework\Mail\Template\TransportBuilderMock',
             ]
-        );
-
+        ];
+        if ($this->loadTestExtensionAttributes) {
+            $objectManagerConfiguration = array_merge(
+                $objectManagerConfiguration,
+                [
+                    'Magento\Framework\Api\ExtensionAttribute\Config\Reader' => [
+                        'arguments' => [
+                            'fileResolver' => ['instance' => 'Magento\TestFramework\Api\Config\Reader\FileResolver'],
+                        ],
+                    ],
+                ]
+            );
+        }
+        $objectManager->configure($objectManagerConfiguration);
         /** Register event observer of Integration Framework */
         /** @var \Magento\Framework\Event\Config\Data $eventConfigData */
         $eventConfigData = $objectManager->get('Magento\Framework\Event\Config\Data');
@@ -327,7 +369,6 @@ class Application
                 ]
             ]
         );
-
         $this->loadArea(\Magento\TestFramework\Application::DEFAULT_APP_AREA);
         \Magento\TestFramework\Helper\Bootstrap::getObjectManager()->configure(
             $objectManager->get('Magento\Framework\ObjectManager\DynamicConfigInterface')->getConfiguration()
@@ -336,6 +377,8 @@ class Application
         /** @var \Magento\TestFramework\Db\Sequence $sequence */
         $sequence = $objectManager->get('Magento\TestFramework\Db\Sequence');
         $sequence->generateSequences();
+        $objectManager->create('Magento\TestFramework\Config', ['configPath' => $this->globalConfigFile])
+            ->rewriteAdditionalConfig();
     }
 
     /**
@@ -379,7 +422,7 @@ class Application
          * @see \Magento\Setup\Mvc\Bootstrap\InitParamListener::BOOTSTRAP_PARAM
          */
         $this->_shell->execute(
-            'php -f %s setup:uninstall -n --magento_init_params=%s',
+            'php -f %s setup:uninstall -n --magento-init-params=%s',
             [BP . '/bin/magento', $this->getInitParamsQuery()]
         );
     }
@@ -416,18 +459,18 @@ class Application
         );
 
         // enable only specified list of caches
-        $cacheScript = BP . '/dev/shell/cache.php';
         $initParamsQuery = $this->getInitParamsQuery();
-        $this->_shell->execute('php -f %s -- --set=0 --bootstrap=%s', [$cacheScript, $initParamsQuery]);
-        $cacheTypes = [
-            \Magento\Framework\App\Cache\Type\Config::TYPE_IDENTIFIER,
-            \Magento\Framework\App\Cache\Type\Layout::TYPE_IDENTIFIER,
-            \Magento\Framework\App\Cache\Type\Translate::TYPE_IDENTIFIER,
-            \Magento\Eav\Model\Cache\Type::TYPE_IDENTIFIER,
-        ];
+        $this->_shell->execute('php -f %s cache:disable --all --bootstrap=%s', [BP . '/bin/magento', $initParamsQuery]);
         $this->_shell->execute(
-            'php -f %s -- --set=1 --types=%s --bootstrap=%s',
-            [$cacheScript, implode(',', $cacheTypes), $initParamsQuery]
+            'php -f %s cache:enable %s %s %s %s --bootstrap=%s',
+            [
+                BP . '/bin/magento',
+                \Magento\Framework\App\Cache\Type\Config::TYPE_IDENTIFIER,
+                \Magento\Framework\App\Cache\Type\Layout::TYPE_IDENTIFIER,
+                \Magento\Framework\App\Cache\Type\Translate::TYPE_IDENTIFIER,
+                \Magento\Eav\Model\Cache\Type::TYPE_IDENTIFIER,
+                $initParamsQuery,
+            ]
         );
 
         // right after a clean installation, store DB dump for future reuse in tests or running the test suite again
@@ -444,7 +487,7 @@ class Application
     private function copyAppConfigFiles()
     {
         $globalConfigFiles = glob(
-            $this->_globalConfigDir . '/{di.xml}',
+            $this->_globalConfigDir . '/{di.xml,vendor_path.php}',
             GLOB_BRACE
         );
         foreach ($globalConfigFiles as $file) {
@@ -466,7 +509,7 @@ class Application
          * Literal value is used instead of constant, because autoloader is not integrated with Magento Setup app
          * @see \Magento\Setup\Mvc\Bootstrap\InitParamListener::BOOTSTRAP_PARAM
          */
-        $params['magento_init_params'] = $this->getInitParamsQuery();
+        $params['magento-init-params'] = $this->getInitParamsQuery();
         $result = [];
         foreach ($params as $key => $value) {
             if (!empty($value)) {

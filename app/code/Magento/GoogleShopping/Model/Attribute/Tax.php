@@ -8,6 +8,7 @@ namespace Magento\GoogleShopping\Model\Attribute;
 use Magento\Framework\Parse\Zip;
 use Magento\Store\Model\Store;
 use Magento\Tax\Api\Data\TaxClassKeyInterface;
+use Magento\Tax\Model\TaxClass\Key;
 
 /**
  * Tax attribute model
@@ -90,7 +91,7 @@ class Tax extends \Magento\GoogleShopping\Model\Attribute\DefaultAttribute
      * @param \Magento\Directory\Model\RegionFactory $regionFactory
      * @param \Magento\Customer\Api\GroupManagementInterface $groupManagement
      * @param \Magento\Framework\Api\DataObjectHelper $dataObjectHelper
-     * @param \Magento\Framework\Data\Collection\Db $resourceCollection
+     * @param \Magento\Framework\Data\Collection\AbstractDb $resourceCollection
      * @param array $data
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
@@ -110,7 +111,7 @@ class Tax extends \Magento\GoogleShopping\Model\Attribute\DefaultAttribute
         \Magento\Directory\Model\RegionFactory $regionFactory,
         \Magento\Customer\Api\GroupManagementInterface $groupManagement,
         \Magento\Framework\Api\DataObjectHelper $dataObjectHelper,
-        \Magento\Framework\Data\Collection\Db $resourceCollection = null,
+        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
         array $data = []
     ) {
         $this->_config = $config;
@@ -164,27 +165,27 @@ class Tax extends \Magento\GoogleShopping\Model\Attribute\DefaultAttribute
                 $ratesTotal += count($regions);
                 if ($ratesTotal > self::RATES_MAX) {
                     throw new \Magento\Framework\Exception\LocalizedException(
-                        __('Google shopping only supports %1 tax rates per product', self::RATES_MAX)
+                        __('Google shopping only supports %1 tax rates per product.', self::RATES_MAX)
                     );
                 }
                 foreach ($regions as $region) {
                     $adjustments = $product->getPriceInfo()->getAdjustments();
                     if (array_key_exists('tax', $adjustments)) {
-                        $taxIncluded = true;
+                        $isTaxIncluded = true;
                     } else {
-                        $taxIncluded = false;
+                        $isTaxIncluded = false;
                     }
 
                     $quoteDetailsItemDataArray = [
                         'code' => $product->getSku(),
                         'type' => 'product',
                         'tax_class_key' => [
-                            TaxClassKeyInterface::KEY_TYPE => TaxClassKeyInterface::TYPE_ID,
-                            TaxClassKeyInterface::KEY_VALUE => $product->getTaxClassId(),
+                            Key::KEY_TYPE => TaxClassKeyInterface::TYPE_ID,
+                            Key::KEY_VALUE => $product->getTaxClassId(),
                         ],
                         'unit_price' => $product->getPrice(),
                         'quantity' => 1,
-                        'tax_included' => $taxIncluded,
+                        'is_tax_included' => $isTaxIncluded,
                         'short_description' => $product->getName(),
                     ];
 
@@ -204,8 +205,8 @@ class Tax extends \Magento\GoogleShopping\Model\Attribute\DefaultAttribute
                         'billing_address' => $billingAddressDataArray,
                         'shipping_address' => $shippingAddressDataArray,
                         'customer_tax_class_key' => [
-                            TaxClassKeyInterface::KEY_TYPE => TaxClassKeyInterface::TYPE_ID,
-                            TaxClassKeyInterface::KEY_VALUE => $defaultCustomerTaxClassId,
+                            Key::KEY_TYPE => TaxClassKeyInterface::TYPE_ID,
+                            Key::KEY_VALUE => $defaultCustomerTaxClassId,
                         ],
                         'items' => [
                             $quoteDetailsItemDataArray,

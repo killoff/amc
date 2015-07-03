@@ -11,8 +11,6 @@ namespace Magento\ConfigurableProduct\Model\Product\Type\Configurable;
 /**
  * @method Attribute _getResource()
  * @method Attribute getResource()
- * @method int getProductId()
- * @method Attribute setProductId(int $value)
  * @method Attribute setProductAttribute(\Magento\Eav\Model\Entity\Attribute\AbstractAttribute $value)
  * @method \Magento\Eav\Model\Entity\Attribute\AbstractAttribute getProductAttribute()
  */
@@ -24,10 +22,10 @@ class Attribute extends \Magento\Framework\Model\AbstractExtensibleModel impleme
      */
     const KEY_ATTRIBUTE_ID = 'attribute_id';
     const KEY_LABEL = 'label';
-    const KEY_TYPE = 'type';
     const KEY_POSITION = 'position';
     const KEY_IS_USE_DEFAULT = 'is_use_default';
     const KEY_VALUES = 'values';
+    const KEY_PRODUCT_ID = 'product_id';
     /**#@-*/
 
     /**
@@ -123,15 +121,6 @@ class Attribute extends \Magento\Framework\Model\AbstractExtensibleModel impleme
      * {@inheritdoc}
      * @codeCoverageIgnore
      */
-    public function getType()
-    {
-        return $this->getData(self::KEY_TYPE);
-    }
-
-    /**
-     * {@inheritdoc}
-     * @codeCoverageIgnore
-     */
     public function getPosition()
     {
         return $this->getData(self::KEY_POSITION);
@@ -172,15 +161,6 @@ class Attribute extends \Magento\Framework\Model\AbstractExtensibleModel impleme
     public function setLabel($label)
     {
         return $this->setData(self::KEY_LABEL, $label);
-    }
-
-    /**
-     * @param string $type
-     * @return $this
-     */
-    public function setType($type)
-    {
-        return $this->setData(self::KEY_TYPE, $type);
     }
 
     /**
@@ -230,6 +210,22 @@ class Attribute extends \Magento\Framework\Model\AbstractExtensibleModel impleme
         \Magento\ConfigurableProduct\Api\Data\OptionExtensionInterface $extensionAttributes
     ) {
         return $this->_setExtensionAttributes($extensionAttributes);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductId()
+    {
+        return $this->getData(self::KEY_PRODUCT_ID);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setProductId($value)
+    {
+        return $this->setData(self::KEY_PRODUCT_ID, $value);
     }
     //@codeCoverageIgnoreEnd
 }

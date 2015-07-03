@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * Copyright © 2015 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
@@ -9,6 +8,7 @@ namespace Magento\Wishlist\Controller\Index;
 use Magento\Framework\App\Action;
 use Magento\Framework\Exception\NotFoundException;
 use Magento\Wishlist\Controller\IndexInterface;
+use Magento\Framework\Controller\ResultFactory;
 
 class Remove extends Action\Action implements IndexInterface
 {
@@ -32,7 +32,7 @@ class Remove extends Action\Action implements IndexInterface
     /**
      * Remove item
      *
-     * @return void
+     * @return \Magento\Framework\Controller\Result\Redirect
      * @throws NotFoundException
      */
     public function execute()
@@ -51,10 +51,10 @@ class Remove extends Action\Action implements IndexInterface
             $wishlist->save();
         } catch (\Magento\Framework\Exception\LocalizedException $e) {
             $this->messageManager->addError(
-                __('An error occurred while deleting the item from wish list: %1', $e->getMessage())
+                __('We can\'t delete the item from Wish List right now because of an error: %1.', $e->getMessage())
             );
         } catch (\Exception $e) {
-            $this->messageManager->addError(__('An error occurred while deleting the item from wish list.'));
+            $this->messageManager->addError(__('We can\'t delete the item from the Wish List right now.'));
         }
 
         $this->_objectManager->get('Magento\Wishlist\Helper\Data')->calculate();
@@ -69,6 +69,9 @@ class Remove extends Action\Action implements IndexInterface
         } else {
             $redirectUrl = $this->_redirect->getRedirectUrl($this->_url->getUrl('*/*'));
         }
-        $this->getResponse()->setRedirect($redirectUrl);
+        /** @var \Magento\Framework\Controller\Result\Redirect $resultRedirect */
+        $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+        $resultRedirect->setUrl($redirectUrl);
+        return $resultRedirect;
     }
 }
