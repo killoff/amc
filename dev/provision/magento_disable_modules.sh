@@ -7,7 +7,6 @@ Magento_Usps \
 Magento_Persistent \
 Magento_GoogleAdwords \
 Magento_Sitemap \
-Magento_Sendfriend \
 Magento_OfflineShipping \
 Magento_LayeredNavigation \
 Magento_GoogleShopping \
