@@ -16,6 +16,13 @@ apt-get install -y vim vim-doc vim-scripts mc >> /tmp/vagrant_log 2>&1
 update-alternatives --set editor /usr/bin/vim.basic
 echo "done"
 
+echo "Adding PPA"
+add-apt-repository ppa:ondrej/php5-5.6
+apt-get update
+apt-get install python-software-properties
+apt-get update
+echo "done"
+
 # install Apache and PHP
 echo "Installing Apache and PHP"
 apt-get install -y php-apc php5 php5-cli php5-curl php5-mhash php5-gd php5-intl php5-mcrypt php5-gd php5-mysql php-pear php5-sqlite php5-dev php5-memcached php5-xdebug >> /tmp/vagrant_log 2>&1
