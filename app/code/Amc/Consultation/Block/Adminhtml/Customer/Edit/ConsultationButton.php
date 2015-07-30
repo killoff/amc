@@ -3,7 +3,7 @@
 namespace Amc\Consultation\Block\Adminhtml\Customer\Edit;
 
 use Magento\Customer\Block\Adminhtml\Edit\GenericButton;
-use Magento\Ui\Component\Control\ButtonProviderInterface;
+use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 
 class ConsultationButton extends GenericButton implements ButtonProviderInterface
 {

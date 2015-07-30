@@ -56,9 +56,6 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
     {
         /** @var \Magento\Customer\Model\Data\Customer $customer */
         $customer = $this->_coreRegistry->registry('current_customer');
-        if ($customer) {
-            return $this->getUrl('customer/*/edit', ['id' => $customer->getId()]);
-        }
-        return $this->getUrl('customer/*/*');
+        return $this->getUrl('customer/*/edit', ['id' => $customer->getId()]);
     }
 }

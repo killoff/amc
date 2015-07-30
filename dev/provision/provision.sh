@@ -13,14 +13,14 @@ echo 'LC_ALL="en_US.UTF-8"' >> /etc/default/locale
 
 echo "Installing vim and set as default editor"
 apt-get install -y vim vim-doc vim-scripts mc >> /tmp/vagrant_log 2>&1
-update-alternatives --set editor /usr/bin/vim.basic
+update-alternatives --set editor /usr/bin/mcedit >> /tmp/vagrant_log 2>&1
 echo "done"
 
 echo "Adding PPA"
-add-apt-repository ppa:ondrej/php5-5.6
-apt-get update
-apt-get install python-software-properties
-apt-get update
+add-apt-repository ppa:ondrej/php5-5.6 >> /tmp/vagrant_log 2>&1
+apt-get update >> /tmp/vagrant_log 2>&1
+apt-get install python-software-properties >> /tmp/vagrant_log 2>&1
+apt-get update >> /tmp/vagrant_log 2>&1
 echo "done"
 
 # install Apache and PHP
@@ -29,7 +29,7 @@ apt-get install -y php-apc php5 php5-cli php5-curl php5-mhash php5-gd php5-intl 
 echo "done"
 
 echo "Installing Memcached"
-apt-get install memcached
+apt-get install memcached >> /tmp/vagrant_log 2>&1
 #service memcached start
 echo "done"
 
@@ -37,12 +37,12 @@ echo "done"
 echo "Configuring Apache and PHP"
 a2dissite 000-default
 cp /vagrant/dev/provision/m2.conf /etc/apache2/sites-available/m2.conf
-a2ensite m2
-a2enmod rewrite
+a2ensite m2 >> /tmp/vagrant_log 2>&1
+a2enmod rewrite >> /tmp/vagrant_log 2>&1
 
-php5enmod mcrypt
+php5enmod mcrypt >> /tmp/vagrant_log 2>&1
 
-a2enmod ssl
+a2enmod ssl >> /tmp/vagrant_log 2>&1
 mkdir /etc/apache2/ssl
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/apache2/ssl/apache.key -out /etc/apache2/ssl/apache.crt -subj "/C=GB/ST=London/L=London/O=Global Security/OU=IT Department/CN=example.com" >> /tmp/vagrant_log 2>&1
 
