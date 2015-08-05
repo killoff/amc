@@ -1,6 +1,6 @@
 #!/bin/bash
 
-php bin/magento module:disable -c \
+magento module:disable -c \
 Magento_Weee \
 Magento_Captcha \
 Magento_Usps \

@@ -35,7 +35,7 @@ echo "done"
 
 # configure Apache and PHP
 echo "Configuring Apache and PHP"
-a2dissite 000-default
+a2dissite 000-default >> /tmp/vagrant_log 2>&1
 cp /vagrant/dev/provision/m2.conf /etc/apache2/sites-available/m2.conf
 a2ensite m2 >> /tmp/vagrant_log 2>&1
 a2enmod rewrite >> /tmp/vagrant_log 2>&1
@@ -51,7 +51,7 @@ cp /vagrant/dev/provision/php.ini /etc/php5/cli/php.ini
 cp /vagrant/dev/provision/xdebug.ini /etc/php5/apache2/conf.d/20-xdebug.ini
 sed -i 's/\(APACHE_RUN_USER=\)www-data/\1vagrant/g' /etc/apache2/envvars
 chown vagrant:www-data /var/lock/apache2
-service apache2 restart
+service apache2 restart >> /tmp/vagrant_log 2>&1
 echo "done"
 
 # install MySQL
@@ -88,5 +88,8 @@ echo "Setting Up Folders Perms"
 find . -type d -exec chmod 700 {} \; && find . -type f -exec chmod 600 {} \;
 chmod 777 -R /vagrant/app/etc /vagrant/var /vagrant/pub/static /vagrant/bin /vagrant/dev/provision/magento_install.sh
 
-/vagrant/dev/provision/magento_install.sh
-/vagrant/dev/provision/magento_disable_modules.sh
+echo "Installing Magento"
+PATH="$PATH:/vagrant/bin" >> ~/.profile
+/vagrant/dev/provision/magento_install.sh >> /tmp/vagrant_log 2>&1
+/vagrant/dev/provision/magento_disable_modules.sh >> /tmp/vagrant_log 2>&1
+echo "done"

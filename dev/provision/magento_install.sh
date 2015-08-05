@@ -1,6 +1,6 @@
 #!/bin/bash
 
-php bin/magento setup:install \
+magento setup:install \
 --base-url=http://m2.loc/ \
 --backend-frontname=admin \
 --db-engine=mysql \
