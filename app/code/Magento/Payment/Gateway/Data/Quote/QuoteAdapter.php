@@ -5,10 +5,14 @@
  */
 namespace Magento\Payment\Gateway\Data\Quote;
 
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Quote\Api\Data\CartInterface;
 use Magento\Payment\Gateway\Data\AddressAdapterInterface;
 
+/**
+ * Class QuoteAdapter
+ */
 class QuoteAdapter implements OrderAdapterInterface
 {
     /**
@@ -105,5 +109,15 @@ class QuoteAdapter implements OrderAdapterInterface
     public function getId()
     {
         return $this->quote->getId();
+    }
+
+    /**
+     * Returns order grand total amount
+     *
+     * @return null
+     */
+    public function getGrandTotalAmount()
+    {
+        return null;
     }
 }

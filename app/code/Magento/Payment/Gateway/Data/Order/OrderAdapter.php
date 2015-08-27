@@ -9,6 +9,9 @@ use Magento\Payment\Gateway\Data\AddressAdapterInterface;
 use Magento\Payment\Gateway\Data\OrderAdapterInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 
+/**
+ * Class OrderAdapter
+ */
 class OrderAdapter implements OrderAdapterInterface
 {
     /**
@@ -105,5 +108,15 @@ class OrderAdapter implements OrderAdapterInterface
     public function getId()
     {
         return $this->order->getEntityId();
+    }
+
+    /**
+     * Returns order grand total amount
+     *
+     * @return float|null
+     */
+    public function getGrandTotalAmount()
+    {
+        return $this->order->getBaseGrandTotal();
     }
 }
