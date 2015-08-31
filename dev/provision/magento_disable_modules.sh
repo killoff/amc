@@ -9,7 +9,6 @@ Magento_GoogleAdwords \
 Magento_Sitemap \
 Magento_OfflineShipping \
 Magento_LayeredNavigation \
-Magento_GoogleShopping \
 Magento_GoogleOptimizer \
 Magento_GoogleAnalytics \
 Magento_Fedex Magento_Dhl
