@@ -11,6 +11,8 @@ composer install >> $LOG_DIR/rebuild.log 2>&1
 
 magento setup:uninstall --no-interaction >> $LOG_DIR/rebuild.log 2>&1
 
+mkdir -p $LOG_DIR
+
 magento setup:install \
 --base-url=http://95.85.27.59:8000/ \
 --backend-frontname=admin \

@@ -6,6 +6,6 @@ $buiderPathParts = [
     'provision',
     'rebuild.sh',
 ];
-$buiderPath = implode(DIRECTORY_SEPARATOR, $buiderPathParts);
+$builderPath = implode(DIRECTORY_SEPARATOR, $buiderPathParts);
 
-exec($buiderPath);
+exec($builderPath);
