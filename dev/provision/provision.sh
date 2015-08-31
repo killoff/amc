@@ -25,7 +25,7 @@ echo "done"
 
 # install Apache and PHP
 echo "Installing Apache and PHP"
-apt-get install -y php-apc php5 php5-cli php5-curl php5-mhash php5-gd php5-intl php5-mcrypt php5-gd php5-mysql php-pear php5-sqlite php5-dev php5-memcached php5-xdebug >> /tmp/vagrant_log 2>&1
+apt-get install -y php-apc php5 php5-cli php5-curl php5-mhash php5-gd php5-intl php5-mcrypt php5-gd php5-mysql php-pear php5-sqlite php5-dev php5-memcached php5-xdebug php5-xsl >> /tmp/vagrant_log 2>&1
 echo "done"
 
 echo "Installing Memcached"
