@@ -2,7 +2,7 @@
 SRC_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 APP_DIR="$(dirname "$SRC_DIR")"
 APP_DIR=$( cd "$(dirname "$APP_DIR")" && pwd )
-LOG_DIR="$APP_DIR/var/log"
+LOG_DIR="$APP_DIR/var"
 
 mkdir -p $LOG_DIR
 
