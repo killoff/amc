@@ -56,7 +56,6 @@
         "ext-curl": "*",
         "ext-iconv": "*",
         "ext-intl": "*",
-        "ext-xsl": "*",
         "ext-mbstring": "*",
         "sjparkinson/static-review": "~4.1",
         "fabpot/php-cs-fixer": "~1.2",
