@@ -127,6 +127,19 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
             ]
         );
 
+        $fieldset->addType('protocol', 'Amc\Protocol\Block\Adminhtml\Renderer');
+
+        $fieldset->addField(
+            'dialog',
+            'protocol',
+            [
+                'name' => 'dialog',
+                'label' => __(''),
+                'title' => __(''),
+                'required' => false,
+            ]
+        );
+
         if (null !== $model) {
             $form->setValues($model->getData());
         }

@@ -14,8 +14,8 @@ require([
     $(function()
     {
 
-        var metadata = <?php echo $this->getItemsMetadataJson(); ?>;
-        var children = <?php echo $this->getItemsChildrenJson(); ?>;
+        var metadata = <?php echo $block->getItemsMetadataJson(); ?>;
+        var children = <?php echo $block->getItemsChildrenJson(); ?>;
         function createSelection(field, start, end)
         {
             if( field.createTextRange ) {
