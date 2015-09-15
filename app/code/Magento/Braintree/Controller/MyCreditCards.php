@@ -11,7 +11,7 @@ use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\App\Action\Context;
 use \Braintree_Result_Error;
 
-class MyCreditCards extends \Magento\Framework\App\Action\Action
+abstract class MyCreditCards extends \Magento\Framework\App\Action\Action
 {
     /**
      * @var \Magento\Customer\Model\Session
@@ -71,7 +71,7 @@ class MyCreditCards extends \Magento\Framework\App\Action\Action
     public function dispatch(RequestInterface $request)
     {
         $loginUrl = $this->customerUrl->getLoginUrl();
-        if (!$this->customerSession->authenticate($this, $loginUrl)) {
+        if (!$this->customerSession->authenticate($loginUrl)) {
             $this->_actionFlag->set('', self::FLAG_NO_DISPATCH, true);
         }
         if (!$this->config->useVault()) {
