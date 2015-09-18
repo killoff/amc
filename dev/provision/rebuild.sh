@@ -6,7 +6,9 @@ LOG_DIR="$APP_DIR/var"
 
 mkdir -p $LOG_DIR
 
+cd $APP_DIR
+
 git pull >> $LOG_DIR/rebuild.log 2>&1
 composer install >> $LOG_DIR/rebuild.log 2>&1
 
-magento setup:upgrade >> $LOG_DIR/rebuild.log 2>&1
+bin/magento setup:upgrade >> $LOG_DIR/rebuild.log 2>&1

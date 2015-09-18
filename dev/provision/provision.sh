@@ -92,4 +92,5 @@ echo "Installing Magento"
 PATH="$PATH:/vagrant/bin" >> ~/.profile
 /vagrant/dev/provision/magento_install.sh >> /tmp/vagrant_log 2>&1
 /vagrant/dev/provision/magento_disable_modules.sh >> /tmp/vagrant_log 2>&1
+/vagrant/dev/provision/magento_deploy_static.sh >> /tmp/vagrant_log 2>&1
 echo "done"
