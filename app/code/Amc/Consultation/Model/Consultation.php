@@ -4,7 +4,7 @@ namespace Amc\Consultation\Model;
 
 use Magento\Framework\Model\AbstractModel;
 
-class Consultation extends AbstractModel implements \Magento\Framework\Object\IdentityInterface
+class Consultation extends AbstractModel implements \Magento\Framework\DataObject\IdentityInterface
 {
     /**
      * Cache tag

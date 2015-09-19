@@ -11,7 +11,7 @@ class Consultation extends \Magento\Customer\Controller\Adminhtml\Index
      */
     public function execute()
     {
-        $this->_initCustomer();
+        $this->initCurrentCustomer();
         return $this->resultLayoutFactory->create();
     }
 }

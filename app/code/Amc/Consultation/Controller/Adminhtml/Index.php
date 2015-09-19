@@ -7,7 +7,7 @@ use Magento\Backend\App\Action;
 /**
  * Class Index
  */
-class Index extends \Magento\Backend\App\Action
+abstract class Index extends \Magento\Backend\App\Action
 {
     /**
      * @var \Magento\Framework\View\Result\PageFactory
