@@ -72,6 +72,8 @@ class Save extends \Magento\Catalog\Controller\Adminhtml\Category
      */
     public function execute()
     {
+        $qwerty = $this->getRequest()->getParams();
+        var_dump($qwerty); yyy();
         /** @var \Magento\Backend\Model\View\Result\Redirect $resultRedirect */
         $resultRedirect = $this->resultRedirectFactory->create();
 

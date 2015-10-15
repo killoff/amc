@@ -3,9 +3,9 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../Magento/Backend/etc/menu.xsd">
     <menu>
         <!--<remove id="Magento_Catalog::catalog"/>-->
-        <remove id="Magento_Sales::sales"/>
-        <remove id="Magento_Backend::marketing"/>
-        <remove id="Magento_Backend::content"/>
-        <remove id="Magento_Reports::report"/>
+        <!--<remove id="Magento_Sales::sales"/>-->
+        <!--<remove id="Magento_Backend::marketing"/>-->
+        <!--<remove id="Magento_Backend::content"/>-->
+        <!--<remove id="Magento_Reports::report"/>-->
     </menu>
 </config>

@@ -75,6 +75,88 @@ class InstallSchema implements InstallSchemaInterface
             );
         }
 
+        $table = $setup->getConnection()
+            ->newTable($setup->getTable('catalog_product_entity'))
+            ->addColumn(
+                'user_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true],
+                'User ID'
+            )
+            ->addColumn(
+                'product_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true],
+                'Entity ID'
+            )
+
+            ->addColumn(
+                'type_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                32,
+                ['nullable' => false, 'default' => 'simple'],
+                'Type ID'
+            )
+            ->addColumn(
+                'sku',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                64,
+                [],
+                'SKU'
+            )
+            ->addColumn(
+                'has_options',
+                \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                null,
+                ['nullable' => false, 'default' => '0'],
+                'Has Options'
+            )
+            ->addColumn(
+                'required_options',
+                \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => '0'],
+                'Required Options'
+            )
+            ->addColumn(
+                'created_at',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+                null,
+                [],
+                'Creation Time'
+            )
+            ->addColumn(
+                'updated_at',
+                \Magento\Framework\DB\Ddl\Table::TYPE_TIMESTAMP,
+                null,
+                [],
+                'Update Time'
+            )
+            ->addIndex(
+                $setup->getIdxName('catalog_product_entity', ['attribute_set_id']),
+                ['attribute_set_id']
+            )
+            ->addIndex(
+                $setup->getIdxName('catalog_product_entity', ['sku']),
+                ['sku']
+            )
+            ->addForeignKey(
+                $setup->getFkName(
+                    'catalog_product_entity',
+                    'attribute_set_id',
+                    'eav_attribute_set',
+                    'attribute_set_id'
+                ),
+                'attribute_set_id',
+                $setup->getTable('eav_attribute_set'),
+                'attribute_set_id',
+                \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+            )
+            ->setComment('Catalog Product Table');
+        $setup->getConnection()->createTable($table);
+
         $setup->endSetup();
     }
 }
