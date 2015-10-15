@@ -47,4 +47,5 @@ atlassian*
 /var/*
 !/var/.htaccess
 /vendor
+!/vendor/.htaccess
 /.vagrant

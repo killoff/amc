@@ -7,6 +7,7 @@
 namespace Magento\Customer\Setup;
 
 use Magento\Customer\Model\Customer;
+use Magento\Framework\Encryption\Encryptor;
 use Magento\Framework\Indexer\IndexerRegistry;
 use Magento\Framework\Setup\UpgradeDataInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
@@ -210,6 +211,36 @@ class UpgradeData implements UpgradeDataInterface
             ];
             $this->upgradeAttributes($entityAttributes, $customerSetup);
         }
+
+        if (version_compare($context->getVersion(), '2.0.4', '<')) {
+            $customerSetup->addAttribute(
+                Customer::ENTITY,
+                'updated_at',
+                [
+                    'type' => 'static',
+                    'label' => 'Updated At',
+                    'input' => 'date',
+                    'required' => false,
+                    'sort_order' => 87,
+                    'visible' => false,
+                    'system' => false,
+                ]
+            );
+        }
+
+        if (version_compare($context->getVersion(), '2.0.5', '<')) {
+            $this->upgradeHash($setup);
+            $entityAttributes = [
+                'customer_address' => [
+                    'fax' => [
+                        'is_visible' => false,
+                        'is_system' => false,
+                    ],
+                ],
+            ];
+            $this->upgradeAttributes($entityAttributes, $customerSetup);
+        }
+
         $indexer = $this->indexerRegistry->get(Customer::CUSTOMER_GRID_INDEXER_ID);
         $indexer->reindexAll();
         $this->eavConfig->clear();
@@ -231,6 +262,36 @@ class UpgradeData implements UpgradeDataInterface
                 }
                 $attribute->save();
             }
+        }
+    }
+
+    /**
+     * @param ModuleDataSetupInterface $setup
+     * @return void
+     */
+    private function upgradeHash($setup)
+    {
+        $customerEntityTable = $setup->getTable('customer_entity');
+
+        $select = $setup->getConnection()->select()->from(
+            $customerEntityTable,
+            ['entity_id', 'password_hash']
+        );
+
+        $customers = $setup->getConnection()->fetchAll($select);
+        foreach ($customers as $customer) {
+            list($hash, $salt) = explode(Encryptor::DELIMITER, $customer['password_hash']);
+
+            $newHash = $customer['password_hash'];
+            if (strlen($hash) === 32) {
+                $newHash = implode(Encryptor::DELIMITER, [$hash, $salt, Encryptor::HASH_VERSION_MD5]);
+            } elseif (strlen($hash) === 64) {
+                $newHash = implode(Encryptor::DELIMITER, [$hash, $salt, Encryptor::HASH_VERSION_SHA256]);
+            }
+
+            $bind = ['password_hash' => $newHash];
+            $where = ['entity_id = ?' => (int)$customer['entity_id']];
+            $setup->getConnection()->update($customerEntityTable, $bind, $where);
         }
     }
 }

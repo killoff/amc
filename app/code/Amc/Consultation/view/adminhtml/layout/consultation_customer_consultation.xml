@@ -3,7 +3,7 @@
     <container name="root">
         <block class="Magento\Backend\Block\Widget\Grid" name="customer.consultation.edit.tab">
             <arguments>
-                <argument name="dataSource" xsi:type="object">Amc\Consultation\Model\Resource\Customer\Collection\Grid</argument>
+                <argument name="dataSource" xsi:type="object">Amc\Consultation\Model\ResourceModel\Customer\Collection\Grid</argument>
                 <argument name="id" xsi:type="string">consultationGrid</argument>
                 <argument name="use_ajax" xsi:type="string">true</argument>
                 <argument name="default_sort" xsi:type="string">created_at</argument>
