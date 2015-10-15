@@ -7,12 +7,12 @@ class Protocol extends \Magento\Backend\Block\Template
 {
     protected $_template = 'protocol.phtml';
 
-    /** @var \Amc\Protocol\Model\Resource\Protocol */
+    /** @var \Amc\Protocol\Model\ResourceModel\Protocol */
     private $protocol;
 
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
-        \Amc\Protocol\Model\Resource\Protocol $protocol,
+        \Amc\Protocol\Model\ResourceModel\Protocol $protocol,
         array $data = []
     ) {
         $this->protocol = $protocol;

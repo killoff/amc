@@ -1,11 +1,11 @@
 <?php
 
-namespace Amc\Consultation\Model\Resource\Customer\Collection;
+namespace Amc\Consultation\Model\ResourceModel\Customer\Collection;
 
-class Grid extends \Amc\Consultation\Model\Resource\Consultation\Collection
+class Grid extends \Amc\Consultation\Model\ResourceModel\Consultation\Collection
 {
     /**
-     * @var \Magento\Catalog\Model\Resource\Product\CollectionFactory
+     * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
      */
     protected $_productCollectionFactory;
 
@@ -16,11 +16,11 @@ class Grid extends \Amc\Consultation\Model\Resource\Consultation\Collection
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Magento\Catalog\Model\Resource\ConfigFactory $catalogConfFactory
+     * @param \Magento\Catalog\Model\ResourceModel\ConfigFactory $catalogConfFactory
      * @param \Magento\Catalog\Model\Entity\AttributeFactory $catalogAttrFactory
-     * @param \Magento\Catalog\Model\Resource\Product\CollectionFactory $productCollectionFactory
+     * @param \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory
      * @param null $connection
-     * @param \Magento\Framework\Model\Resource\Db\AbstractDb $resource
+     * @param \Magento\Framework\Model\ModelResource\Db\AbstractDb $resource
      */
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory,
@@ -29,11 +29,11 @@ class Grid extends \Amc\Consultation\Model\Resource\Consultation\Collection
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Framework\Registry $registry,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Catalog\Model\Resource\ConfigFactory $catalogConfFactory,
+        \Magento\Catalog\Model\ResourceModel\ConfigFactory $catalogConfFactory,
         \Magento\Catalog\Model\Entity\AttributeFactory $catalogAttrFactory,
-        \Magento\Catalog\Model\Resource\Product\CollectionFactory $productCollectionFactory,
+        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
         $connection = null,
-        \Magento\Framework\Model\Resource\Db\AbstractDb $resource = null
+        \Magento\Framework\Model\ModelResource\Db\AbstractDb $resource = null
     ) {
         $this->_productCollectionFactory = $productCollectionFactory;
         parent::__construct(
@@ -101,7 +101,7 @@ class Grid extends \Amc\Consultation\Model\Resource\Consultation\Collection
      */
     protected function _assignProductNames()
     {
-        /** @var \Magento\Catalog\Model\Resource\Product\Collection $productCollection */
+        /** @var \Magento\Catalog\Model\ResourceModel\Product\Collection $productCollection */
         $productCollection = $this->_productCollectionFactory->create();
         $productCollection->addAttributeToSelect(['name']);
 

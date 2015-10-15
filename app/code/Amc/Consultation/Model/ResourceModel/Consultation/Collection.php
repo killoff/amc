@@ -1,10 +1,10 @@
 <?php
 
-namespace Amc\Consultation\Model\Resource\Consultation;
+namespace Amc\Consultation\Model\ResourceModel\Consultation;
 
 use Magento\Customer\Controller\RegistryConstants as RegistryConstants;
 
-class Collection extends \Magento\Framework\Model\Resource\Db\Collection\AbstractCollection
+class Collection extends \Magento\Framework\Model\ModelResource\Db\Collection\AbstractCollection
 {
     /**
      * @var \Magento\Framework\Registry
@@ -17,7 +17,7 @@ class Collection extends \Magento\Framework\Model\Resource\Db\Collection\Abstrac
     protected $_storeManager;
 
     /**
-     * @var \Magento\Catalog\Model\Resource\ConfigFactory
+     * @var \Magento\Catalog\Model\ResourceModel\ConfigFactory
      */
     protected $_catalogConfFactory;
 
@@ -43,7 +43,7 @@ class Collection extends \Magento\Framework\Model\Resource\Db\Collection\Abstrac
      * @param \Magento\Framework\Event\ManagerInterface $eventManager
      * @param \Magento\Framework\Registry $registry
      * @param null $connection
-     * @param \Magento\Framework\Model\Resource\Db\AbstractDb $resource
+     * @param \Magento\Framework\Model\ModelResource\Db\AbstractDb $resource
      */
     public function __construct(
         \Magento\Framework\Data\Collection\EntityFactoryInterface $entityFactory,
@@ -52,10 +52,10 @@ class Collection extends \Magento\Framework\Model\Resource\Db\Collection\Abstrac
         \Magento\Framework\Event\ManagerInterface $eventManager,
         \Magento\Framework\Registry $registry,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Catalog\Model\Resource\ConfigFactory $catalogConfFactory,
+        \Magento\Catalog\Model\ResourceModel\ConfigFactory $catalogConfFactory,
         \Magento\Catalog\Model\Entity\AttributeFactory $catalogAttrFactory,
         $connection = null,
-        \Magento\Framework\Model\Resource\Db\AbstractDb $resource = null
+        \Magento\Framework\Model\ModelResource\Db\AbstractDb $resource = null
     )
     {
         $this->_registryManager = $registry;
@@ -72,7 +72,7 @@ class Collection extends \Magento\Framework\Model\Resource\Db\Collection\Abstrac
      */
     public function _construct()
     {
-        $this->_init('Amc\Consultation\Model\Consultation', 'Amc\Consultation\Model\Resource\Consultation');
+        $this->_init('Amc\Consultation\Model\Consultation', 'Amc\Consultation\Model\ResourceModel\Consultation');
     }
 
     /**

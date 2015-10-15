@@ -4,7 +4,7 @@ namespace Amc\Protocol\Model;
 use Magento\Framework\Model\AbstractModel;
 
 /**
- * @method \Amc\Protocol\Model\Resource\Protocol _getResource()
+ * @method \Amc\Protocol\Model\ResourceModel\Protocol _getResource()
  * @method \Amc\Protocol\Model\Protocol setName()
  */
 class Protocol extends AbstractModel
@@ -23,7 +23,7 @@ class Protocol extends AbstractModel
      */
     protected function _construct()
     {
-        $this->_init('Amc\Protocol\Model\Resource\Protocol');
+        $this->_init('Amc\Protocol\Model\ResourceModel\Protocol');
     }
 
     public function saveHypertext($text)

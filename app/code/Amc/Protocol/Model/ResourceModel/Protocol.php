@@ -1,7 +1,7 @@
 <?php
-namespace Amc\Protocol\Model\Resource;
+namespace Amc\Protocol\Model\ResourceModel;
 
-use Magento\Framework\Model\Resource\Db\AbstractDb;
+use Magento\Framework\Model\ModelResource\Db\AbstractDb;
 
 class Protocol extends AbstractDb
 {

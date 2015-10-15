@@ -1,8 +1,8 @@
 <?php
 
-namespace Amc\Consultation\Model\Resource;
+namespace Amc\Consultation\Model\ResourceModel;
 
-class Consultation extends \Magento\Framework\Model\Resource\Db\AbstractDb
+class Consultation extends \Magento\Framework\Model\ModelResource\Db\AbstractDb
 {
     /**
      * @var \Amc\Consultation\Model\Consultation\Validator
@@ -10,12 +10,12 @@ class Consultation extends \Magento\Framework\Model\Resource\Db\AbstractDb
     protected $validator;
 
     /**
-     * @param \Magento\Framework\Model\Resource\Db\Context $context
+     * @param \Magento\Framework\Model\ModelResource\Db\Context $context
      * @param \Amc\Consultation\Model\Consultation\Validator $validator
      * @param null $resourcePrefix
      */
     public function __construct(
-        \Magento\Framework\Model\Resource\Db\Context $context,
+        \Magento\Framework\Model\ModelResource\Db\Context $context,
         \Amc\Consultation\Model\Consultation\Validator $validator,
         $resourcePrefix = null
     ) {

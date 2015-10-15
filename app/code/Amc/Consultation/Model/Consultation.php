@@ -25,7 +25,7 @@ class Consultation extends AbstractModel implements \Magento\Framework\DataObjec
      */
     public function _construct()
     {
-        $this->_init('Amc\Consultation\Model\Resource\Consultation');
+        $this->_init('Amc\Consultation\Model\ResourceModel\Consultation');
     }
 
     /**
