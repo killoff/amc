@@ -21,6 +21,16 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
     protected $_productFactory;
 
     /**
+     * @var \Amc\User\Model\UserProductLink
+     */
+    protected $_relationManager;
+
+    /**
+     * @var \Magento\User\Model\User
+     */
+    protected $_user;
+
+    /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Backend\Helper\Data $backendHelper
      * @param \Magento\Catalog\Model\ProductFactory $productFactory
@@ -32,10 +42,12 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
         \Magento\Backend\Helper\Data $backendHelper,
         \Magento\Catalog\Model\ProductFactory $productFactory,
         \Magento\Framework\Registry $coreRegistry,
+        \Amc\User\Model\UserProductLink $relationManager,
         array $data = []
     ) {
         $this->_productFactory = $productFactory;
         $this->_coreRegistry = $coreRegistry;
+        $this->_relationManager = $relationManager;
         parent::__construct($context, $backendHelper, $data);
     }
 
@@ -51,10 +63,22 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
     }
 
     /**
+     * @param \Magento\User\Model\User $user
+     */
+    public function setUser(\Magento\User\Model\User $user)
+    {
+        $this->_user = $user;
+    }
+
+    /**
      * @return array|null
      */
     public function getUser()
     {
+        if (null !== $this->_user) {
+            return $this->_user;
+        }
+
         return $this->_coreRegistry->registry('permissions_user');
     }
 
@@ -171,7 +195,7 @@ class Products extends \Magento\Backend\Block\Widget\Grid\Extended
     {
         $products = $this->getRequest()->getPost('selected_products');
         if ($products === null) {
-            //return $this->getUser()->getAssignedProducts();
+            return (null === $this->getUser()) ? [] : $this->_relationManager->getUserProducts($this->getUser());
         }
         return $products;
     }

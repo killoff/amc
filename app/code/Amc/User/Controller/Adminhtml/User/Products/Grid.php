@@ -15,6 +15,11 @@ class Grid extends \Magento\Backend\App\Action
     protected $layoutFactory;
 
     /**
+     * @var \Magento\User\Model\UserFactory
+     */
+    protected $userFactory;
+
+    /**
      * @param \Magento\Backend\App\Action\Context $context
      * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
      * @param \Magento\Framework\View\LayoutFactory $layoutFactory
@@ -22,11 +27,13 @@ class Grid extends \Magento\Backend\App\Action
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
         \Magento\Framework\Controller\Result\RawFactory $resultRawFactory,
-        \Magento\Framework\View\LayoutFactory $layoutFactory
+        \Magento\Framework\View\LayoutFactory $layoutFactory,
+        \Magento\User\Model\UserFactory $userFactory
     ) {
         parent::__construct($context);
         $this->resultRawFactory = $resultRawFactory;
         $this->layoutFactory = $layoutFactory;
+        $this->userFactory = $userFactory;
     }
 
     /**
@@ -45,11 +52,19 @@ class Grid extends \Magento\Backend\App\Action
 //        }
         /** @var \Magento\Framework\Controller\Result\Raw $resultRaw */
         $resultRaw = $this->resultRawFactory->create();
-        return $resultRaw->setContents(
-            $this->layoutFactory->create()->createBlock(
-                'Amc\User\Block\User\Edit\Tab\Products',
-                'user.products.grid'
-            )->toHtml()
+
+        /** @var \Amc\User\Block\User\Edit\Tab\Products $block */
+        $block = $this->layoutFactory->create()->createBlock(
+            'Amc\User\Block\User\Edit\Tab\Products',
+            'user.products.grid'
         );
+        if ($this->_request->getParam('user_id')) {
+            $user = $this->userFactory->create()->load($this->_request->getParam('user_id'));
+            if ($user->getId()) {
+                $block->setUser($user);
+            }
+        }
+
+        return $resultRaw->setContents($block->toHtml());
     }
 }

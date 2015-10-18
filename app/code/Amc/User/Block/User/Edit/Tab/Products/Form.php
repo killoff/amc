@@ -22,6 +22,11 @@ class Form extends Template
     protected $_coreRegistry;
 
     /**
+     * @var \Amc\User\Model\UserProductLink
+     */
+    protected $_relationManager;
+
+    /**
      * @param Template\Context $context
      * @param \Magento\Framework\Json\EncoderInterface $jsonEncoder
      * @param \Magento\Framework\Registry $coreRegistry
@@ -31,10 +36,12 @@ class Form extends Template
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Magento\Framework\Registry $coreRegistry,
+        \Amc\User\Model\UserProductLink $relationManager,
         array $data = []
     ) {
         $this->_jsonEncoder = $jsonEncoder;
         $this->_coreRegistry = $coreRegistry;
+        $this->_relationManager = $relationManager;
         parent::__construct($context, $data);
     }
 
@@ -44,7 +51,7 @@ class Form extends Template
     public function getProductsJson()
     {
         return $this->_jsonEncoder->encode(
-            $this->getUser()->getAssignedProducts()
+            $this->_relationManager->getUserProducts($this->getUser())
         );
     }
 

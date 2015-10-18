@@ -10,9 +10,21 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     protected $_productFactory;
 
     /**
+     * @var \Amc\User\Model\UserProductLink
+     */
+    protected $relationManager;
+
+    /**
+     * @var \Magento\Backend\Model\Auth\Session
+     */
+    protected $authSession;
+
+    /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Framework\Data\FormFactory $formFactory
+     * @param \Amc\User\Model\UserProductLink $relationManager
+     * @param \Magento\Backend\Model\Auth\Session $authSession
      * @param array $data
      * @param \Magento\Catalog\Model\ProductFactory $productFactory
      */
@@ -20,11 +32,15 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
+        \Amc\User\Model\UserProductLink $relationManager,
+        \Magento\Backend\Model\Auth\Session $authSession,
         array $data = [],
         \Magento\Catalog\Model\ProductFactory $productFactory
     )
     {
         $this->_productFactory = $productFactory;
+        $this->relationManager = $relationManager;
+        $this->authSession = $authSession;
         parent::__construct($context, $registry, $formFactory, $data);
     }
 
@@ -172,8 +188,14 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     public function getProductCollectionOptions($emptyElement = null)
     {
         $options = [];
-        /** @var  $collection */
-        $collection = $this->_productFactory->create()->getCollection()->addAttributeToSelect('name');
+
+        $productIds = $this->relationManager->getUserProducts(
+            $this->authSession->getUser()
+        );
+
+        $collection = $this->_productFactory->create()->getCollection()
+            ->addAttributeToSelect('name')
+            ->addIdFilter($productIds);
         foreach ($collection as $product) {
             /** @var \Magento\Catalog\Api\Data\ProductInterface $product */
             $options[$product->getId()] = $product->getName();

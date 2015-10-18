@@ -4,6 +4,7 @@
     <module name="Amc_Consultation" setup_version="0.0.1">
         <sequence>
             <module name="Magento_Customer" />
+            <module name="Amc_User" />
         </sequence>
     </module>
 </config>

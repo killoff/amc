@@ -2,7 +2,7 @@
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../../../../../lib/internal/Magento/Framework/ObjectManager/etc/config.xsd">
     <preference for="Magento\User\Model\User" type="Amc\User\Model\User" />
-    <type name="\Magento\User\Controller\Adminhtml\User\Save">
+    <type name="\Magento\User\Model\User">
         <plugin name="update_user_products_relation" type="Amc\User\Plugin\Model\User\UpdateProductsRelation"/>
     </type>
 </config>
