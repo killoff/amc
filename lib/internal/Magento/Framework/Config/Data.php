@@ -6,7 +6,6 @@
  * See COPYING.txt for license details.
  */
 namespace Magento\Framework\Config;
-use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * @SuppressWarnings(PHPMD.NumberOfChildren)
