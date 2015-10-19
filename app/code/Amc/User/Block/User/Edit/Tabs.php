@@ -42,6 +42,22 @@ class Tabs extends \Magento\Backend\Block\Widget\Tabs
         );
 
         $this->addTab(
+            'products_section',
+            [
+                'label' => __('Allowed Products'),
+                'title' => __('Allowed Products'),
+                'content' => $this->getLayout()->createBlock(
+                    'Amc\User\Block\User\Edit\Tab\Products',
+                    'user.products.grid'
+                )->toHtml()
+                . $this->getLayout()->createBlock(
+                        'Amc\User\Block\User\Edit\Tab\Products\Form',
+                        'user.products.grid.form'
+                    )->toHtml()
+            ]
+        );
+
+        $this->addTab(
             'roles_section',
             [
                 'label' => __('User Role'),

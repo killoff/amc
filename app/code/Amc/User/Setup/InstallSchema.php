@@ -75,6 +75,42 @@ class InstallSchema implements InstallSchemaInterface
             );
         }
 
+        $table = $setup->getConnection()
+            ->newTable($setup->getTable('amc_admin_user_products'))
+            ->addColumn(
+                'user_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => '0'],
+                'User Id'
+            )
+            ->addColumn(
+                'product_id',
+                \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                null,
+                ['unsigned' => true, 'nullable' => false, 'default' => '0'],
+                'Entity ID'
+            )->addForeignKey(
+                $setup->getFkName('amc_admin_user_products', 'user_id', 'admin_user', 'user_id'),
+                'user_id',
+                $setup->getTable('admin_user'),
+                'user_id',
+                \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+            )->addForeignKey(
+                $setup->getFkName(
+                    'amc_admin_user_products',
+                    'product_id',
+                    'catalog_product_entity',
+                    'entity_id'
+                ),
+                'product_id',
+                $setup->getTable('catalog_product_entity'),
+                'entity_id',
+                \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
+            )
+            ->setComment('Admin User Products Relations');
+        $setup->getConnection()->createTable($table);
+
         $setup->endSetup();
     }
 }

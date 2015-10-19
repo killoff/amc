@@ -1,0 +1,50 @@
+<div class="no-display">
+    <input type="hidden" name="user_products" id="in_user_products" value=""/>
+</div>
+<?php if (($blockGrid = $block->getLayout()->getBlock('user.products.grid')) && ($_gridJsObject = $blockGrid->getJsObjectName())): ?>
+<script>
+    require([
+        "mage/adminhtml/grid"
+    ], function(){
+
+        var userProducts = <?php /* @escapeNotVerified */ echo $block->getProductsJson() ?>;
+        $('in_user_products').value = Object.toJSON(userProducts);
+
+        Array.prototype.remove = function() {
+            var what, a = arguments, L = a.length, ax;
+            while (L && this.length) {
+                what = a[--L];
+                while ((ax = this.indexOf(what)) !== -1) {
+                    this.splice(ax, 1);
+                }
+            }
+            return this;
+        };
+
+        function registerUserProduct(grid, element, checked){
+            if(checked){
+                userProducts.push(element.value);
+            } else {
+                userProducts.remove(element.value);
+            }
+            $('in_user_products').value = Object.toJSON(userProducts);
+            grid.reloadParams = {'selected_products[]':userProducts};
+        }
+
+        function userProductRowClick(grid, event){
+            var trElement = Event.findElement(event, 'tr');
+            var isInput   = Event.element(event).tagName == 'INPUT';
+            if(trElement){
+                var checkbox = Element.getElementsBySelector(trElement, 'input');
+                if(checkbox[0]){
+                    var checked = isInput ? checkbox[0].checked : !checkbox[0].checked;
+                    <?php /* @escapeNotVerified */ echo $_gridJsObject ?>.setCheckboxChecked(checkbox[0], checked);
+                }
+            }
+        }
+
+        <?php /* @escapeNotVerified */ echo $_gridJsObject ?>.rowClickCallback = userProductRowClick;
+        <?php /* @escapeNotVerified */ echo $_gridJsObject ?>.checkboxCheckCallback = registerUserProduct;
+    });
+</script>
+<?php endif; ?>
