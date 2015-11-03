@@ -212,7 +212,10 @@
         }
     },
     "config": {
-        "use-include-path": true
+        "use-include-path": true,
+        "github-oauth": {
+            "github.com": "c6a43d60fada7837b0bcbbd77fd01bd1a6d84546"
+        }
     },
     "autoload": {
         "psr-4": {
