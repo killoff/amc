@@ -75,6 +75,10 @@ fi
 
 echo "done"
 
+echo "Installing Dependencies"
+cd /vagrant && composer install >> /tmp/vagrant_log 2>&1
+echo "done"
+
 echo "Change SSH login dir"
 echo "cd /vagrant" >> /home/vagrant/.bashrc
 echo "done"
