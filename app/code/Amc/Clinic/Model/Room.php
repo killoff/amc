@@ -46,4 +46,18 @@ class Room extends AbstractModel implements \Magento\Framework\DataObject\Identi
     {
         return [];
     }
+
+    /**
+     * @return mixed|string
+     */
+    public function getFullLabel()
+    {
+        $label = $this->getData('name');
+
+        if ($this->hasData('code')) {
+            $label .= sprintf(' (#%s)', $this->getData('code'));
+        }
+
+        return $label;
+    }
 }

@@ -65,28 +65,6 @@
                 </item>
             </argument>
         </container>
-        <massaction name="listing_massaction">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="selectProvider" xsi:type="string">clinic_room_listing.clinic_room_listing.clinic_room_columns.ids</item>
-                    <item name="displayArea" xsi:type="string">bottom</item>
-                    <item name="indexField" xsi:type="string">page_id</item>
-                </item>
-            </argument>
-            <action name="delete">
-                <argument name="data" xsi:type="array">
-                    <item name="config" xsi:type="array">
-                        <item name="type" xsi:type="string">delete</item>
-                        <item name="label" xsi:type="string" translate="true">Delete</item>
-                        <item name="url" xsi:type="url" path="clinic/room/massDelete"/>
-                        <item name="confirm" xsi:type="array">
-                            <item name="title" xsi:type="string" translate="true">Delete items</item>
-                            <item name="message" xsi:type="string" translate="true">Are you sure you wan't to delete selected items?</item>
-                        </item>
-                    </item>
-                </argument>
-            </action>
-        </massaction>
         <paging name="listing_paging">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -101,17 +79,6 @@
         </paging>
     </container>
     <columns name="clinic_room_columns">
-        <column name="ids" class="Magento\Ui\Component\MassAction\Columns\Column">
-            <argument name="data" xsi:type="array">
-                <item name="js_config" xsi:type="array">
-                    <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/multiselect</item>
-                </item>
-                <item name="config" xsi:type="array">
-                    <item name="indexField" xsi:type="string">entity_id</item>
-                    <item name="controlVisibility" xsi:type="boolean">false</item>
-                </item>
-            </argument>
-        </column>
         <column name="entity_id">
             <argument name="data" xsi:type="array">
                 <item name="js_config" xsi:type="array">
