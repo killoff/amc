@@ -42,6 +42,9 @@ class Room extends AbstractModel implements \Magento\Framework\DataObject\Identi
         return $identities;
     }
 
+    /**
+     * @return array
+     */
     public function getCustomAttributes()
     {
         return [];
@@ -54,7 +57,7 @@ class Room extends AbstractModel implements \Magento\Framework\DataObject\Identi
     {
         $label = $this->getData('name');
 
-        if ($this->hasData('code')) {
+        if ($this->hasData('code') && $this->getData('code')) {
             $label .= sprintf(' (#%s)', $this->getData('code'));
         }
 

@@ -63,6 +63,18 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         );
 
         $fieldset->addField(
+            'color',
+            'text',
+            [
+                'name' => 'color',
+                'label' => __('Color'),
+                'title' => __('Color'),
+                'note' => __('You can use any of the CSS color formats such #f00, #ff0000, rgb(255,0,0), or red.'),
+                'required' => false
+            ]
+        );
+
+        $fieldset->addField(
             'description',
             'editor',
             [
