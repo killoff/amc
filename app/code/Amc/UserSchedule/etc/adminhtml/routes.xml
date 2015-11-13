@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="user_schedule" frontName="user_schedule">
+            <module name="Amc_UserSchedule" before="Magento_Backend" />
+        </route>
+    </router>
+</config>

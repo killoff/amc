@@ -21,7 +21,7 @@ class InstallSchema implements InstallSchemaInterface
         $installer->startSetup();
 
         /**
-         * Create table 'amc_consultation_entity'
+         * Create table 'amc_clinic_room_entity'
          */
         $table = $installer->getConnection()->newTable(
             $installer->getTable('amc_clinic_room_entity')
@@ -36,13 +36,19 @@ class InstallSchema implements InstallSchemaInterface
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
             '64k',
             ['nullable' => true],
-            'Name')
-        ->addColumn(
+            'Name'
+        )->addColumn(
             'code',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
             '64k',
             ['nullable' => true],
             'Room Code'
+        )->addColumn(
+            'color',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            '64k',
+            ['nullable' => true],
+            'Room Color'
         )->addColumn(
             'description',
             \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,

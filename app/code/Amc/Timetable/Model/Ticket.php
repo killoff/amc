@@ -1,15 +1,16 @@
 <?php
 
-namespace Amc\Clinic\Model;
+namespace Amc\Timetable\Model;
 
 use Magento\Framework\Model\AbstractModel;
+use Magento\Framework\DataObject\IdentityInterface;
 
-class Room extends AbstractModel implements \Magento\Framework\DataObject\IdentityInterface
+class Ticket extends AbstractModel implements IdentityInterface
 {
     /**
      * Cache tag
      */
-    const CACHE_TAG = 'room';
+    const CACHE_TAG = 'ticket';
 
     /**
      * Name of object id field
@@ -25,7 +26,7 @@ class Room extends AbstractModel implements \Magento\Framework\DataObject\Identi
      */
     public function _construct()
     {
-        $this->_init('Amc\Clinic\Model\ResourceModel\Room');
+        $this->_init('Amc\Timetable\Model\ResourceModel\Ticket');
     }
 
     /**
@@ -40,27 +41,5 @@ class Room extends AbstractModel implements \Magento\Framework\DataObject\Identi
             $identities = [self::CACHE_TAG . '_' . $this->getId()];
         }
         return $identities;
-    }
-
-    /**
-     * @return array
-     */
-    public function getCustomAttributes()
-    {
-        return [];
-    }
-
-    /**
-     * @return mixed|string
-     */
-    public function getFullLabel()
-    {
-        $label = $this->getData('name');
-
-        if ($this->hasData('code') && $this->getData('code')) {
-            $label .= sprintf(' (#%s)', $this->getData('code'));
-        }
-
-        return $label;
     }
 }
