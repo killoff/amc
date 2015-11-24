@@ -49,6 +49,7 @@ class ConsultationButton extends GenericButton implements ButtonProviderInterfac
      */
     public function getCreateConsultationUrl()
     {
-        return $this->getUrl('consultation/index/edit', ['customer_id' => $this->getCustomerId()]);
+//        return $this->getUrl('consultation/index/edit', ['customer_id' => $this->getCustomerId()]);
+        return $this->getUrl('consultation/index/create', ['customer_id' => $this->getCustomerId()]);
     }
 }

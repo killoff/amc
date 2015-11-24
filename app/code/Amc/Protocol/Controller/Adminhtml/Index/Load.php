@@ -14,4 +14,9 @@ class Load extends \Magento\Backend\App\Action
             )->toHtml()
         );
     }
+
+    protected function _isAllowed()
+    {
+        return true;
+    }
 }

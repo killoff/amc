@@ -30,9 +30,13 @@ require([
                     $(this).closest('.ui-dialog').css('margin-top', topMargin);
                     // todo: loading mask not displayed?
                     $(this).html($('.loading-mask').show());
-                    $.get('/admin/protocol/index/load/', {protocol_id: 2}, function(response) {
-                        $('#protocol-dialog').html(response);
-                    });
+
+
+                    //$.get('/index.php/admin/protocol/index/load/', {protocol_id: 2}, function(response) {
+                    //    $('#protocol-dialog').html(response);
+                    //});
+
+
                 },
                 close: function () {
                     $(this).closest('.ui-dialog').removeClass('ui-dialog-active');
