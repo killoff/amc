@@ -12,6 +12,7 @@ class Edit extends \Amc\Consultation\Controller\Adminhtml\Index
     public function execute()
     {
         try {
+            $this->_initProduct();
             $this->_initConsultation();
             $this->_initCustomer();
         } catch (NoSuchEntityException $e) {

@@ -31,7 +31,7 @@ class Protocol extends AbstractDb
                 'action' => $row['action'],
             ];
         }
-        return $this->_getWriteAdapter()->insertMultiple($this->getTable('protocol_rows'), $data);
+        return $this->getConnection()->insertMultiple($this->getTable('protocol_rows'), $data);
     }
 
     /**
@@ -42,7 +42,7 @@ class Protocol extends AbstractDb
      */
     public function getProtocolItems($protocolId)
     {
-        $adapter = $this->_getReadAdapter();
+        $adapter = $this->getConnection();
         $select = $adapter->select()
             ->from($this->getTable('protocol_rows'))
             ->where('protocol_id=?', $protocolId);

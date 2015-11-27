@@ -1,4 +1,4 @@
-<textarea id="protocol" class="protocol-output"></textarea>
+<!--<textarea id="protocol" class="protocol-output"></textarea>-->
 <div id="breadcrumb" class="breadcrumb"></div>
 <ul class="collection" id="protocol-items" />
 
@@ -13,7 +13,6 @@ require([
 {
     $(function()
     {
-
         var metadata = <?php echo $block->getItemsMetadataJson(); ?>;
         var children = <?php echo $block->getItemsChildrenJson(); ?>;
         function createSelection(field, start, end)
@@ -169,7 +168,6 @@ require([
                 },
 
                 enter: function(el, cellIndex, e) {
-
                     var li = $(el[0]);
                     var rowId = li.attr('row-id');
                     if (hasChildren(rowId)) {
@@ -188,9 +186,18 @@ require([
                             renderChildren($(this).attr('row-id'));
                         });
                     } else {
+                        var rootRowId = $('#breadcrumb > span').first();
+                        var target;
+                        if (rootRowId.attr('row-id') == '1') {
+                            target = $('#comment');
+                        } else if (rootRowId.attr('row-id') == '265') {
+                            target = $('#conclusion');
+                        } else if (rootRowId.attr('row-id') == '290') {
+                            target = $('#recommendation');
+                        }
                         var rowOutput = getOutput(rowId);
-                        var protocolOutput = $('#protocol').val() + rowOutput;
-                        $('#protocol').val(protocolOutput);
+                        var protocolOutput = target.val() + rowOutput;
+                        target.val(protocolOutput);
                         if (rowOutput.indexOf('#') !== -1) {
                             createSelection($('#protocol').get(0), protocolOutput.indexOf('#'), protocolOutput.lastIndexOf('#') + 1);
                         }

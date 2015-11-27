@@ -48,6 +48,10 @@ abstract class Index extends \Magento\Backend\App\Action
      */
     protected $_consultation;
 
+
+    protected $_productFactory;
+
+
     /**
      * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
      * @param \Amc\Consultation\Model\ConsultationFactory $consultationFactory
@@ -62,7 +66,8 @@ abstract class Index extends \Magento\Backend\App\Action
         \Psr\Log\LoggerInterface $loggerInterface,
         Action\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
+        \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
+        \Magento\Catalog\Model\ProductFactory $productFactory
     ) {
         parent::__construct($context);
 
@@ -72,6 +77,7 @@ abstract class Index extends \Magento\Backend\App\Action
         $this->_authSession = $authSession;
         $this->_coreRegistry = $registry;
         $this->_customerRepository = $customerRepository;
+        $this->_productFactory = $productFactory;
     }
 
     /**
@@ -90,6 +96,17 @@ abstract class Index extends \Magento\Backend\App\Action
             }
         }
         return $this->_consultation;
+    }
+
+    protected function _initProduct()
+    {
+        $id = $this->getRequest()->getParam('product_id');
+        if ($id) {
+            $model = $this->_productFactory->create()->load($id);
+            if ($model->getId()) {
+                $this->_coreRegistry->register('current_product', $model);
+            }
+        }
     }
 
     protected function _initCustomer()

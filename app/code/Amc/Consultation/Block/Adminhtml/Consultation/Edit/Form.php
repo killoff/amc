@@ -68,7 +68,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         $fullName = implode(' ', [$customer->getLastname(), $customer->getFirstname(), $customer->getMiddlename()]);
         $fieldset = $form->addFieldset(
             'base_fieldset',
-            ['legend' => __('Consultation for %1', $fullName), 'class' => 'fieldset-wide']
+            ['legend' => __('%1 for %2',$this->getProduct()->getName(), $fullName), 'class' => 'fieldset-wide']
         );
 
         if ($customer) {
@@ -78,20 +78,20 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         if ($model) {
             $fieldset->addField('entity_id', 'hidden', ['name' => 'consultation_id', 'value' => $model->getId()]);
         }
-
-        $fieldset->addField(
-            'product_id',
-            'select',
-            [
-                'name' => 'product_id',
-                'label' => __('Product'),
-                'title' => __('Product'),
-                'values' => $this->getProductCollectionOptions(__('-- Please Select --')),
-                'class' => 'select',
-                'required' => true,
-                'disabled' => $isEditMode
-            ]
-        );
+//
+//        $fieldset->addField(
+//            'product_id',
+//            'select',
+//            [
+//                'name' => 'product_id',
+//                'label' => __('Product'),
+//                'title' => __('Product'),
+//                'values' => $this->getProductCollectionOptions(__('-- Please Select --')),
+//                'class' => 'select',
+//                'required' => true,
+//                'disabled' => $isEditMode
+//            ]
+//        );
 
         $dateFormat = $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT);
         $fieldset->addField(
@@ -110,7 +110,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
 
         $fieldset->addField(
             'comment',
-            'text',
+            'editor',
             [
                 'name' => 'comment',
                 'label' => __('Comment'),
@@ -179,6 +179,14 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     public function getCustomer()
     {
         return $this->_coreRegistry->registry('current_customer');
+    }
+
+    /**
+     * @return \Magento\Customer\Model\Data\Customer
+     */
+    public function getProduct()
+    {
+        return $this->_coreRegistry->registry('current_product');
     }
 
     /**
