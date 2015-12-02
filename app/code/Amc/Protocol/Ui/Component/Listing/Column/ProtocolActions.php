@@ -13,16 +13,11 @@ use Magento\Framework\UrlInterface;
 class ProtocolActions extends Column
 {
     /** Url path */
-    const PROTOCOL_URL_PATH_EDIT = 'protocol/edit';
-    const PROTOCOL_URL_PATH_DELETE = 'protocol/delete';
+    const PROTOCOL_URL_PATH_EDIT = 'protocol/index/edit';
+    const PROTOCOL_URL_PATH_DELETE = 'protocol/index/delete';
 
     /** @var UrlInterface */
     protected $urlBuilder;
-
-    /**
-     * @var string
-     */
-    private $editUrl;
 
     /**
      * @param ContextInterface $context
@@ -30,18 +25,15 @@ class ProtocolActions extends Column
      * @param UrlInterface $urlBuilder
      * @param array $components
      * @param array $data
-     * @param string $editUrl
      */
     public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
         UrlInterface $urlBuilder,
         array $components = [],
-        array $data = [],
-        $editUrl = self::PROTOCOL_URL_PATH_EDIT
+        array $data = []
     ) {
         $this->urlBuilder = $urlBuilder;
-        $this->editUrl = $editUrl;
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 
@@ -54,19 +46,19 @@ class ProtocolActions extends Column
     public function prepareDataSource(array $dataSource)
     {
         if (isset($dataSource['data']['items'])) {
+            $name = $this->getData('name');
             foreach ($dataSource['data']['items'] as & $item) {
-                $name = $this->getData('name');
-                if (isset($item['entity_id'])) {
+                if (isset($item['protocol_id'])) {
                     $item[$name]['edit'] = [
-                        'href' => $this->urlBuilder->getUrl($this->editUrl, ['room_id' => $item['entity_id']]),
+                        'href' => $this->urlBuilder->getUrl(self::PROTOCOL_URL_PATH_EDIT, ['id' => $item['protocol_id']]),
                         'label' => __('Edit')
                     ];
                     $item[$name]['delete'] = [
-                        'href' => $this->urlBuilder->getUrl(self::PROTOCOL_URL_PATH_DELETE, ['room_id' => $item['entity_id']]),
+                        'href' => $this->urlBuilder->getUrl(self::PROTOCOL_URL_PATH_DELETE, ['id' => $item['protocol_id']]),
                         'label' => __('Delete'),
                         'confirm' => [
-                            'title' => __('Delete ${ $.$data.title }'),
-                            'message' => __('Are you sure you wan\'t to delete a ${ $.$data.title } record?')
+                            'title' => __('Delete ${ $.$data.name }'),
+                            'message' => __('Are you sure you wan\'t to delete a ${ $.$data.name } record?')
                         ]
                     ];
                 }

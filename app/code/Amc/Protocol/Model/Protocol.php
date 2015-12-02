@@ -41,7 +41,7 @@ class Protocol extends AbstractModel
         foreach ($rows as $row) {
             $row = rtrim($row);
             // skip empty strings and comments
-            if (empty($row) || strpos(ltrim($row), ';') === 0) {
+            if (trim($row) === '' || strpos(ltrim($row), ';') === 0) {
                 continue;
             }
             $level = 0;
@@ -74,6 +74,8 @@ class Protocol extends AbstractModel
                 $i++;
             }
         }
+        print_r($result);
+        exit;
         return $result;
     }
 
