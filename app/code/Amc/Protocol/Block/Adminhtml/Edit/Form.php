@@ -17,7 +17,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
             ['data' => ['id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post']]
         );
 
-        $legend = $isEditMode ? __('Protocol %1', $model->getName()) : __('New Protocol');
+        $legend = $isEditMode ? __('Protocol %1', $model->getName()) : __('Protocol');
         $fieldSet = $form->addFieldset(
             'base_fieldset',
             ['legend' => $legend, 'class' => 'fieldset-wide']
@@ -28,8 +28,8 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
             'text',
             [
                 'name' => 'name',
-                'label' => __('Protocol Name'),
-                'title' => __('Protocol Name'),
+                'label' => __('Title'),
+                'title' => __('Title'),
                 'required' => true,
             ]
         );
@@ -39,11 +39,22 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
             'editor',
             [
                 'name' => 'text',
-                'label' => __('Metadata'),
-                'title' => __('Metadata'),
+                'label' => __('Hypertext'),
+                'title' => __('Hypertext'),
                 'required' => true,
                 'state' => 'html',
                 'style' => 'height:36em;',
+            ]
+        );
+
+        $fieldSet->addField(
+            'product_ids',
+            'text',
+            [
+                'name' => 'product_ids',
+                'label' => __('Product IDs'),
+                'title' => __('Product IDs'),
+                'required' => false,
             ]
         );
 

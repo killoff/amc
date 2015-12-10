@@ -26,10 +26,20 @@ class Protocol extends AbstractModel
         $this->_init('Amc\Protocol\Model\ResourceModel\Protocol');
     }
 
+    public function saveProducts(array $productIds = [])
+    {
+        $this->_getResource()->saveProducts($this, $productIds);
+    }
+
     public function saveHypertext($text)
     {
+        $this->_getResource()->saveHypertext($this, $text);
+    }
+
+    public function saveHypertextRows($text)
+    {
         $rows = $this->parseHypertext($text);
-        $this->_getResource()->saveHypertext($this, $rows);
+        $this->_getResource()->saveHypertextRows($this, $rows);
     }
 
     private function parseHypertext($text)
@@ -74,8 +84,8 @@ class Protocol extends AbstractModel
                 $i++;
             }
         }
-        print_r($result);
-        exit;
+//        print_r($result);
+//        exit;
         return $result;
     }
 
