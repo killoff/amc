@@ -1,3 +1,4 @@
+<?php /** @var $block \Amc\UserSchedule\Block\Adminhtml\Schedule\Edit\Js */ ?>
 <script>
     require([
         'scheduleEvent',
@@ -32,16 +33,20 @@
                 droppable: true,
                 aspectRatio: 1.8,
                 eventOverlap: false,
-                scrollTime: '00:00',
                 businessHours: {
                     start: '9:00',
-                    end: '18:00',
+                    end: '20:00',
                     dow: [ 1, 2, 3, 4, 5 ]
                 },
+                minTime: '09:00',
+                maxTime: '20:00',
+                slotDuration: '00:15',
+                slotWidth: 20,
+                slotLabelFormat: 'hh:mm',
                 header: {
                     left: 'today prev,next',
                     center: 'title',
-                    right: 'timelineDetailedDay,timelineDay,timelineThreeDays,agendaWeek,month'
+                    right: 'timelineDetailedDay,timelineDay,timelineThreeDays'
                 },
                 defaultView: 'timelineDay',
                 views: {
@@ -56,6 +61,7 @@
                         duration: { days: 3 }
                     }
                 },
+                resourceAreaWidth: '200px',
                 resourceLabelText: '<?php echo $block->getResourceLabel(); ?>',
                 resources: <?php echo $block->getRoomsCollectionJson(); ?>,
                 events: <?php echo $block->getEventsCollectionJson(); ?>,

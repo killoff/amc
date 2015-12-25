@@ -84,8 +84,9 @@ class Js extends Template
                 'id' => $event->getId(),
                 'userId' => $event->getUserId(),
                 'resourceId' => $event->getRoomId(),
-                'start' => $this->_localeDate->date($event->getStartAt())->format(\DateTime::ISO8601),
-                'end' => $this->_localeDate->date($event->getEndAt())->format(\DateTime::ISO8601),
+                'start' => $event->getStartAt(),
+                'end' => $event->getEndAt(),
+                // todo: cache/precalculate user load
                 'title' => $this->userFactory->create()->load($event->getUserId())->getName()
             ];
         }
