@@ -1,0 +1,143 @@
+<script>
+    require([
+        "moment",
+        "jquery",
+        "jquery/jquery-ui",
+        "fullcalendar-scheduler-1.0.2/lib/fullcalendar.min",
+        "fullcalendar-scheduler-1.0.2/scheduler"
+    ], function(moment, $){
+
+        $(function() { // document ready
+
+            var $timetable = $('#order-timetable');
+
+            $timetable.fullCalendar({
+                now: '2015-12-07',
+                editable: true,
+                aspectRatio: 1.8,
+                scrollTime: '00:00',
+                header: {
+                    left: 'today prev,next',
+                    center: 'title',
+                    right: 'timelineDay,timelineThreeDays'
+                },
+                defaultView: 'timelineDay',
+                views: {
+                    timelineThreeDays: {
+                        type: 'timeline',
+                        duration: { days: 3 }
+                    }
+                },
+                businessHours: {
+                    start: '9:00',
+                    end: '20:00',
+                    dow: [ 1, 2, 3, 4, 5 ]
+                },
+                minTime: '09:00',
+                maxTime: '20:00',
+                slotLabelFormat: 'hh:mm',
+                eventOverlap: true, // will cause the event to take up entire resource height
+                resourceAreaWidth: '25%',
+                resourceLabelText: 'Кому',
+                selectable: true,
+                selectHelper: true,
+                slotDuration: '00:15',
+                slotWidth: 15,
+                select: function(start, end, event, calendar, resource) {
+//                    console.log(resource);
+                    var title = prompt('Event Title:');
+                    var eventData;
+                    if (title) {
+                        eventData = {
+                            title: title,
+                            start: start,
+                            end: end,
+                            resourceId: resource.id
+                        };
+                        $timetable.fullCalendar('renderEvent', eventData, true); // stick? = true
+                    }
+                    $timetable.fullCalendar('unselect');
+                },
+                selectOverlap: function(event) {
+                    console.log(event);
+                    return event.rendering === 'background';
+                },
+                resources: [
+                    { id: 'a', title: 'УЗИ верхних конечностей', children: [
+                        { id: 'a1', title: 'Узистов А.А' },
+                        { id: 'a2', title: 'Иванов Б.Б' } ]},
+                    { id: 'b', title: 'УЗИ коленных суставов', children: [
+                        { id: 'b1', title: ' нет доктора ' }]},
+                    { id: 'c', title: 'Консультация ревматолога', children: [
+                        { id: 'c1', title: 'Ремвов АА' },
+                        { id: 'c2', title: 'Бабу ББ' } ]}
+                ],
+                events: [
+                    {
+                        resourceId: 'c1',
+                        id: 'availableForMeeting',
+                        start: '2015-12-07T09:30:00',
+                        end: '2015-12-07T16:30:00',
+                        rendering: 'background',
+                        overlap: true,
+                        title: 'event 5'
+                    },
+                    {
+                        resourceId: 'c1',
+                        id: 'availableForMeetingNoe',
+                        start: '2015-12-07T11:30:00',
+                        end: '2015-12-07T13:30:00',
+                        rendering: 'background',
+                        color: '#ff9f89',
+                        overlap: false,
+                        selectable: false
+
+                    },
+
+                    {
+                        resourceId: 'a1',
+                        id: 'availableForMeeting',
+                        start: '2015-12-07T10:30:00',
+                        end: '2015-12-07T15:30:00',
+                        rendering: 'background',
+                        overlap: true,
+                        title: 'event 5'
+                    },
+                    {
+                        resourceId: 'a1',
+                        id: 'availableForMeetingNoe',
+                        start: '2015-12-07T10:30:00',
+                        end: '2015-12-07T12:00:00',
+                        rendering: 'background',
+                        color: '#ff9f89',
+                        overlap: false,
+                        selectable: false
+
+                    },
+                    {
+                        resourceId: 'a2',
+                        id: 'availableForMeeting',
+                        start: '2015-12-07T11:30:00',
+                        end: '2015-12-07T17:30:00',
+                        rendering: 'background',
+                        overlap: true,
+                        title: 'event 5'
+                    },
+                    {
+                        resourceId: 'a2',
+                        id: 'availableForMeetingNoe',
+                        start: '2015-12-07T14:30:00',
+                        end: '2015-12-07T16:30:00',
+                        rendering: 'background',
+                        color: '#ff9f89',
+                        overlap: false,
+                        selectable: false
+
+                    }
+
+                ]
+            });
+
+        });
+    });
+</script>
