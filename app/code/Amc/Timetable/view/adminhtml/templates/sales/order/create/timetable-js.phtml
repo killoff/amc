@@ -1,0 +1,148 @@
+<script>
+
+    var iFrameResponse = {
+        "sidebar": "<div class=\"customer-current-activity-inner\">\n    <h4 class=\"customer-activity-title\">Customer's Activities<\/h4>\n    <div class=\"create-order-sidebar-container\">\n                                            <div class=\"order-sidebar-block\" id=\"order-sidebar_cart\">\n                    <div class=\"create-order-sidebar-block\" id=\"sidebar_data_cart\">\n    <div class=\"head sidebar-title-block\">\n        <a href=\"#\" class=\"action-refresh\"\n           title=\"Refresh\"\n           onclick=\"order.loadArea('sidebar_cart', 'sidebar_data_cart');return false;\">\n            <span>Refresh<\/span>\n        <\/a>\n        <h5 class=\"create-order-sidebar-label\">\n            Shopping Cart            <span class=\"normal\">(0)<\/span>\n        <\/h5>\n    <\/div>\n    <div class=\"content\">\n        <div class=\"auto-scroll\">\n                    <span class=\"no-items\">No items<\/span>\n                <\/div>\n            <\/div>\n<\/div>\n                <\/div>\n                                                            <div class=\"order-sidebar-block\" id=\"order-sidebar_wishlist\">\n                    <div class=\"create-order-sidebar-block\" id=\"sidebar_data_wishlist\">\n    <div class=\"head sidebar-title-block\">\n        <a href=\"#\" class=\"action-refresh\"\n           title=\"Refresh\"\n           onclick=\"order.loadArea('sidebar_wishlist', 'sidebar_data_wishlist');return false;\">\n            <span>Refresh<\/span>\n        <\/a>\n        <h5 class=\"create-order-sidebar-label\">\n            Wish List            <span class=\"normal\">(0)<\/span>\n        <\/h5>\n    <\/div>\n    <div class=\"content\">\n        <div class=\"auto-scroll\">\n                    <span class=\"no-items\">No items<\/span>\n                <\/div>\n            <\/div>\n<\/div>\n                <\/div>\n                                                            <div class=\"order-sidebar-block\" id=\"order-sidebar_reorder\">\n                    <div class=\"create-order-sidebar-block\" id=\"sidebar_data_reorder\">\n    <div class=\"head sidebar-title-block\">\n        <a href=\"#\" class=\"action-refresh\"\n           title=\"Refresh\"\n           onclick=\"order.loadArea('sidebar_reorder', 'sidebar_data_reorder');return false;\">\n            <span>Refresh<\/span>\n        <\/a>\n        <h5 class=\"create-order-sidebar-label\">\n            Last Ordered Items            <span class=\"normal\">(0)<\/span>\n        <\/h5>\n    <\/div>\n    <div class=\"content\">\n        <div class=\"auto-scroll\">\n                    <span class=\"no-items\">No items<\/span>\n                <\/div>\n            <\/div>\n<\/div>\n                <\/div>\n                                                                                            <div class=\"order-sidebar-block\" id=\"order-sidebar_compared\">\n                    <div class=\"create-order-sidebar-block\" id=\"sidebar_data_compared\">\n    <div class=\"head sidebar-title-block\">\n        <a href=\"#\" class=\"action-refresh\"\n           title=\"Refresh\"\n           onclick=\"order.loadArea('sidebar_compared', 'sidebar_data_compared');return false;\">\n            <span>Refresh<\/span>\n        <\/a>\n        <h5 class=\"create-order-sidebar-label\">\n            Products in Comparison List            <span class=\"normal\">(0)<\/span>\n        <\/h5>\n    <\/div>\n    <div class=\"content\">\n        <div class=\"auto-scroll\">\n                    <span class=\"no-items\">No items<\/span>\n                <\/div>\n            <\/div>\n<\/div>\n                <\/div>\n                                                            <div class=\"order-sidebar-block\" id=\"order-sidebar_pcompared\">\n                    <div class=\"create-order-sidebar-block\" id=\"sidebar_data_pcompared\">\n    <div class=\"head sidebar-title-block\">\n        <a href=\"#\" class=\"action-refresh\"\n           title=\"Refresh\"\n           onclick=\"order.loadArea('sidebar_pcompared', 'sidebar_data_pcompared');return false;\">\n            <span>Refresh<\/span>\n        <\/a>\n        <h5 class=\"create-order-sidebar-label\">\n            Recently Compared Products            <span class=\"normal\">(0)<\/span>\n        <\/h5>\n    <\/div>\n    <div class=\"content\">\n        <div class=\"auto-scroll\">\n                    <span class=\"no-items\">No items<\/span>\n                <\/div>\n            <\/div>\n<\/div>\n                <\/div>\n                                                            <div class=\"order-sidebar-block\" id=\"order-sidebar_pviewed\">\n                    <div class=\"create-order-sidebar-block\" id=\"sidebar_data_pviewed\">\n    <div class=\"head sidebar-title-block\">\n        <a href=\"#\" class=\"action-refresh\"\n           title=\"Refresh\"\n           onclick=\"order.loadArea('sidebar_pviewed', 'sidebar_data_pviewed');return false;\">\n            <span>Refresh<\/span>\n        <\/a>\n        <h5 class=\"create-order-sidebar-label\">\n            Recently Viewed Products            <span class=\"normal\">(0)<\/span>\n        <\/h5>\n    <\/div>\n    <div class=\"content\">\n        <div class=\"auto-scroll\">\n                    <span class=\"no-items\">No items<\/span>\n                <\/div>\n            <\/div>\n<\/div>\n                <\/div>\n                                        <div class=\"actions\"><button id=\"id_ff456a79393279319d1ebb267f2e9009\" title=\"Update Changes\" type=\"button\" class=\"action-default scalable action-secondary\" onclick=\"order.sidebarApplyChanges()\"  data-ui-id=\"widget-button-0\" >\n    <span>Update Changes<\/span>\n<\/button>\n<\/div>    <\/div>\n<\/div>\n<script>\nrequire([\n    \"prototype\",\n    \"Magento_Catalog\/catalog\/product\/composite\/configure\"\n], function(){\n\n    function addSidebarCompositeListType() {\n        productConfigure.addListType('sidebar', {\n            urlFetch: 'http:\/\/m2.loc\/index.php\/admin\/sales\/order_create\/configureProductToAdd\/',\n            urlConfirm: 'http:\/\/m2.loc\/index.php\/admin\/sales\/order_create\/addConfigured\/'\n        });\n        productConfigure.addListType('sidebar_wishlist', {\n            urlFetch: 'http:\/\/m2.loc\/index.php\/admin\/customer\/wishlist_product_composite_wishlist\/configure\/',\n            urlConfirm: 'http:\/\/m2.loc\/index.php\/admin\/sales\/order_create\/addConfigured\/'\n        });\n    }\n\n    if (typeof(sidebarListTypeWorkedOn) == 'undefined') {\n        sidebarListTypeWorkedOn = false;\n    }\n    if (!sidebarListTypeWorkedOn) {\n        if (typeof(productConfigure) == 'undefined') {\n            Event.observe(window, 'load',  function(){\n                setTimeout(addSidebarCompositeListType, 10);\n            })\n        } else {\n            addSidebarCompositeListType();\n        }\n        sidebarListTypeWorkedOn = true;\n    }\n\n    window.addSidebarCompositeListType = addSidebarCompositeListType;\n});\n<\/script>\n",
+        "items": "\n<div class=\"admin__page-section-title\">\n    <strong class=\"title\">Items Ordered<\/strong>\n    <div class=\"actions\">\n            <\/div>\n<\/div>\n\n    <div class=\"admin__table-wrapper\" id=\"order-items_grid\">\n            <table class=\"data-table admin__table-primary order-tables\">\n            <thead>\n                <tr class=\"headings\">\n                    <th class=\"col-product\"><span>Product<\/span><\/th>\n                    <th class=\"col-price\"><span>Price<\/span><\/th>\n                    <th class=\"col-qty\"><span>Qty<\/span><\/th>\n                    <th class=\"col-subtotal\"><span>Subtotal<\/span><\/th>\n                    <th class=\"col-discount\"><span>Discount<\/span><\/th>\n                    <th class=\"col-row-total\"><span>Row Subtotal<\/span><\/th>\n                    <th class=\"col-action\"><span>Action<\/span><\/th>\n                <\/tr>\n            <\/thead>\n            <tfoot>\n                <tr>\n                    <td class=\"col-total\">Total 1 product(s)<\/td>\n                    <td colspan=\"2\" class=\"col-subtotal\">Subtotal:<\/td>\n                    <td class=\"col-price\"><strong><span class=\"price\">$200.00<\/span><\/strong><\/td>\n                    <td class=\"col-price\"><strong><span class=\"price\">$0.00<\/span><\/strong><\/td>\n                    <td class=\"col-price\"><strong>\n                    <span class=\"price\">$200.00<\/span><\/strong><\/td>\n                    <td colspan=\"2\">&nbsp;<\/td>\n                <\/tr>\n            <\/tfoot>\n                                                <tbody class=\"even\">\n                    <tr>\n                        <td class=\"col-product\">\n                            <span id=\"order_item_12_title\">\u0423\u0417\u0418 \u0432\u0435\u0440\u0445\u043d\u0438\u0445 \u043a\u043e\u043d\u0435\u0447\u043d\u043e\u0441\u0442\u0435\u0439<\/span>\n                            <div class=\"product-sku-block\">\n                                <span>SKU:<\/span>\n                                \u0423\u0417\u0418 \u0432\u0435\u0440\u0445\u043d\u0438\u0445 \u043a\u043e\u043d\u0435\u0447\u043d\u043e\u0441\u0442\u0435\u0439                            <\/div>\n                            <div class=\"product-configure-block\">\n                                <button id=\"id_73466d67438dcba623d41c1dd93db94a\" title=\"This product does not have any configurable options\" type=\"button\" class=\"action-default scalable  disabled\"  data-ui-id=\"widget-button-1\" >\n    <span>Configure<\/span>\n<\/button>\n                            <\/div>\n                        <\/td>\n                        <td class=\"col-price\">\n\n                            \n        <span class=\"price\">$200.00<\/span>\n\n\n                                                                                                                    <div class=\"custom-price-block\">\n                                    <input type=\"checkbox\"\n                                           class=\"admin__control-checkbox\"\n                                           id=\"item_use_custom_price_12\"\n                                                                                      onclick=\"order.toggleCustomPrice(this, 'item_custom_price_12', 'item_tier_block_12');\"\/>\n                                    <label\n                                        class=\"normal admin__field-label\"\n                                        for=\"item_use_custom_price_12\">\n                                        <span>Custom Price*<\/span><\/label>\n                                <\/div>\n                                                        <input id=\"item_custom_price_12\"\n                                   name=\"item[12][custom_price]\"\n                                   value=\"200.00\"\n                                                                      style=\"display:none\"\n                                   disabled=\"disabled\"\n                                                                      class=\"input-text item-price admin__control-text\"\/>\n                        <\/td>\n                        <td class=\"col-qty\">\n                            <input name=\"item[12][qty]\"\n                                   class=\"input-text item-qty admin__control-text\"\n                                   value=\"1\"\n                                   maxlength=\"12\" \/>\n                        <\/td>\n                        <td class=\"col-subtotal col-price\">\n                            \n        <span class=\"price\">$200.00<\/span>\n                        <\/td>\n                        <td class=\"col-discount col-price\">\n                            <span class=\"price\">$0.00<\/span>                            <div class=\"discount-price-block\">\n                                <input id=\"item_use_discount_12\"\n                                       class=\"admin__control-checkbox\"\n                                       name=\"item[12][use_discount]\"\n                                       checked=\"checked\"                                       value=\"1\"\n                                       type=\"checkbox\" \/>\n                                <label\n                                    for=\"item_use_discount_12\"\n                                    class=\"normal admin__field-label\">\n                                    <span>Apply<\/span><\/label>\n                            <\/div>\n\n                        <\/td>\n                        <td class=\"col-price col-row-subtotal\">\n                            \n            <span class=\"price\">$200.00<\/span>\n\n                        <\/td>\n                        <td class=\"col-actions last\">\n                            <select class=\"admin__control-select\" name=\"item[12][action]\">\n                                <option value=\"\">Please select<\/option>\n                                <option value=\"remove\">Remove<\/option>\n                                                                    <option value=\"cart\">Move to Shopping Cart<\/option>\n                                                                                                                                                                <option value=\"wishlist\">Move to Wish List<\/option>\n                                                                                                                                        <\/select>\n                        <\/td>\n                    <\/tr>\n\n                                                                                    \n                    \n                    \n                        <\/tbody>\n                        <\/table>\n        <p><small>* - Enter custom price excluding tax<\/small><\/p>\n    <\/div>\n\n    <div class=\"order-discounts\">\n        <button id=\"id_522492c2111c59731356905078ec2a89\" title=\"Update Items and Quantities\" type=\"button\" class=\"action-default scalable action-secondary\" onclick=\"order.itemsUpdate()\"  data-ui-id=\"widget-button-2\" >\n    <span>Update Items and Quantities<\/span>\n<\/button>\n        <div id=\"order-coupons\" class=\"order-coupons\">\n<div class=\"admin__field field-apply-coupon-code\">\n    <label class=\"admin__field-label\"><span>Apply Coupon Code<\/span><\/label>\n    <div class=\"admin__field-control\">\n        <input type=\"text\" class=\"admin__control-text\" id=\"coupons:code\" value=\"\" name=\"coupon_code\" \/>\n        <button id=\"id_20757e13082dd1cbc2c63a469d46af20\" title=\"Apply\" type=\"button\" class=\"action-default scalable\" onclick=\"order.applyCoupon($F('coupons:code'))\"  data-ui-id=\"widget-button-3\" >\n    <span>Apply<\/span>\n<\/button>\n                <script>\n            require([\"Magento_Sales\/order\/create\/form\"], function(){\n\n                order.overlay('shipping-method-overlay', true);\n                order.overlay('address-shipping-overlay', true);\n\n            });\n        <\/script>\n    <\/div>\n<\/div>\n\n<div id=\"gift_options_configure_new\" class=\"gift_options-popup product-configure-popup\" style=\"display: none;\">\n    <div id=\"gift_options_form_contents\">\n        <div class=\"content\">\n            \n        <\/div>\n        <div class=\"ui-dialog-buttonset\">\n            <button type=\"button\" class=\"action-close\" id=\"gift_options_cancel_button\"><span>Cancel<\/span><\/button>\n            <button type=\"button\" class=\"action-primary\" id=\"gift_options_ok_button\"><span>OK<\/span><\/button>\n        <\/div>\n    <\/div>\n<\/div>\n\n<div id=\"giftoptions_tooltip_window\" class=\"gift-options-tooltip\" style=\"display: none;\">\n    <div id=\"giftoptions_tooltip_window_content\">&nbsp;<\/div>\n<\/div>\n\n<script>\nrequire([\n    \"Magento_Sales\/order\/create\/giftmessage\",\n    \"Magento_Sales\/order\/giftoptions_tooltip\"\n], function(){\n\n\/\/<![CDATA[\nvar giftMessageSet = new GiftMessageSet();\n\n_giftOptions = new GiftOptionsPopup();\ngiftOptionsTooltip.setTooltipWindow('giftoptions_tooltip_window','giftoptions_tooltip_window_content');\n\/\/]]>\nwindow.giftMessageSet = giftMessageSet;\n});\n<\/script>\n<\/div>\n    <\/div>\n\n    <script>\n        require([\n            'Magento_Sales\/order\/create\/form'\n        ], function(){\n            order.itemsOnchangeBind()\n        });\n    <\/script>\n\n",
+        "order_item_extra_info": "\n        ",
+        "shipping_method": "\n<div class=\"admin__page-section-title\">\n    <span class=\"title\">Shipping Method<\/span>\n    <\/div>\n\n    <div id=\"order-shipping-method-summary\" class=\"order-shipping-method-summary\">\n        <a href=\"#\" onclick=\"order.loadShippingRates();return false\" class=\"action-default\">\n            <span>Get shipping methods and rates<\/span>\n        <\/a>\n        <input type=\"hidden\" name=\"order[has_shipping]\" value=\"\" class=\"required-entry\" \/>\n    <\/div>\n<div style=\"display: none;\" id=\"shipping-method-overlay\" class=\"order-methods-overlay\">\n    <span>You don't need to select a shipping method.<\/span>\n<\/div>\n<script>\n    require([\"Magento_Sales\/order\/create\/form\"], function(){\n\n        order.overlay('shipping-method-overlay', true);\n        order.overlay('address-shipping-overlay', true);\n\n            });\n<\/script>\n",
+        "billing_method": "\n<div class=\"admin__page-section-title\">\n    <span class=\"title\">Payment Method<\/span>\n    <\/div>\n\n<div id=\"order-billing_method_form\">\n    <dl class=\"admin__payment-methods\">\n                <dt class=\"admin__field-option\">\n                    <span class=\"no-display\">\n                <input id=\"p_method_checkmo\" value=\"checkmo\" type=\"radio\"\n                       name=\"payment[method]\" class=\"admin__control-radio\"\n                       checked=\"checked\"\/>\n            <\/span>\n        \n            <label class=\"admin__field-label\" for=\"p_method_checkmo\">Check \/ Money order<\/label>\n        <\/dt>\n        <dd class=\"admin__payment-method-wapper\">\n            <fieldset class=\"admin__fieldset payment-method\" id=\"payment_form_checkmo\" style=\"display:none\">\n        <\/fieldset>\n        <\/dd>\n        <\/dl>\n<\/div>\n<script>\n    require([\"Magento_Sales\/order\/create\/form\"], function(){\n        order.setPaymentMethod('checkmo')\n    });\n<\/script>\n",
+        "totals": "<legend class=\"admin__legend\"><span>Order Totals<\/span><\/legend>\n<br>\n\n<table class=\"admin__table-secondary data-table\">\n    <tbody>\n        <tr class=\"row-totals\">\n    <td style=\"\" class=\"admin__total-mark\" colspan=\"1\">\n        Subtotal    <\/td>\n    <td style=\"\" class=\"admin__total-amount\">\n        <span class=\"price\">$200.00<\/span>    <\/td>\n<\/tr>\n<tr class=\"row-totals\">\n    <td style=\"\" class=\"admin__total-mark\" colspan=\"1\">\n        Shipping &amp; Handling    <\/td>\n    <td style=\"\" class=\"admin__total-amount\">\n        <span class=\"price\">$0.00<\/span>    <\/td>\n<\/tr>\n        <tr class=\"row-totals\">\n    <td style=\"\" class=\"admin__total-mark\" colspan=\"1\">\n        <strong>Grand Total<\/strong>\n    <\/td>\n    <td style=\"\" class=\"admin__total-amount\">\n        <strong><span class=\"price\">$200.00<\/span><\/strong>\n    <\/td>\n<\/tr>\n    <\/tbody>\n<\/table>\n\n<div class=\"order-totals-actions\">\n    <div class=\"admin__field admin__field-option field-append-comments\">\n        <input type=\"checkbox\" id=\"notify_customer\" name=\"order[comment][customer_note_notify]\"\n               value=\"1\" checked=\"checked\"               class=\"admin__control-checkbox\"\/>\n        <label for=\"notify_customer\" class=\"admin__field-label\">Append Comments<\/label>\n    <\/div>\n        <div class=\"admin__field admin__field-option field-email-order-confirmation\">\n        <input type=\"checkbox\" id=\"send_confirmation\" name=\"order[send_confirmation]\" value=\"1\" checked=\"checked\"\n               class=\"admin__control-checkbox\"\/>\n        <label for=\"send_confirmation\" class=\"admin__field-label\">Email Order Confirmation<\/label>\n    <\/div>\n        <div class=\"actions\">\n        <button id=\"id_8c409b8c5300350a950f890fdd8b0a48\" title=\"Submit Order\" type=\"button\" class=\"action-default scalable save primary\" onclick=\"order.submit()\"  data-ui-id=\"widget-button-4\" >\n    <span>Submit Order<\/span>\n<\/button>\n    <\/div>\n<\/div>\n\n<script>\nrequire(['prototype'], function(){\n\n\/\/<![CDATA[\nvar sendEmailCheckbox = $('send_confirmation');\nif (sendEmailCheckbox) {\n    Event.observe(sendEmailCheckbox, 'change', notifyCustomerUpdate);\n    notifyCustomerUpdate();\n}\n\nfunction notifyCustomerUpdate() {\n    var sendEmailCheckbox = $('send_confirmation');\n    var notifyCustomerCheckbox = $('notify_customer');\n    if (!sendEmailCheckbox || !notifyCustomerCheckbox)\n        return;\n    notifyCustomerCheckbox.disabled = !sendEmailCheckbox.checked;\n}\n\/\/]]>\n\nwindow.notifyCustomerUpdate = notifyCustomerUpdate;\nwindow.sendEmailCheckbox = sendEmailCheckbox;\n\n});\n<\/script>\n",
+        "giftmessage": "",
+        "message": ""
+    }
+
+
+    require([
+        "moment",
+        "jquery",
+        "jquery/jquery-ui",
+        "fullcalendar-scheduler-1.0.2/lib/fullcalendar.min",
+        "fullcalendar-scheduler-1.0.2/scheduler"
+    ], function(moment, $){
+
+        $(function() { // document ready
+
+            var $timetable = $('#order-timetable');
+console.log($timetable);
+            $timetable.fullCalendar({
+                now: '2015-12-07',
+                editable: true,
+                aspectRatio: 1.8,
+                scrollTime: '00:00',
+                header: {
+                    left: 'today prev,next',
+                    center: 'title',
+                    right: 'timelineDay,timelineThreeDays,agendaWeek'
+                },
+                defaultView: 'timelineDay',
+                views: {
+                    timelineThreeDays: {
+                        type: 'timeline',
+                        duration: { days: 3 }
+                    }
+                },
+                eventOverlap: true, // will cause the event to take up entire resource height
+                resourceAreaWidth: '25%',
+                resourceLabelText: 'Кому',
+                selectable: true,
+                selectHelper: true,
+                slotDuration: '00:15',
+                slotWidth: 15,
+                select: function(start, end, event, calendar, resource) {
+//                    console.log(resource);
+                    var title = prompt('Event Title:');
+                    var eventData;
+                    if (title) {
+                        eventData = {
+                            title: title,
+                            start: start,
+                            end: end,
+                            resourceId: resource.id
+                        };
+                        $timetable.fullCalendar('renderEvent', eventData, true); // stick? = true
+                    }
+                    $timetable.fullCalendar('unselect');
+                },
+                selectOverlap: function(event) {
+                    console.log(event);
+                    return event.rendering === 'background';
+                },
+                resources: [
+                    { id: 'a', title: 'УЗИ верхних конечностей', children: [
+                        { id: 'a1', title: 'Узистов А.А' },
+                        { id: 'a2', title: 'Иванов Б.Б' } ]},
+                    { id: 'b', title: 'УЗИ коленных суставов', children: [
+                        { id: 'b1', title: ' нет доктора ' }]},
+                    { id: 'c', title: 'Консультация ревматолога', children: [
+                        { id: 'c1', title: 'Ремвов АА' },
+                        { id: 'c2', title: 'Бабу ББ' } ]}
+                ],
+                events: [
+                    {
+                        resourceId: 'c1',
+                        id: 'availableForMeeting',
+                        start: '2015-12-07T09:30:00',
+                        end: '2015-12-07T16:30:00',
+                        rendering: 'background',
+                        overlap: true,
+                        title: 'event 5'
+                    },
+                    {
+                        resourceId: 'c1',
+                        id: 'availableForMeetingNoe',
+                        start: '2015-12-07T11:30:00',
+                        end: '2015-12-07T13:30:00',
+                        rendering: 'background',
+                        color: '#ff9f89',
+                        overlap: false,
+                        selectable: false
+
+                    },
+
+                    {
+                        resourceId: 'a1',
+                        id: 'availableForMeeting',
+                        start: '2015-12-07T10:30:00',
+                        end: '2015-12-07T15:30:00',
+                        rendering: 'background',
+                        overlap: true,
+                        title: 'event 5'
+                    },
+                    {
+                        resourceId: 'a1',
+                        id: 'availableForMeetingNoe',
+                        start: '2015-12-07T10:30:00',
+                        end: '2015-12-07T12:00:00',
+                        rendering: 'background',
+                        color: '#ff9f89',
+                        overlap: false,
+                        selectable: false
+
+                    },
+                    {
+                        resourceId: 'a2',
+                        id: 'availableForMeeting',
+                        start: '2015-12-07T11:30:00',
+                        end: '2015-12-07T17:30:00',
+                        rendering: 'background',
+                        overlap: true,
+                        title: 'event 5'
+                    },
+                    {
+                        resourceId: 'a2',
+                        id: 'availableForMeetingNoe',
+                        start: '2015-12-07T14:30:00',
+                        end: '2015-12-07T16:30:00',
+                        rendering: 'background',
+                        color: '#ff9f89',
+                        overlap: false,
+                        selectable: false
+
+                    }
+
+                ]
+            });
+
+        });
+    });
+</script>
