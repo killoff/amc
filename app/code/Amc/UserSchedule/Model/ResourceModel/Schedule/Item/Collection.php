@@ -21,21 +21,31 @@ class Collection extends AbstractCollection
         $this->_init('Amc\UserSchedule\Model\Schedule\Item', 'Amc\UserSchedule\Model\ResourceModel\Schedule\Item');
     }
 
-    public function joinUsers()
-    {
-        $this->getSelect()->joinInner(
-            ['u' => $this->getTable('admin_user')],
-            'main_table.user_id = u.user_id',
-            ['u.firstname', 'u.lastname', 'u.user_fathername', 'u.user_position']
-        );
-    }
-
     public function addProductFilter($productId)
     {
+        return $this->addProductsFilter([$productId]);
+    }
+
+    public function addProductsFilter(array $productIds)
+    {
+        if (0 === count($productIds)) {
+            return $this;
+        } elseif (1 === count($productIds)) {
+            $condition = $this->getConnection()->quoteInto('main_table.user_id = up.user_id AND up.product_id = ?', $productIds[0]);
+        } else {
+            $condition = $this->getConnection()->quoteInto('main_table.user_id = up.user_id AND up.product_id IN(?)', $productIds);
+        }
         $this->getSelect()->joinInner(
-            ['up' => $this->getTable('amc_admin_user_products')],
-            $this->getConnection()->quoteInto('main_table.user_id = up.user_id AND up.product_id = ?', $productId),
+            ['up' => $this->getTable('amc_user_products')],
+            $condition,
             []
         );
+        return $this;
+    }
+
+    public function groupByUsers()
+    {
+        $this->getSelect()->group('main_table.user_id');
+        return $this;
     }
 }

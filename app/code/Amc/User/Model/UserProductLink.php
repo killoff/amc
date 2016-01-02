@@ -7,7 +7,7 @@ class UserProductLink
     /**
      * @var string
      */
-    protected $relationTableName = 'amc_admin_user_products';
+    protected $relationTableName = 'amc_user_products';
 
     /**
      * @var \Magento\Framework\App\ResourceConnection

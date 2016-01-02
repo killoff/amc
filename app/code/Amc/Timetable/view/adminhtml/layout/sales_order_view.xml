@@ -6,7 +6,7 @@
     </head>
     <body>
         <referenceContainer name="js">
-            <block class="Magento\Backend\Block\Template" name="order.create.timetable.js" template="Amc_Timetable::order/timetable-js.phtml"/>
+            <block class="Amc\Timetable\Block\Adminhtml\Order\Tab\Timetable" name="order.tab.timetable.js" template="Amc_Timetable::order/timetable-js.phtml"/>
         </referenceContainer>
         <referenceBlock name="sales_order_tabs">
             <action method="addTab">

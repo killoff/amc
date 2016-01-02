@@ -76,7 +76,7 @@ class InstallSchema implements InstallSchemaInterface
         }
 
         $table = $setup->getConnection()
-            ->newTable($setup->getTable('amc_admin_user_products'))
+            ->newTable($setup->getTable('amc_user_products'))
             ->addColumn(
                 'user_id',
                 \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
@@ -91,14 +91,14 @@ class InstallSchema implements InstallSchemaInterface
                 ['unsigned' => true, 'nullable' => false, 'default' => '0'],
                 'Entity ID'
             )->addForeignKey(
-                $setup->getFkName('amc_admin_user_products', 'user_id', 'admin_user', 'user_id'),
+                $setup->getFkName('amc_user_products', 'user_id', 'admin_user', 'user_id'),
                 'user_id',
                 $setup->getTable('admin_user'),
                 'user_id',
                 \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
             )->addForeignKey(
                 $setup->getFkName(
-                    'amc_admin_user_products',
+                    'amc_user_products',
                     'product_id',
                     'catalog_product_entity',
                     'entity_id'

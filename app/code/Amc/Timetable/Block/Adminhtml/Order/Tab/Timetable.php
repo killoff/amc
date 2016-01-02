@@ -4,39 +4,52 @@ namespace Amc\Timetable\Block\Adminhtml\Order\Tab;
 class Timetable extends \Magento\Backend\Block\Template implements \Magento\Backend\Block\Widget\Tab\TabInterface
 {
     /**
-     * Template
-     *
-     * @var string
+     * {@inheritdoc}
      */
     protected $_template = 'order/tab/timetable.phtml';
 
-    /**
-     * Core registry
-     *
-     * @var \Magento\Framework\Registry
-     */
-    protected $_coreRegistry = null;
+    /** @var \Magento\Framework\Registry */
+    protected $coreRegistry = null;
 
-    /**
-     * @var \Magento\Sales\Helper\Admin
-     */
+    /** @var \Magento\Sales\Helper\Admin */
     private $adminHelper;
+
+    /** @var \Amc\UserSchedule\Model\ResourceModel\Schedule\Item\CollectionFactory */
+    private $scheduleCollectionFactory;
+
+    /** @var \Magento\User\Model\ResourceModel\User\CollectionFactory */
+    private $userCollectionFactory;
+
+    /** @var \Magento\User\Model\ResourceModel\User\Collection */
+    private $userCollection;
+
+    /** @var \Magento\Framework\Json\EncoderInterface */
+    private $jsonEncoder;
 
     /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Framework\Registry $registry
      * @param \Magento\Sales\Helper\Admin $adminHelper
+     * @param \Amc\UserSchedule\Model\ResourceModel\Schedule\Item\CollectionFactory $scheduleCollectionFactory,
+     * @param \Magento\User\Model\ResourceModel\User\CollectionFactory $userCollectionFactory,
+     * @param \Magento\Framework\Json\EncoderInterface $jsonEncoder,
      * @param array $data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Sales\Helper\Admin $adminHelper,
+        \Amc\UserSchedule\Model\ResourceModel\Schedule\Item\CollectionFactory $scheduleCollectionFactory,
+        \Magento\User\Model\ResourceModel\User\CollectionFactory $userCollectionFactory,
+        \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         array $data = []
     ) {
-        $this->_coreRegistry = $registry;
         parent::__construct($context, $data);
+        $this->coreRegistry = $registry;
         $this->adminHelper = $adminHelper;
+        $this->scheduleCollectionFactory = $scheduleCollectionFactory;
+        $this->userCollectionFactory = $userCollectionFactory;
+        $this->jsonEncoder = $jsonEncoder;
     }
 
     /**
@@ -46,168 +59,106 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
      */
     public function getOrder()
     {
-        return $this->_coreRegistry->registry('current_order');
+        return $this->coreRegistry->registry('current_order');
     }
 
     /**
-     * Compose and get order full history.
-     * Consists of the status history comments as well as of invoices, shipments and creditmemos creations
+     * Return array of resources and events for timetable calendar.
+     *      Resources = Products and relevant users
+     *      Events = Available slots in users' schedule linked to resources
      *
-     * @TODO This method requires refactoring. Need to create separate model for comment history handling
-     * and avoid generating it dynamically
-     *
-     * @return array
+     * @return array ['resources' => resources_json, 'events' => events_json]
      */
-    public function getFullHistory()
+    public function getResourcesAndEvents()
     {
-        $order = $this->getOrder();
-
-        $history = [];
-        foreach ($order->getAllStatusHistory() as $orderComment) {
-            $history[] = $this->_prepareHistoryItem(
-                $orderComment->getStatusLabel(),
-                $orderComment->getIsCustomerNotified(),
-                $this->getOrderAdminDate($orderComment->getCreatedAt()),
-                $orderComment->getComment()
-            );
-        }
-
-        foreach ($order->getCreditmemosCollection() as $_memo) {
-            $history[] = $this->_prepareHistoryItem(
-                __('Credit memo #%1 created', $_memo->getIncrementId()),
-                $_memo->getEmailSent(),
-                $this->getOrderAdminDate($_memo->getCreatedAt())
-            );
-
-            foreach ($_memo->getCommentsCollection() as $_comment) {
-                $history[] = $this->_prepareHistoryItem(
-                    __('Credit memo #%1 comment added', $_memo->getIncrementId()),
-                    $_comment->getIsCustomerNotified(),
-                    $this->getOrderAdminDate($_comment->getCreatedAt()),
-                    $_comment->getComment()
-                );
+        $resources = [];
+        $events = [];
+        /** @var \Magento\Sales\Model\Order\Item $item */
+        foreach ($this->getOrder()->getAllVisibleItems() as $item) {
+            $scheduleCollection = $this->prepareUserScheduleCollection();
+            $scheduleCollection->addProductFilter($item->getProductId());
+            $productUserIds = [];
+            foreach ($scheduleCollection->getItems() as $schedule) {
+                $productUserIds[$schedule->getData('user_id')] = 1;
+                $events[] = [
+                    'resourceId' => sprintf('i%s_u%s', $item->getId(), $schedule->getData('user_id')),
+                    'id'         => sprintf('u%s_s%s', $schedule->getData('user_id'), $schedule->getId()),
+                    'start'      => $schedule->getStartAt(),
+                    'end'        => $schedule->getEndAt(),
+                    'rendering'  => 'background',
+                    'overlap'    => true,
+                    'title'      => 'room '.$schedule->getRoomId()
+                ];
             }
-        }
-
-        foreach ($order->getShipmentsCollection() as $_shipment) {
-            $history[] = $this->_prepareHistoryItem(
-                __('Shipment #%1 created', $_shipment->getIncrementId()),
-                $_shipment->getEmailSent(),
-                $this->getOrderAdminDate($_shipment->getCreatedAt())
-            );
-
-            foreach ($_shipment->getCommentsCollection() as $_comment) {
-                $history[] = $this->_prepareHistoryItem(
-                    __('Shipment #%1 comment added', $_shipment->getIncrementId()),
-                    $_comment->getIsCustomerNotified(),
-                    $this->getOrderAdminDate($_comment->getCreatedAt()),
-                    $_comment->getComment()
-                );
+            $resource = [
+                'id'    => 'i' . $item->getId(),
+                'title' => $item->getName(),
+                'type'  => 'item'
+            ];
+            foreach (array_keys($productUserIds) as $userId) {
+                $resource['children'][] = [
+                    'id'    => sprintf('i%s_u%s', $item->getId(), $userId),
+                    'title' => $this->getUserInfo($userId)->getLastname(),
+                    'type'  => 'user'
+                ];
             }
+            $resources[] = $resource;
         }
 
-        foreach ($order->getInvoiceCollection() as $_invoice) {
-            $history[] = $this->_prepareHistoryItem(
-                __('Invoice #%1 created', $_invoice->getIncrementId()),
-                $_invoice->getEmailSent(),
-                $this->getOrderAdminDate($_invoice->getCreatedAt())
-            );
+        return [
+            'resources' => $this->jsonEncoder->encode($resources),
+            'events' => $this->jsonEncoder->encode($events)
+        ];
+    }
 
-            foreach ($_invoice->getCommentsCollection() as $_comment) {
-                $history[] = $this->_prepareHistoryItem(
-                    __('Invoice #%1 comment added', $_invoice->getIncrementId()),
-                    $_comment->getIsCustomerNotified(),
-                    $this->getOrderAdminDate($_comment->getCreatedAt()),
-                    $_comment->getComment()
-                );
+    /**
+     * Return user info that represented in order timetable
+     * User collection is cached and based on products in order
+     *
+     * @param int $userId
+     * @return \Magento\User\Model\User
+     */
+    private function getUserInfo($userId)
+    {
+        if (null === $this->userCollection) {
+            $productIds = [];
+            /** @var \Magento\Sales\Model\Order\Item $item */
+            foreach ($this->getOrder()->getItems() as $item) {
+                $productIds[] = $item->getProductId();
             }
-        }
+            $scheduleCollection = $this->prepareUserScheduleCollection()
+                ->addProductsFilter($productIds)
+                ->groupByUsers();
+            $userIds = $scheduleCollection->getColumnValues('user_id');
 
-        foreach ($order->getTracksCollection() as $_track) {
-            $history[] = $this->_prepareHistoryItem(
-                __('Tracking number %1 for %2 assigned', $_track->getNumber(), $_track->getTitle()),
-                false,
-                $this->getOrderAdminDate($_track->getCreatedAt())
-            );
+            /** @var \Magento\User\Model\ResourceModel\User\Collection $userCollection */
+            $this->userCollection = $this->userCollectionFactory->create();
+            $this->userCollection->addFieldToFilter('user_id', ['in' => $userIds]);
         }
-
-        usort($history, [__CLASS__, 'sortHistoryByTimestamp']);
-        return $history;
+        return $this->userCollection->getItemById($userId);
     }
 
     /**
-     * Status history date/datetime getter
+     * Return collection of users' schedule between order date and 1 month (P1M) further
      *
-     * @param array $item
-     * @param string $dateType
-     * @param int $format
-     * @return string
+     * @return \Amc\UserSchedule\Model\ResourceModel\Schedule\Item\Collection
      */
-    public function getItemCreatedAt(array $item, $dateType = 'date', $format = \IntlDateFormatter::MEDIUM)
+    private function prepareUserScheduleCollection()
     {
-        if (!isset($item['created_at'])) {
-            return '';
-        }
-        $date = $item['created_at'] instanceof \DateTimeInterface
-            ? $item['created_at']
-            : new \DateTime($item['created_at']);
-        if ('date' === $dateType) {
-            return $this->_localeDate->formatDateTime($date, $format, $format);
-        }
-        return $this->_localeDate->formatDateTime($date, \IntlDateFormatter::NONE, $format);
+        $rangeStart = new \DateTime($this->getOrder()->getCreatedAt());
+        $rangeEnd = new \DateTime($this->getOrder()->getCreatedAt());
+        $rangeEnd->add(new \DateInterval('P1M'));
+        /** @var \Amc\UserSchedule\Model\ResourceModel\Schedule\Item\Collection $scheduleCollection */
+        $scheduleCollection = $this->scheduleCollectionFactory->create();
+        $scheduleCollection
+            ->addFieldToFilter('end_at', ['gt' => $rangeStart->format('Y-m-d H:i:s')])
+            ->addFieldToFilter('start_at', ['lt' => $rangeEnd->format('Y-m-d H:i:s')]);
+        return $scheduleCollection;
     }
 
-    /**
-     * Status history item title getter
-     *
-     * @param array $item
-     * @return string
-     */
-    public function getItemTitle(array $item)
+    private function getUserFullName($schedule)
     {
-        return isset($item['title']) ? $this->escapeHtml($item['title']) : '';
-    }
-
-    /**
-     * Check whether status history comment is with customer notification
-     *
-     * @param array $item
-     * @param bool $isSimpleCheck
-     * @return bool
-     */
-    public function isItemNotified(array $item, $isSimpleCheck = true)
-    {
-        if ($isSimpleCheck) {
-            return !empty($item['notified']);
-        }
-        return isset($item['notified']) && false !== $item['notified'];
-    }
-
-    /**
-     * Status history item comment getter
-     *
-     * @param array $item
-     * @return string
-     */
-    public function getItemComment(array $item)
-    {
-        $allowedTags = ['b', 'br', 'strong', 'i', 'u', 'a'];
-        return isset($item['comment'])
-            ? $this->adminHelper->escapeHtmlWithLinks($item['comment'], $allowedTags) : '';
-    }
-
-    /**
-     * Map history items as array
-     *
-     * @param string $label
-     * @param bool $notified
-     * @param \DateTime $created
-     * @param string $comment
-     * @return array
-     */
-    protected function _prepareHistoryItem($label, $notified, $created, $comment = '')
-    {
-        return ['title' => $label, 'notified' => $notified, 'comment' => $comment, 'created_at' => $created];
+        return $schedule->getData('lastname').' '.$schedule->getData('firstname').' '.$schedule->getData('user_fathername');
     }
 
     /**
@@ -240,16 +191,5 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
     public function isHidden()
     {
         return false;
-    }
-
-    /**
-     * Get order admin date
-     *
-     * @param int $createdAt
-     * @return \DateTime
-     */
-    public function getOrderAdminDate($createdAt)
-    {
-        return $this->_localeDate->date(new \DateTime($createdAt));
     }
 }
