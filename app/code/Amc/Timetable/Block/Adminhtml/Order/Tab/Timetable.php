@@ -26,6 +26,9 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
     /** @var \Magento\Framework\Json\EncoderInterface */
     private $jsonEncoder;
 
+    /** @var \Amc\User\Helper\Data */
+    private $userHelper;
+
     /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Framework\Registry $registry
@@ -42,6 +45,7 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
         \Amc\UserSchedule\Model\ResourceModel\Schedule\Item\CollectionFactory $scheduleCollectionFactory,
         \Magento\User\Model\ResourceModel\User\CollectionFactory $userCollectionFactory,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
+        \Amc\User\Helper\Data $userHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
@@ -50,6 +54,7 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
         $this->scheduleCollectionFactory = $scheduleCollectionFactory;
         $this->userCollectionFactory = $userCollectionFactory;
         $this->jsonEncoder = $jsonEncoder;
+        $this->userHelper = $userHelper;
     }
 
     /**
@@ -98,7 +103,7 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
             foreach (array_keys($productUserIds) as $userId) {
                 $resource['children'][] = [
                     'id'    => sprintf('i%s_u%s', $item->getId(), $userId),
-                    'title' => $this->getUserInfo($userId)->getLastname(),
+                    'title' => $this->userHelper->getUserShortName($this->getUserInfo($userId)),
                     'type'  => 'user'
                 ];
             }
@@ -154,11 +159,6 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
             ->addFieldToFilter('end_at', ['gt' => $rangeStart->format('Y-m-d H:i:s')])
             ->addFieldToFilter('start_at', ['lt' => $rangeEnd->format('Y-m-d H:i:s')]);
         return $scheduleCollection;
-    }
-
-    private function getUserFullName($schedule)
-    {
-        return $schedule->getData('lastname').' '.$schedule->getData('firstname').' '.$schedule->getData('user_fathername');
     }
 
     /**

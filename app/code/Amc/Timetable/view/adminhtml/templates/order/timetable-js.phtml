@@ -35,16 +35,30 @@
                     end: '20:00',
                     dow: [ 1, 2, 3, 4, 5 ]
                 },
-                minTime: '09:00',
-                maxTime: '20:00',
+                minTime: '09:00', // todo: impldement config "Working hours"
+                maxTime: '20:00', // todo: impldement config "Working hours"
                 slotLabelFormat: 'HH:mm',
                 eventOverlap: true, // will cause the event to take up entire resource height
                 resourceAreaWidth: '25%',
-                resourceLabelText: 'Кому',
+                resourceLabelText: "<?php echo $this->escapeQuote(__('Executant')) ?>",
                 selectable: true,
                 selectHelper: true,
                 slotDuration: '00:15',
                 slotWidth: 15,
+                eventResize: function(event, delta, revertFunc) {
+
+                    alert(event.title + " start is now " + event.start.format() + " end is now " + event.end.format());
+
+                },
+                eventDrop: function(event, delta, revertFunc) {
+
+                    alert(event.title + " was dropped on " + event.start.format()+ " - "+event.end.format());
+
+//                    if (!confirm("Are you sure about this change?")) {
+//                        revertFunc();
+//                    }
+
+                },
                 select: function(start, end, event, calendar, resource) {
 //                    console.log(resource);
                     var title = prompt('Event Title:');
