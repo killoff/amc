@@ -48,11 +48,19 @@
                 eventResize: function(event, delta, revertFunc) {
 
                     alert(event.title + " start is now " + event.start.format() + " end is now " + event.end.format());
+                    var resource = $timetable.fullCalendar( 'getResourceById', event.resourceId );
+                    console.log(resource);
+//                    id: "i2_u4"
+//                    parent: Object
+//                    title: "Узистов В."
+//                    type: "user"
+                    console.log(event);
 
                 },
                 eventDrop: function(event, delta, revertFunc) {
 
                     alert(event.title + " was dropped on " + event.start.format()+ " - "+event.end.format());
+                    console.log(event);
 
 //                    if (!confirm("Are you sure about this change?")) {
 //                        revertFunc();
@@ -73,6 +81,7 @@
                         $timetable.fullCalendar('renderEvent', eventData, true); // stick? = true
                     }
                     $timetable.fullCalendar('unselect');
+                    console.log(event);
                 },
                 selectOverlap: function(event) {
                     console.log(event);
