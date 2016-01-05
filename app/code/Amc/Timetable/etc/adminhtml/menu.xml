@@ -2,6 +2,6 @@
 
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
-        <add id="Amc_Clinic::clinic_timetable" title="Tickets" module="Amc_Timetable" sortOrder="10" parent="Amc_Clinic::clinic" action="timetable/ticket/" resource="Amc_Clinic::clinic_timetable"/>
+        <add id="Amc_Clinic::clinic_timetable" title="Timetable" module="Amc_Timetable" sortOrder="10" parent="Amc_Clinic::clinic" action="timetable/" resource="Amc_Clinic::clinic_timetable"/>
     </menu>
 </config>

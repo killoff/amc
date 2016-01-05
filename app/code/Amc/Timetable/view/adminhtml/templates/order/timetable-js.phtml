@@ -47,6 +47,7 @@
                 slotWidth: 15,
                 eventResize: function(event, delta, revertFunc) {
 
+
                     alert(event.title + " start is now " + event.start.format() + " end is now " + event.end.format());
                     var resource = $timetable.fullCalendar( 'getResourceById', event.resourceId );
                     console.log(resource);
