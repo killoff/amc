@@ -12,7 +12,29 @@
         $(function() { // document ready
 
 
+            var uuid = function () {
+                var i, random;
+                var uuid = '';
+
+                for (i = 0; i < 32; i++) {
+                    random = Math.random() * 16 | 0;
+                    if (i === 8 || i === 12 || i === 16 || i === 20) {
+                        uuid += '-';
+                    }
+                    uuid += (i === 12 ? 4 : (i === 16 ? (random & 3 | 8) : random))
+                        .toString(16);
+                }
+
+                return uuid;
+            };
+
             var $timetable = $('#order-timetable');
+            var registry = {};
+//            var legend = [];
+//            var resources = <?php //echo $resourcesAndEvents['resources'] ?>//;
+//            for (var i =0; i < resources.length; i++) {
+//
+//            }
 
             $timetable.fullCalendar({
                 editable: true,
@@ -46,50 +68,62 @@
                 slotDuration: '00:15',
                 slotWidth: 15,
                 eventResize: function(event, delta, revertFunc) {
+                    registry[event.id] = event;
 
 
-                    alert(event.title + " start is now " + event.start.format() + " end is now " + event.end.format());
                     var resource = $timetable.fullCalendar( 'getResourceById', event.resourceId );
-                    console.log(resource);
+//                    console.log(event);
+//                    console.log(resource);
 //                    id: "i2_u4"
 //                    parent: Object
 //                    title: "Узистов В."
 //                    type: "user"
-                    console.log(event);
+                    console.log(registry);
 
                 },
                 eventDrop: function(event, delta, revertFunc) {
+                    registry[event.id] = event;
 
-                    alert(event.title + " was dropped on " + event.start.format()+ " - "+event.end.format());
-                    console.log(event);
+//                    alert(event.title + " was dropped on " + event.start.format()+ " - "+event.end.format());
+//                    console.log(event);
 
 //                    if (!confirm("Are you sure about this change?")) {
 //                        revertFunc();
 //                    }
+                    console.log(registry);
 
                 },
                 select: function(start, end, event, calendar, resource) {
-//                    console.log(resource);
-                    var title = prompt('Event Title:');
                     var eventData;
-                    if (title) {
+                    var resourceId = resource.id;
+                    var resourceType = resource.type;
+                    if (resourceId && resourceType === 'user') {
                         eventData = {
-                            title: title,
+                            title: '', // time start - time end?
                             start: start,
                             end: end,
-                            resourceId: resource.id
+                            resourceId: resourceId,
+                            id: uuid(),
                         };
                         $timetable.fullCalendar('renderEvent', eventData, true); // stick? = true
+                        registry[eventData.id] = eventData;
+//                        console.log(eventData);
+                        console.log(registry);
+                        console.log($timetable.fullCalendar( 'getResourceEvents', resourceId ));
+
                     }
                     $timetable.fullCalendar('unselect');
-                    console.log(event);
+//                    console.log(event);
                 },
                 selectOverlap: function(event) {
                     console.log(event);
                     return event.rendering === 'background';
                 },
+
+
                 resources: <?php echo $resourcesAndEvents['resources'] ?>,
                 events:  <?php echo $resourcesAndEvents['events'] ?>
+
 //                    [
 //                    {
 //                        resourceId: 'c1',
