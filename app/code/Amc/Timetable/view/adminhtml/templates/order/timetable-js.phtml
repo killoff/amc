@@ -1,5 +1,31 @@
 <?php /** @var $this \Amc\Timetable\Block\Adminhtml\Order\Tab\Timetable */ ?>
 <?php $resourcesAndEvents = $this->getResourcesAndEvents() ?>
+<style>
+    .timetable-state .parent {
+        margin-top: 10px;
+        font-size: 1.3em;
+    }
+    .timetable-state .child {
+        margin-left: 20px;
+        margin-top: 3px;
+    }
+    .timetable-state .who {
+        margin-right: 10px;
+        font-size: 1.1em;
+    }
+    .timetable-state .times {
+        margin-left: 10px;
+    }
+    .timetable-state .time {
+        margin-right: 15px;
+        cursor: pointer;
+        border-bottom: 1px dashed #006600;
+    }
+    .timetable-state .not-assigned {
+        margin-left: 10px;
+        color: #fe7834;
+    }
+</style>
 <script>
     require([
         "moment",
@@ -11,6 +37,66 @@
 
         $(function() { // document ready
 
+            var getTimetableState = function(timetable) {
+
+                var state = [],
+                    stateRow,
+                    stateRowEvents,
+                    events,
+                    resources = timetable.fullCalendar('getResources'),
+                    resource,
+                    i, j, k;
+                for(i = 0; i < resources.length; i++) {
+                    resource = resources[i];
+                    stateRow = { title: resource.title, children: [] }
+                    console.log('resource children:');
+                    console.log(resource.children);
+                    for(j = 0; j < resource.children.length; j++) {
+                        stateRowEvents = [];
+                        events = timetable.fullCalendar('getResourceEvents', resource.children[j]);
+                        console.log('row events:');
+                        console.log(events);
+                        for(k = 0; k < events.length; k++) {
+                            if (events[k].type == 'order') {
+                                stateRowEvents.push(events[k]);
+                            }
+                        }
+                        if (stateRowEvents.length > 0) {
+                            stateRow.children.push( { title: resource.children[j].title, events: stateRowEvents } );
+                        }
+                    }
+                    state.push( stateRow );
+                }
+                console.log(state);
+                return state;
+            };
+
+            var renderTimetableState = function(state) {
+                var i, j, k,
+                    events,
+                    html = '';
+                for(i = 0; i < state.length; i++) {
+                    html += '<div class="parent">'
+                         + state[i].title
+                         + (state[i].children.length == 0 ? '<span class="not-assigned">&ndash; not assigned</span>' : '')
+                         + '</div>';
+
+                    for(j = 0; j < state[i].children.length; j++) {
+                        html += '<div class="child">'
+                             + '<?php echo __('by') ?> ' + '<span class="who">' + state[i].children[j].title + '</span>';
+                        events = state[i].children[j].events;
+                        html += '<?php echo __('at') ?>';
+                        html += '<span class="times">';
+                        for(k = 0; k < events.length; k++) {
+                            html += '<span class="time">' + events[k].start.format("ddd D.MM, HH:mm") + '</span>';
+                        }
+                        html.replace(/;$/g, '');
+                        html += '</span>';
+                        html += '</div>';
+                    }
+                }
+                $('#timetable-state').html(html);
+            };
 
             var uuid = function () {
                 var i, random;
@@ -37,6 +123,7 @@
 //            }
 
             $timetable.fullCalendar({
+                defaultDate: '2016-01-02',
                 editable: true,
                 contentHeight: 'auto',
                 scrollTime: '00:00',
@@ -79,11 +166,17 @@
 //                    title: "Узистов В."
 //                    type: "user"
                     console.log(registry);
+                    renderTimetableState(
+                        getTimetableState($timetable)
+                    );
 
                 },
                 eventDrop: function(event, delta, revertFunc) {
                     registry[event.id] = event;
 
+                    renderTimetableState(
+                        getTimetableState($timetable)
+                    );
 //                    alert(event.title + " was dropped on " + event.start.format()+ " - "+event.end.format());
 //                    console.log(event);
 
@@ -104,12 +197,16 @@
                             end: end,
                             resourceId: resourceId,
                             id: uuid(),
+                            type: 'order'
                         };
                         $timetable.fullCalendar('renderEvent', eventData, true); // stick? = true
                         registry[eventData.id] = eventData;
 //                        console.log(eventData);
                         console.log(registry);
                         console.log($timetable.fullCalendar( 'getResourceEvents', resourceId ));
+                        renderTimetableState(
+                            getTimetableState($timetable)
+                        );
 
                     }
                     $timetable.fullCalendar('unselect');
