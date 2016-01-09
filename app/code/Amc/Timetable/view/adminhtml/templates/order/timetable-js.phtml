@@ -1,6 +1,16 @@
 <?php /** @var $this \Amc\Timetable\Block\Adminhtml\Order\Tab\Timetable */ ?>
 <?php $resourcesAndEvents = $this->getResourcesAndEvents() ?>
 <style>
+    .timetable-state {
+        float: left;
+        width: 60%
+    }
+    .timetable-save {
+        float: right;
+    }
+    .timetable-save .save{
+        padding: 20px 30px 20px 30px;
+    }
     .timetable-state .parent {
         margin-top: 10px;
         font-size: 1.3em;
@@ -31,8 +41,8 @@
         "moment",
         "jquery",
         "jquery/jquery-ui",
-        "fullcalendar-scheduler-1.0.2/lib/fullcalendar.min",
-        "fullcalendar-scheduler-1.0.2/scheduler"
+        "fullcalendar",
+        "fullcalendarScheduler"
     ], function(moment, $){
 
         $(function() { // document ready
@@ -221,70 +231,13 @@
                 resources: <?php echo $resourcesAndEvents['resources'] ?>,
                 events:  <?php echo $resourcesAndEvents['events'] ?>
 
-//                    [
-//                    {
-//                        resourceId: 'c1',
-//                        id: 'availableForMeeting',
-//                        start: '2015-12-07T09:30:00',
-//                        end: '2015-12-07T16:30:00',
-//                        rendering: 'background',
-//                        overlap: true,
-//                        title: 'event 5'
-//                    },
-//                    {
-//                        resourceId: 'c1',
-//                        id: 'availableForMeetingNoe',
-//                        start: '2015-12-07T11:30:00',
-//                        end: '2015-12-07T13:30:00',
-//                        rendering: 'background',
-//                        color: '#ff9f89',
-//                        overlap: false,
-//                        selectable: false
-//
-//                    },
-//
-//                    {
-//                        resourceId: 'a1',
-//                        id: 'availableForMeeting',
-//                        start: '2015-12-07T10:30:00',
-//                        end: '2015-12-07T15:30:00',
-//                        rendering: 'background',
-//                        overlap: true,
-//                        title: 'event 5'
-//                    },
-//                    {
-//                        resourceId: 'a1',
-//                        id: 'availableForMeetingNoe',
-//                        start: '2015-12-07T10:30:00',
-//                        end: '2015-12-07T12:00:00',
-//                        rendering: 'background',
-//                        color: '#ff9f89',
-//                        overlap: false,
-//                        selectable: false
-//
-//                    },
-//                    {
-//                        resourceId: 'a2',
-//                        id: 'availableForMeeting',
-//                        start: '2015-12-07T11:30:00',
-//                        end: '2015-12-07T17:30:00',
-//                        rendering: 'background',
-//                        overlap: true,
-//                        title: 'event 5'
-//                    },
-//                    {
-//                        resourceId: 'a2',
-//                        id: 'availableForMeetingNoe',
-//                        start: '2015-12-07T14:30:00',
-//                        end: '2015-12-07T16:30:00',
-//                        rendering: 'background',
-//                        color: '#ff9f89',
-//                        overlap: false,
-//                        selectable: false
-//
-//                    }
-//
-//                ]
+            });
+
+            // re-render calendar on tab activated
+            $("#sales_order_view_tabs").on("tabsactivate", function(event, ui) {
+                if(ui.newTab.attr('data-ui-id').indexOf('timetable') !== -1) {
+                    $timetable.fullCalendar('render');
+                }
             });
 
         });
