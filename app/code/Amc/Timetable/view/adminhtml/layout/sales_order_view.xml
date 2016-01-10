@@ -3,6 +3,7 @@
     <head>
         <css src="fullcalendar-scheduler-1.0.2/lib/fullcalendar.min.css"/>
         <css src="fullcalendar-scheduler-1.0.2/scheduler.min.css"/>
+        <css src="Amc_Timetable::css/order-timetable.css"/>
     </head>
     <body>
         <referenceContainer name="js">

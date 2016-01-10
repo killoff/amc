@@ -1,41 +1,5 @@
 <?php /** @var $this \Amc\Timetable\Block\Adminhtml\Order\Tab\Timetable */ ?>
 <?php $resourcesAndEvents = $this->getResourcesAndEvents() ?>
-<style>
-    .timetable-state {
-        float: left;
-        width: 60%
-    }
-    .timetable-save {
-        float: right;
-    }
-    .timetable-save .save{
-        padding: 20px 30px 20px 30px;
-    }
-    .timetable-state .parent {
-        margin-top: 10px;
-        font-size: 1.3em;
-    }
-    .timetable-state .child {
-        margin-left: 20px;
-        margin-top: 3px;
-    }
-    .timetable-state .who {
-        margin-right: 10px;
-        font-size: 1.1em;
-    }
-    .timetable-state .times {
-        margin-left: 10px;
-    }
-    .timetable-state .time {
-        margin-right: 15px;
-        cursor: pointer;
-        border-bottom: 1px dashed #006600;
-    }
-    .timetable-state .not-assigned {
-        margin-left: 10px;
-        color: #fe7834;
-    }
-</style>
 <script>
     require([
         "moment",
@@ -47,93 +11,11 @@
 
         $(function() { // document ready
 
-            var getTimetableState = function(timetable) {
-
-                var state = [],
-                    stateRow,
-                    stateRowEvents,
-                    events,
-                    resources = timetable.fullCalendar('getResources'),
-                    resource,
-                    i, j, k;
-                for(i = 0; i < resources.length; i++) {
-                    resource = resources[i];
-                    stateRow = { title: resource.title, children: [] }
-                    console.log('resource children:');
-                    console.log(resource.children);
-                    for(j = 0; j < resource.children.length; j++) {
-                        stateRowEvents = [];
-                        events = timetable.fullCalendar('getResourceEvents', resource.children[j]);
-                        console.log('row events:');
-                        console.log(events);
-                        for(k = 0; k < events.length; k++) {
-                            if (events[k].type == 'order') {
-                                stateRowEvents.push(events[k]);
-                            }
-                        }
-                        if (stateRowEvents.length > 0) {
-                            stateRow.children.push( { title: resource.children[j].title, events: stateRowEvents } );
-                        }
-                    }
-                    state.push( stateRow );
-                }
-                console.log(state);
-                return state;
-            };
-
-            var renderTimetableState = function(state) {
-                var i, j, k,
-                    events,
-                    html = '';
-                for(i = 0; i < state.length; i++) {
-                    html += '<div class="parent">'
-                         + state[i].title
-                         + (state[i].children.length == 0 ? '<span class="not-assigned">&ndash; not assigned</span>' : '')
-                         + '</div>';
-
-                    for(j = 0; j < state[i].children.length; j++) {
-                        html += '<div class="child">'
-                             + '<?php echo __('by') ?> ' + '<span class="who">' + state[i].children[j].title + '</span>';
-                        events = state[i].children[j].events;
-                        html += '<?php echo __('at') ?>';
-                        html += '<span class="times">';
-                        for(k = 0; k < events.length; k++) {
-                            html += '<span class="time">' + events[k].start.format("ddd D.MM, HH:mm") + '</span>';
-                        }
-                        html.replace(/;$/g, '');
-                        html += '</span>';
-                        html += '</div>';
-                    }
-                }
-                $('#timetable-state').html(html);
-            };
-
-            var uuid = function () {
-                var i, random;
-                var uuid = '';
-
-                for (i = 0; i < 32; i++) {
-                    random = Math.random() * 16 | 0;
-                    if (i === 8 || i === 12 || i === 16 || i === 20) {
-                        uuid += '-';
-                    }
-                    uuid += (i === 12 ? 4 : (i === 16 ? (random & 3 | 8) : random))
-                        .toString(16);
-                }
-
-                return uuid;
-            };
-
             var $timetable = $('#order-timetable');
             var registry = {};
-//            var legend = [];
-//            var resources = <?php //echo $resourcesAndEvents['resources'] ?>//;
-//            for (var i =0; i < resources.length; i++) {
-//
-//            }
 
             $timetable.fullCalendar({
-                defaultDate: '2016-01-02',
+                defaultDate: '<?php echo $this->getInitialDate() ?>',
                 editable: true,
                 contentHeight: 'auto',
                 scrollTime: '00:00',
@@ -166,35 +48,23 @@
                 slotWidth: 15,
                 eventResize: function(event, delta, revertFunc) {
                     registry[event.id] = event;
-
-
-                    var resource = $timetable.fullCalendar( 'getResourceById', event.resourceId );
-//                    console.log(event);
-//                    console.log(resource);
-//                    id: "i2_u4"
-//                    parent: Object
-//                    title: "Узистов В."
-//                    type: "user"
-                    console.log(registry);
                     renderTimetableState(
                         getTimetableState($timetable)
                     );
-
+                    console.log('event resized');
+                    console.log(registry);
                 },
                 eventDrop: function(event, delta, revertFunc) {
                     registry[event.id] = event;
-
                     renderTimetableState(
                         getTimetableState($timetable)
                     );
-//                    alert(event.title + " was dropped on " + event.start.format()+ " - "+event.end.format());
-//                    console.log(event);
-
-//                    if (!confirm("Are you sure about this change?")) {
-//                        revertFunc();
-//                    }
+                    console.log('event moved');
                     console.log(registry);
-
+                },
+                eventClick: function(event, jsEvent, view) {
+                    console.log('event clicked');
+//                    console.log(registry);
                 },
                 select: function(start, end, event, calendar, resource) {
                     var eventData;
@@ -211,27 +81,103 @@
                         };
                         $timetable.fullCalendar('renderEvent', eventData, true); // stick? = true
                         registry[eventData.id] = eventData;
-//                        console.log(eventData);
+                        console.log('event selected');
                         console.log(registry);
-                        console.log($timetable.fullCalendar( 'getResourceEvents', resourceId ));
                         renderTimetableState(
                             getTimetableState($timetable)
                         );
 
                     }
                     $timetable.fullCalendar('unselect');
-//                    console.log(event);
                 },
+
                 selectOverlap: function(event) {
                     console.log(event);
                     return event.rendering === 'background';
                 },
 
-
                 resources: <?php echo $resourcesAndEvents['resources'] ?>,
                 events:  <?php echo $resourcesAndEvents['events'] ?>
 
             });
+
+            var getTimetableState = function(timetable) {
+
+                var state = [],
+                    stateRow,
+                    stateRowEvents,
+                    events,
+                    resources = timetable.fullCalendar('getResources'),
+                    resource,
+                    i, j, k;
+                for(i = 0; i < resources.length; i++) {
+                    resource = resources[i];
+                    stateRow = { title: resource.title, children: [] }
+//                    console.log('resource children:');
+//                    console.log(resource.children);
+                    for(j = 0; j < resource.children.length; j++) {
+                        stateRowEvents = [];
+                        events = timetable.fullCalendar('getResourceEvents', resource.children[j]);
+//                        console.log('row events:');
+//                        console.log(events);
+                        for(k = 0; k < events.length; k++) {
+                            if (events[k].type == 'order') {
+                                stateRowEvents.push(events[k]);
+                            }
+                        }
+                        if (stateRowEvents.length > 0) {
+                            stateRow.children.push( { title: resource.children[j].title, events: stateRowEvents } );
+                        }
+                    }
+                    state.push( stateRow );
+                }
+//                console.log(state);
+                return state;
+            };
+
+            var renderTimetableState = function(state) {
+                var i, j, k,
+                    events,
+                    html = '';
+                for(i = 0; i < state.length; i++) {
+                    html += '<div class="parent">'
+                        + state[i].title
+                        + (state[i].children.length == 0 ? '<span class="not-assigned">&ndash; not assigned</span>' : '')
+                        + '</div>';
+
+                    for(j = 0; j < state[i].children.length; j++) {
+                        html += '<div class="child">'
+                            + '<?php echo __('by') ?> ' + '<span class="who">' + state[i].children[j].title + '</span>';
+                        events = state[i].children[j].events;
+                        html += '<?php echo __('at') ?>';
+                        html += '<span class="times">';
+                        for(k = 0; k < events.length; k++) {
+                            html += '<span class="time">' + events[k].start.format("ddd D.MM, HH:mm") + '</span>';
+                        }
+                        html.replace(/;$/g, '');
+                        html += '</span>';
+                        html += '</div>';
+                    }
+                }
+                $('#timetable-state').html(html);
+            };
+
+            var uuid = function () {
+                var i, random;
+                var uuid = '';
+
+                for (i = 0; i < 32; i++) {
+                    random = Math.random() * 16 | 0;
+                    if (i === 8 || i === 12 || i === 16 || i === 20) {
+                        uuid += '-';
+                    }
+                    uuid += (i === 12 ? 4 : (i === 16 ? (random & 3 | 8) : random))
+                        .toString(16);
+                }
+
+                return uuid;
+            };
+
 
             // re-render calendar on tab activated
             $("#sales_order_view_tabs").on("tabsactivate", function(event, ui) {
@@ -240,6 +186,46 @@
                 }
             });
 
+            $("#timetable-save").on("click", function() {
+                var changedEvents = [];
+                $.each(registry, function(uuid, event) {
+                    changedEvents.push({
+                        user_id: event.user_id,
+                        room_id: event.room_id,
+                        order_item_id: event.order_item_id,
+                        start_at: event.start.format('YYYY-MM-DD HH:mm:00'),
+                        end_at: event.end.format('YYYY-MM-DD HH:mm:00'),
+                        uuid: uuid
+                    });
+                });
+
+                if (changedEvents.length > 0) {
+                    jQuery('body').trigger('processStart');
+                    var data = {
+                        customer_id: '<?php echo $this->getOrder()->getCustomerId() ?>',
+                        order_id: '<?php echo $this->getOrder()->getId() ?>',
+                        events: changedEvents
+                    };
+                    $.post("<?php echo $this->getSaveTimetableUrl(); ?>", {data: JSON.stringify(data)})
+                        .done(function( data ) {
+                            var response = $.parseJSON(data);
+                            console.log(response);
+                            registry = {};
+                            changedEvents = [];
+                            jQuery('body').trigger('processStop');
+                        })
+                        .fail(function() {
+                            jQuery('body').trigger('processStop');
+                            $('body').notification('clear').notification('add', {
+                                error: true,
+                                message: $.mage.__('Error happened during schedule save.'),
+                                insertMethod: function(message) {
+                                    $('.page-main-actions').after(message);
+                                }
+                            });
+                        });
+                }
+            });
         });
     });
 </script>

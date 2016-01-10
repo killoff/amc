@@ -67,6 +67,16 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
         return $this->coreRegistry->registry('current_order');
     }
 
+    public function getInitialDate()
+    {
+        return $this->getData('initial_date') ? $this->getData('initial_date') : $this->getOrder()->getCreatedAt();
+    }
+
+    public function getSaveTimetableUrl()
+    {
+        return $this->getUrl('timetable/order/save');
+    }
+
     /**
      * Return array of resources and events for timetable calendar.
      *      Resources = Products and relevant users
@@ -104,7 +114,9 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
                 $resource['children'][] = [
                     'id'    => sprintf('i%s_u%s', $item->getId(), $userId),
                     'title' => $this->userHelper->getUserShortName($this->getUserInfo($userId)),
-                    'type'  => 'user'
+                    'type'  => 'user',
+                    'order_item_id' => $item->getId(),
+                    'user_id' => $userId
                 ];
             }
             $resources[] = $resource;

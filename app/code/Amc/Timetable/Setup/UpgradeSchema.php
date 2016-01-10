@@ -88,5 +88,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
             'Order timetable events'
         );
         $installer->getConnection()->createTable($table);
+
+        $connection = $setup->getConnection();
+        $connection->addColumn($installer->getTable('amc_timetable_order_event'), 'uuid', 'VARCHAR(50) NOT NULL AFTER room_id');
+        $connection->addIndex(
+            $installer->getTable('amc_timetable_order_event'),
+            'timetable_order_event_uuid',
+            'uuid',
+            \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE
+        );
+
+        $installer->endSetup();
     }
 }

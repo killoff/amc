@@ -1,6 +1,6 @@
 <?php
 
-namespace Amc\Timetable\Model\ResourceModel\OrderItem;
+namespace Amc\Timetable\Model\ResourceModel\OrderEvent;
 
 use Magento\Framework\Model\ModelResource\Db\Collection\AbstractCollection;
 
@@ -9,7 +9,7 @@ class Collection extends AbstractCollection
     /**
      * @var string
      */
-    protected $_idFieldName = 'item_id';
+    protected $_idFieldName = 'event_id';
 
     /**
      * Define resource model
@@ -18,6 +18,6 @@ class Collection extends AbstractCollection
      */
     protected function _construct()
     {
-        $this->_init('Amc\Timetable\Model\OrderItem', 'Amc\Timetable\Model\ResourceModel\OrderItem');
+        $this->_init('Amc\Timetable\Model\OrderEvent', 'Amc\Timetable\Model\ResourceModel\OrderEvent');
     }
 }
