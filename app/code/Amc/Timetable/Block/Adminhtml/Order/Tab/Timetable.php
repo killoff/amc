@@ -11,14 +11,14 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
     /** @var \Magento\Framework\Registry */
     protected $coreRegistry = null;
 
-    /** @var \Magento\Sales\Helper\Admin */
-    private $adminHelper;
-
     /** @var \Amc\UserSchedule\Model\ResourceModel\Schedule\Item\CollectionFactory */
     private $scheduleCollectionFactory;
 
     /** @var \Magento\User\Model\ResourceModel\User\CollectionFactory */
     private $userCollectionFactory;
+
+    /** @var \Amc\Timetable\Model\ResourceModel\OrderEvent\CollectionFactory */
+    private $orderEventCollectionFactory;
 
     /** @var \Magento\User\Model\ResourceModel\User\Collection */
     private $userCollection;
@@ -32,27 +32,27 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
     /**
      * @param \Magento\Backend\Block\Template\Context $context
      * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Sales\Helper\Admin $adminHelper
      * @param \Amc\UserSchedule\Model\ResourceModel\Schedule\Item\CollectionFactory $scheduleCollectionFactory,
      * @param \Magento\User\Model\ResourceModel\User\CollectionFactory $userCollectionFactory,
+     * @param \Amc\Timetable\Model\ResourceModel\OrderEvent\CollectionFactory $orderEventCollectionFactory,
      * @param \Magento\Framework\Json\EncoderInterface $jsonEncoder,
      * @param array $data
      */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\Registry $registry,
-        \Magento\Sales\Helper\Admin $adminHelper,
         \Amc\UserSchedule\Model\ResourceModel\Schedule\Item\CollectionFactory $scheduleCollectionFactory,
         \Magento\User\Model\ResourceModel\User\CollectionFactory $userCollectionFactory,
+        \Amc\Timetable\Model\ResourceModel\OrderEvent\CollectionFactory $orderEventCollectionFactory,
         \Magento\Framework\Json\EncoderInterface $jsonEncoder,
         \Amc\User\Helper\Data $userHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->coreRegistry = $registry;
-        $this->adminHelper = $adminHelper;
         $this->scheduleCollectionFactory = $scheduleCollectionFactory;
         $this->userCollectionFactory = $userCollectionFactory;
+        $this->orderEventCollectionFactory = $orderEventCollectionFactory;
         $this->jsonEncoder = $jsonEncoder;
         $this->userHelper = $userHelper;
     }
@@ -90,6 +90,8 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
         $events = [];
         /** @var \Magento\Sales\Model\Order\Item $item */
         foreach ($this->getOrder()->getAllVisibleItems() as $item) {
+
+            // add user schedule as background events
             $scheduleCollection = $this->prepareUserScheduleCollection();
             $scheduleCollection->addProductFilter($item->getProductId());
             $productUserIds = [];
@@ -102,9 +104,29 @@ class Timetable extends \Magento\Backend\Block\Template implements \Magento\Back
                     'end'        => $schedule->getEndAt(),
                     'rendering'  => 'background',
                     'overlap'    => true,
-                    'title'      => 'room '.$schedule->getRoomId()
+                    'title'      => 'room '.$schedule->getRoomId(),
+                    'type'       => 'schedule'
                 ];
             }
+
+            // add time slots for arranged events
+            /** @var \Amc\Timetable\Model\ResourceModel\OrderEvent\Collection $orderEventCollection */
+            $orderEventCollection = $this->orderEventCollectionFactory->create();
+            $orderEventCollection->addFieldToFilter('order_item_id', $item->getId());
+            foreach ($orderEventCollection->getItems() as $event) {
+                $productUserIds[$schedule->getData('user_id')] = 1;
+                $events[] = [
+                    'resourceId' => sprintf('i%s_u%s', $item->getId(), $event->getData('user_id')),
+                    'id'         => $event->getData('uuid'),
+                    'uuid'       => $event->getData('uuid'),
+                    'start'      => $event->getStartAt(),
+                    'end'        => $event->getEndAt(),
+                    'overlap'    => false,
+                    'title'      => '', // 'room '.$schedule->getRoomId()
+                    'type'       => 'order'
+                ];
+            }
+
             $resource = [
                 'id'    => 'i' . $item->getId(),
                 'title' => $item->getName(),

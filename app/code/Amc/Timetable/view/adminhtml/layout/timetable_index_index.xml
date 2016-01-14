@@ -15,10 +15,10 @@
     </head>
     <body>
         <referenceContainer name="js">
-            <block class="Magento\Backend\Block\Template" name="timetable.ticket.scheduler.js" template="Amc_Timetable::scheduler_js.phtml"/>
+            <block class="Amc\Timetable\Block\Adminhtml\Index\Timetable" name="index.timetable.js" template="Amc_Timetable::index/index-js.phtml"/>
         </referenceContainer>
         <referenceContainer name="content">
-            <block class="Magento\Backend\Block\Template" name="timetable.ticket.scheduler" template="Amc_Timetable::scheduler.phtml"/>
+            <block class="Amc\Timetable\Block\Adminhtml\Index\Timetable" name="index.timetable" template="Amc_Timetable::index/index.phtml"/>
         </referenceContainer>
     </body>
 </page>

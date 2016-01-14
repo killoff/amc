@@ -12,7 +12,10 @@
         $(function() { // document ready
 
             var $timetable = $('#order-timetable');
+            window.order_timetable = $timetable;
             var registry = {};
+
+            $('#timetable-save').addClass('disabled');
 
             $timetable.fullCalendar({
                 defaultDate: '<?php echo $this->getInitialDate() ?>',
@@ -47,46 +50,61 @@
                 slotDuration: '00:15',
                 slotWidth: 15,
                 eventResize: function(event, delta, revertFunc) {
-                    registry[event.id] = event;
+                    registry[event.uuid] = event;
                     renderTimetableState(
                         getTimetableState($timetable)
                     );
+                    $('#timetable-save').removeClass('disabled');
                     console.log('event resized');
                     console.log(registry);
                 },
                 eventDrop: function(event, delta, revertFunc) {
-                    registry[event.id] = event;
+                    registry[event.uuid] = event;
                     renderTimetableState(
                         getTimetableState($timetable)
                     );
+                    $('#timetable-save').removeClass('disabled');
                     console.log('event moved');
                     console.log(registry);
                 },
                 eventClick: function(event, jsEvent, view) {
-                    console.log('event clicked');
-//                    console.log(registry);
+
+                    if (window.confirm('Delete time slot?')) {
+                        event.deleted = 1;
+                        registry[event.uuid] = event;
+                        $timetable.fullCalendar('removeEvents', event.id);
+                        $('#timetable-save').removeClass('disabled');
+                        renderTimetableState(
+                            getTimetableState($timetable)
+                        );
+                    }
                 },
-                select: function(start, end, event, calendar, resource) {
+                select: function(start, end, jsEvent, calendar, resource) {
                     var eventData;
                     var resourceId = resource.id;
                     var resourceType = resource.type;
                     if (resourceId && resourceType === 'user') {
+                        var eventUuid = uuid();
                         eventData = {
+                            id: eventUuid,
                             title: '', // time start - time end?
                             start: start,
                             end: end,
                             resourceId: resourceId,
-                            id: uuid(),
-                            type: 'order'
+                            uuid: eventUuid,
+                            type: 'order',
+                            user_id: resource.user_id,
+                            order_item_id: resource.order_item_id
                         };
                         $timetable.fullCalendar('renderEvent', eventData, true); // stick? = true
-                        registry[eventData.id] = eventData;
-                        console.log('event selected');
-                        console.log(registry);
+                        registry[eventUuid] = eventData;
                         renderTimetableState(
                             getTimetableState($timetable)
                         );
-
+                        $('#timetable-save').removeClass('disabled');
+                        console.log('event selected');
+                        console.log(eventData);
+                        console.log(registry);
                     }
                     $timetable.fullCalendar('unselect');
                 },
@@ -101,6 +119,8 @@
 
             });
 
+
+
             var getTimetableState = function(timetable) {
 
                 var state = [],
@@ -110,6 +130,8 @@
                     resources = timetable.fullCalendar('getResources'),
                     resource,
                     i, j, k;
+                console.log('rendering state');
+                console.log(resources);
                 for(i = 0; i < resources.length; i++) {
                     resource = resources[i];
                     stateRow = { title: resource.title, children: [] }
@@ -136,6 +158,7 @@
             };
 
             var renderTimetableState = function(state) {
+                gotoEvent('qqqqq');
                 var i, j, k,
                     events,
                     html = '';
@@ -152,7 +175,7 @@
                         html += '<?php echo __('at') ?>';
                         html += '<span class="times">';
                         for(k = 0; k < events.length; k++) {
-                            html += '<span class="time">' + events[k].start.format("ddd D.MM, HH:mm") + '</span>';
+                            html += '<span class="time" data-event-id="' + events[k].uuid + '" onclick="gotoEvent(this);">' + events[k].start.format("ddd D.MM, HH:mm") + '</span>';
                         }
                         html.replace(/;$/g, '');
                         html += '</span>';
@@ -160,6 +183,13 @@
                     }
                 }
                 $('#timetable-state').html(html);
+            };
+
+            window.gotoEvent = function(timeSlot) {
+                var events = $timetable.fullCalendar( 'clientEvents', $(timeSlot).attr('data-event-id'));
+                if (events.length > 0) {
+                    window.order_timetable.fullCalendar( 'gotoDate', events[0].start);
+                }
             };
 
             var uuid = function () {
@@ -178,11 +208,13 @@
                 return uuid;
             };
 
-
             // re-render calendar on tab activated
             $("#sales_order_view_tabs").on("tabsactivate", function(event, ui) {
                 if(ui.newTab.attr('data-ui-id').indexOf('timetable') !== -1) {
                     $timetable.fullCalendar('render');
+                    renderTimetableState(
+                        getTimetableState($timetable)
+                    );
                 }
             });
 
@@ -191,11 +223,12 @@
                 $.each(registry, function(uuid, event) {
                     changedEvents.push({
                         user_id: event.user_id,
-                        room_id: event.room_id,
+                        //room_id: event.room_id, // todo: cannot define room_id so far
                         order_item_id: event.order_item_id,
                         start_at: event.start.format('YYYY-MM-DD HH:mm:00'),
                         end_at: event.end.format('YYYY-MM-DD HH:mm:00'),
-                        uuid: uuid
+                        uuid: uuid,
+                        deleted: event.deleted
                     });
                 });
 
@@ -209,9 +242,16 @@
                     $.post("<?php echo $this->getSaveTimetableUrl(); ?>", {data: JSON.stringify(data)})
                         .done(function( data ) {
                             var response = $.parseJSON(data);
-                            console.log(response);
+                            var saved = response.saved;
+                            // validate data consistency
+                            $.each(changedEvents, function(index, data) {
+                                if (! saved.hasOwnProperty(data.uuid)) {
+                                    alert(data.start_at + ' - ' + data.end_at + ' failed to save');
+                                }
+                            });
                             registry = {};
                             changedEvents = [];
+                            $('#timetable-save').addClass('disabled');
                             jQuery('body').trigger('processStop');
                         })
                         .fail(function() {

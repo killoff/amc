@@ -30,7 +30,7 @@ class Save extends \Magento\Backend\App\Action
     public function execute()
     {
         try {
-            $response = array('error' => false);
+            $response = array('error' => false, 'saved' => []);
             $data = $this->jsonDecoder->decode(
                 $this->getRequest()->getParam('data')
             );
@@ -42,14 +42,24 @@ class Save extends \Magento\Backend\App\Action
                 return;
             }
             $saved = [];
-            foreach ($data['events'] as $uuid => $eventData) {
+            // todo: validation for each $eventData
+            foreach ($data['events'] as $eventData) {
+                $uuid = isset($eventData['uuid']) ? $eventData['uuid'] : '';
+                if (! $uuid) {
+                    continue;
+                }
+                $eventData['room_id'] = 1; // todo: cannot define room_id so far
                 $eventData['customer_id'] = $data['customer_id'];
                 /** @var \Amc\Timetable\Model\OrderEvent $eventModel */
                 $eventModel = $this->orderEventFactory->create();
                 $eventModel->load($uuid,'uuid');
-                $eventModel->setData($eventData);
-                $eventModel->save();
-                $saved[$eventModel->getId()] = $uuid;
+                if (isset($eventData['deleted']) && $eventData['deleted']) {
+                    $eventModel->delete();
+                } else {
+                    $eventModel->addData($eventData);
+                    $eventModel->save();
+                }
+                $saved[$uuid] = $eventModel->getId();
             }
             $response['saved'] = $saved;
 
