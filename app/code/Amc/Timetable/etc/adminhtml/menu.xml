@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Amc_Timetable::timetable" title="Timetable" module="Amc_Menu" sortOrder="0" resource="Amc_Timetable::timetable" action="timetable/index/" />
+    </menu>
+</config>

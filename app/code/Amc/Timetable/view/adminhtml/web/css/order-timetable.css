@@ -1,0 +1,33 @@
+.timetable-state {
+    /*width: 60%*/
+}
+.timetable-save {
+    float: right;
+}
+.timetable-save .save{
+    padding: 20px 30px 20px 30px;
+}
+.timetable-state .parent {
+    margin-top: 10px;
+    font-size: 1.3em;
+}
+.timetable-state .child {
+    margin-left: 5px;
+    margin-top: 10px;
+}
+.timetable-state .who {
+    margin-right: 10px;
+    font-size: 0.9em;
+}
+.timetable-state .times {
+    margin-left: 10px;
+}
+.timetable-state .time {
+    margin-right: 10px;
+    cursor: pointer;
+    border-bottom: 1px dashed #006600;
+}
+.timetable-state .not-assigned {
+    margin-left: 10px;
+    color: #fe7834;
+}

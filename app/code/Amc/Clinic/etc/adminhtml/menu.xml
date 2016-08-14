@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Amc_Clinic::clinic" title="Clinic" module="Amc_Clinic" sortOrder="30" resource="Amc_Clinic::clinic"/>
+        <add id="Amc_Clinic::clinic_office" title="Office" module="Amc_Clinic" sortOrder="100" parent="Amc_Clinic::clinic" resource="Amc_Clinic::clinic"/>
+        <add id="Amc_Clinic::clinic_room" title="Rooms" module="Amc_Clinic" sortOrder="10" parent="Amc_Clinic::clinic_office" action="clinic/room/" resource="Amc_Clinic::clinic_room"/>
+    </menu>
+</config>

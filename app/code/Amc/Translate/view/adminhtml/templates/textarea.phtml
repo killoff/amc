@@ -1,0 +1,12 @@
+<?php
+/** @var $block \Amc\Translate\Block\Adminhtml\Index\Textarea */
+?>
+<form action="<?php echo $block->getUrl('translate/index/save') ?>" method="post" id="translation_form">
+    <input name="form_key" type="hidden" value="<?php /* @escapeNotVerified */ echo $block->getFormKey() ?>" />
+    <textarea name="translations"
+              style="width:100%;font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New, monospace;"
+              rows=20
+              wrap="off"><?php echo $block->escapeHtml($block->getTranslationsAsText()) ?>
+
+</textarea>
+</form>

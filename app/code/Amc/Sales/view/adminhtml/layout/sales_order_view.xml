@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="order_tab_info">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Amc_Sales::order/view/tab/info.phtml</argument>
+            </action>
+            <container name="items_after_container" htmlTag="div" htmlClass="order-payment-additional" />
+        </referenceBlock>
+        <referenceBlock name="order_info">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Amc_Sales::order/view/info.phtml</argument>
+            </action>
+        </referenceBlock>
+        <referenceBlock name="order_items">
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Amc_Sales::order/view/items.phtml</argument>
+            </action>
+            <arguments>
+                <argument name="template" xsi:type="string">Amc_Sales::order/view/items.phtml</argument>
+                <argument name="columns" xsi:type="array">
+                    <item name="product" xsi:type="string" translate="true">Product</item>
+                    <item name="price" xsi:type="string" translate="true">Price</item>
+                    <item name="ordered-qty" xsi:type="string" translate="true">Qty</item>
+                    <item name="total" xsi:type="string" translate="true">Row Total</item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+        <referenceBlock name="default">
+            <arguments>
+                <argument name="columns" xsi:type="array">
+                    <item name="product" xsi:type="string" translate="false">col-product</item>
+                    <item name="price" xsi:type="string" translate="false">col-price</item>
+                    <item name="qty" xsi:type="string" translate="false">col-ordered-qty</item>
+                    <item name="total" xsi:type="string" translate="false">col-total</item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

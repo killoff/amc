@@ -1,0 +1,280 @@
+<div id="order-timetable"></div>
+<div>
+    <div id="timetable-state" class="timetable-state"></div>
+    <div class="timetable-save">
+        <button id="timetable-save" title="Save" type="button" class="action-default scalable save primary" onclick="">
+            <span>Save</span>
+        </button>
+    </div>
+</div>
+
+<?php /** @var $this \Amc\Timetable\Block\Adminhtml\Order\Tab\Timetable */ ?>
+<?php $resourcesAndEvents = $this->getResourcesAndEvents() ?>
+<script>
+    require([
+        "moment",
+        "jquery",
+        "jquery/jquery-ui",
+        "fullcalendar",
+        "fullcalendarScheduler"
+    ], function(moment, $){
+
+        $(function() { // document ready
+
+            var $timetable = $('#order-timetable');
+            window.order_timetable = $timetable;
+            var registry = {};
+
+            $('#timetable-save').addClass('disabled');
+
+            $timetable.fullCalendar({
+                defaultDate: '<?php echo $this->getInitialDate() ?>',
+                editable: false,
+                contentHeight: 'auto',
+                scrollTime: '00:00',
+                header: {
+                    left: 'today prev,next',
+                    center: 'title',
+                    right: 'timelineDay,timelineThreeDays'
+                },
+                defaultView: 'timelineDay',
+                views: {
+                    timelineThreeDays: {
+                        type: 'timeline',
+                        duration: { days: 3 }
+                    }
+                },
+                businessHours: {
+                    start: '9:00',
+                    end: '20:00',
+                    dow: [ 1, 2, 3, 4, 5 ]
+                },
+                minTime: '09:00', // todo: impldement config "Working hours"
+                maxTime: '20:00', // todo: impldement config "Working hours"
+                slotLabelFormat: 'HH:mm',
+                eventOverlap: true, // will cause the event to take up entire resource height
+                resourceAreaWidth: '25%',
+                resourceLabelText: "<?php echo $this->escapeQuote(__('Executant')) ?>",
+                selectable: true,
+                selectHelper: true,
+                slotDuration: '00:15',
+                slotWidth: 15,
+                eventResize: function(event, delta, revertFunc) {
+                    registry[event.uuid] = event;
+                    renderTimetableState(
+                        getTimetableState($timetable)
+                    );
+                    $('#timetable-save').removeClass('disabled');
+                    console.log('event resized');
+                    console.log(registry);
+                },
+                eventDrop: function(event, delta, revertFunc) {
+                    registry[event.uuid] = event;
+                    renderTimetableState(
+                        getTimetableState($timetable)
+                    );
+                    $('#timetable-save').removeClass('disabled');
+                    console.log('event moved');
+                    console.log(registry);
+                },
+                eventClick: function(event, jsEvent, view) {
+
+                    if (window.confirm('Delete time slot?')) {
+                        event.deleted = 1;
+                        registry[event.uuid] = event;
+                        $timetable.fullCalendar('removeEvents', event.id);
+                        $('#timetable-save').removeClass('disabled');
+                        renderTimetableState(
+                            getTimetableState($timetable)
+                        );
+                    }
+                },
+                select: function(start, end, jsEvent, calendar, resource) {
+                    var eventData;
+                    var resourceId = resource.id;
+                    var resourceType = resource.type;
+                    if (resourceId && resourceType === 'user') {
+                        var eventUuid = uuid();
+                        eventData = {
+                            id: eventUuid,
+                            title: '', // time start - time end?
+                            start: start,
+                            end: end,
+                            resourceId: resourceId,
+                            uuid: eventUuid,
+                            type: 'order',
+                            user_id: resource.user_id,
+                            sales_item_id: resource.sales_item_id
+                        };
+                        $timetable.fullCalendar('renderEvent', eventData, true); // stick? = true
+                        registry[eventUuid] = eventData;
+                        renderTimetableState(
+                            getTimetableState($timetable)
+                        );
+                        $('#timetable-save').removeClass('disabled');
+                        console.log('event selected');
+                        console.log(eventData);
+                        console.log(registry);
+                    }
+                    $timetable.fullCalendar('unselect');
+                },
+
+                selectOverlap: function(event) {
+                    console.log(event);
+                    return event.rendering === 'background';
+                },
+
+                resources: <?php echo $resourcesAndEvents['resources'] ?>,
+                events:  <?php echo $resourcesAndEvents['events'] ?>
+
+            });
+
+
+
+            var getTimetableState = function(timetable) {
+
+                var state = [],
+                    stateRow,
+                    stateRowEvents,
+                    events,
+                    resources = timetable.fullCalendar('getResources'),
+                    resource,
+                    i, j, k;
+                console.log('rendering state');
+                console.log(resources);
+                for(i = 0; i < resources.length; i++) {
+                    resource = resources[i];
+                    stateRow = { title: resource.title, children: [] }
+//                    console.log('resource children:');
+//                    console.log(resource.children);
+                    for(j = 0; j < resource.children.length; j++) {
+                        stateRowEvents = [];
+                        events = timetable.fullCalendar('getResourceEvents', resource.children[j]);
+//                        console.log('row events:');
+//                        console.log(events);
+                        for(k = 0; k < events.length; k++) {
+                            if (events[k].type == 'order') {
+                                stateRowEvents.push(events[k]);
+                            }
+                        }
+                        if (stateRowEvents.length > 0) {
+                            stateRow.children.push( { title: resource.children[j].title, events: stateRowEvents } );
+                        }
+                    }
+                    state.push( stateRow );
+                }
+//                console.log(state);
+                return state;
+            };
+
+            var renderTimetableState = function(state) {
+                gotoEvent('qqqqq');
+                var i, j, k,
+                    events,
+                    html = '';
+                for(i = 0; i < state.length; i++) {
+                    html += '<div class="parent">'
+                        + state[i].title
+                        + (state[i].children.length == 0 ? '<span class="not-assigned">&ndash; not assigned</span>' : '')
+                        + '</div>';
+
+                    for(j = 0; j < state[i].children.length; j++) {
+                        html += '<div class="child">'
+                            + '<?php echo __('by') ?> ' + '<span class="who">' + state[i].children[j].title + '</span>';
+                        events = state[i].children[j].events;
+                        html += '<?php echo __('at') ?>';
+                        html += '<span class="times">';
+                        for(k = 0; k < events.length; k++) {
+                            html += '<span class="time" data-event-id="' + events[k].uuid + '" onclick="gotoEvent(this);">' + events[k].start.format("ddd D.MM, HH:mm") + '</span>';
+                        }
+                        html.replace(/;$/g, '');
+                        html += '</span>';
+                        html += '</div>';
+                    }
+                }
+                $('#timetable-state').html(html);
+            };
+
+            window.gotoEvent = function(timeSlot) {
+                var events = $timetable.fullCalendar( 'clientEvents', $(timeSlot).attr('data-event-id'));
+                if (events.length > 0) {
+                    window.order_timetable.fullCalendar( 'gotoDate', events[0].start);
+                }
+            };
+
+            var uuid = function () {
+                var i, random;
+                var uuid = '';
+
+                for (i = 0; i < 32; i++) {
+                    random = Math.random() * 16 | 0;
+                    if (i === 8 || i === 12 || i === 16 || i === 20) {
+                        uuid += '-';
+                    }
+                    uuid += (i === 12 ? 4 : (i === 16 ? (random & 3 | 8) : random))
+                        .toString(16);
+                }
+
+                return uuid;
+            };
+
+            // re-render calendar on tab activated
+            $("#sales_order_view_tabs").on("tabsactivate", function(event, ui) {
+                if(ui.newTab.attr('data-ui-id').indexOf('order-info') !== -1) {
+                    $timetable.fullCalendar('render');
+                    renderTimetableState(
+                        getTimetableState($timetable)
+                    );
+                }
+            });
+
+            $("#timetable-save").on("click", function() {
+                var changedEvents = [];
+                $.each(registry, function(uuid, event) {
+                    changedEvents.push({
+                        user_id: event.user_id,
+                        room_id: event.room_id,
+                        sales_item_id: event.sales_item_id,
+                        start_at: event.start.format('YYYY-MM-DD HH:mm:00'),
+                        end_at: event.end.format('YYYY-MM-DD HH:mm:00'),
+                        uuid: uuid,
+                        deleted: event.deleted
+                    });
+                });
+
+                if (changedEvents.length > 0) {
+                    jQuery('body').trigger('processStart');
+                    var data = {
+                        customer_id: '<?php echo $this->getCustomerId() ?>',
+                        events: changedEvents
+                    };
+                    $.post("<?php echo $this->getSaveTimetableUrl(); ?>", {data: JSON.stringify(data)})
+                        .done(function( data ) {
+                            var response = $.parseJSON(data);
+                            var saved = response.saved;
+                            // validate data consistency
+                            $.each(changedEvents, function(index, data) {
+                                if (! saved.hasOwnProperty(data.uuid)) {
+                                    alert(data.start_at + ' - ' + data.end_at + ' failed to save');
+                                }
+                            });
+                            registry = {};
+                            changedEvents = [];
+                            $('#timetable-save').addClass('disabled');
+                            jQuery('body').trigger('processStop');
+                        })
+                        .fail(function() {
+                            jQuery('body').trigger('processStop');
+                            $('body').notification('clear').notification('add', {
+                                error: true,
+                                message: $.mage.__('Error happened during schedule save.'),
+                                insertMethod: function(message) {
+                                    $('.page-main-actions').after(message);
+                                }
+                            });
+                        });
+                }
+            });
+        });
+    });
+</script>

@@ -1,0 +1,72 @@
+<?php /** @var \Amc\User\Block\User\Edit\Tab\Products\Form $block */ ?>
+<div class="no-display">
+    <input type="hidden" name="user_products" id="in_user_products" value=""/>
+</div>
+<?php if (($blockGrid = $block->getLayout()->getBlock('user.products.grid')) && ($_gridJsObject = $blockGrid->getJsObjectName())): ?>
+<script>
+    require([
+        "mage/adminhtml/grid"
+    ], function(){
+
+        var userProducts = $H(<?php /* @escapeNotVerified */ echo $block->getProductsJson() ?>);
+        $('in_user_products').value = Object.toJSON(userProducts);
+
+        function registerUserProduct(grid, element, checked) {
+
+            if(checked) {
+                if(element.incomeElement) {
+                    element.incomeElement.disabled = false;
+                    userProducts.set(element.value, element.incomeElement.value);
+                }
+            } else {
+                if(element.incomeElement) {
+                    element.incomeElement.disabled = true;
+                }
+                userProducts.unset(element.value);
+            }
+            $('in_user_products').value = Object.toJSON(userProducts);
+            grid.reloadParams = {'selected_products[]' : userProducts.keys()};
+        }
+        function userProductRowClick(grid, event) {
+            var trElement = Event.findElement(event, 'tr');
+            var isInput   = Event.element(event).tagName == 'INPUT';
+            if(trElement) {
+                var checkbox = Element.getElementsBySelector(trElement, 'input');
+                if(checkbox[0]) {
+                    var checked = isInput ? checkbox[0].checked : !checkbox[0].checked;
+                    <?php /* @escapeNotVerified */ echo $_gridJsObject ?>.setCheckboxChecked(checkbox[0], checked);
+                }
+            }
+        }
+        function incomeChange(event) {
+            var element = Event.element(event);
+            if (element && element.checkboxElement && element.checkboxElement.checked) {
+                userProducts.set(element.checkboxElement.value, element.value);
+                $('in_user_products').value = Object.toJSON(userProducts);
+            }
+        }
+
+        var tabIndex = 1000;
+        function userProductRowInit(grid, row) {
+            var checkbox = $(row).getElementsByClassName('checkbox')[0];
+            var income = $(row).getElementsByClassName('input-text')[0];
+
+            if (checkbox && income) {
+                checkbox.incomeElement = income;
+                income.checkboxElement = checkbox;
+                income.disabled = !checkbox.checked;
+                income.tabIndex = tabIndex++;
+                Event.observe(income, 'keyup', incomeChange);
+            }
+        }
+
+
+        <?php /* @escapeNotVerified */ echo $_gridJsObject ?>.rowClickCallback = userProductRowClick;
+        <?php /* @escapeNotVerified */ echo $_gridJsObject ?>.initRowCallback = userProductRowInit;
+        <?php /* @escapeNotVerified */ echo $_gridJsObject ?>.checkboxCheckCallback = registerUserProduct;
+        if (<?php /* @escapeNotVerified */ echo $_gridJsObject ?>.rows) {
+            <?php /* @escapeNotVerified */ echo $_gridJsObject ?>.rows.each(function (row) {userProductRowInit(<?php /* @escapeNotVerified */ echo $_gridJsObject ?>, row)});
+        }
+    });
+</script>
+<?php endif; ?>

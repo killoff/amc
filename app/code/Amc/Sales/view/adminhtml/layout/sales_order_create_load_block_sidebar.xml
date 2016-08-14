@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <!-- remove not applicable blocks from sidebar -->
+        <referenceBlock name="cart" remove="true" />
+        <referenceBlock name="wishlist" remove="true" />
+        <referenceBlock name="viewed" remove="true" />
+        <referenceBlock name="compared" remove="true" />
+        <referenceBlock name="pcompared" remove="true" />
+        <referenceBlock name="pviewed" remove="true" />
+    </body>
+</page>

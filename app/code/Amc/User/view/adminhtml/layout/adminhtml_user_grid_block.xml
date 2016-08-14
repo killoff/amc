@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="adminhtml.user.grid.container">
+            <referenceBlock name="adminhtml.user.grid">
+                <referenceBlock name="permission.user.grid.columnSet">
+                    <block class="Magento\Backend\Block\Widget\Grid\Column" as="user_fathername" after="firstname">
+                        <arguments>
+                            <argument name="header" xsi:type="string" translate="true">Fathers Name</argument>
+                            <argument name="type" xsi:type="string">text</argument>
+                            <argument name="index" xsi:type="string">user_fathername</argument>
+                            <argument name="escape" xsi:type="string">1</argument>
+                            <argument name="column_css_class" xsi:type="string">col-name</argument>
+                            <argument name="header_css_class" xsi:type="string">col-name</argument>
+                        </arguments>
+                    </block>
+                </referenceBlock>
+            </referenceBlock>
+        </referenceBlock>
+    </body>
+</page>

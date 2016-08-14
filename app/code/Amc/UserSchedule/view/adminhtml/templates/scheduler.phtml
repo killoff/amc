@@ -1,0 +1,9 @@
+<div class="users-wrap">
+    <div class="users-list">
+        <h4><?php echo $block->getUsersListLabel(); ?></h4>
+        <?php foreach ($block->getUsersData() as $user): ?>
+        <div class='fc-event' data-duration='04:00' data-user-id='<?php echo $user['value']; ?>'><?php echo $user['label']; ?></div>
+        <?php endforeach; ?>
+    </div>
+    <div id='calendar'></div>
+</div>

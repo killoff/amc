@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="\Magento\Sales\Block\Adminhtml\Order\Create\Search">
+        <plugin name="timetable_change_order_create_add_products_button" type="Amc\Timetable\Model\Plugin\Order\Create\Search"/>
+    </type>
+    <type name="\Magento\Sales\Model\AdminOrder\Create">
+        <plugin name="timetable_on_admin_order_create" type="Amc\Timetable\Model\Plugin\Order\Create"/>
+    </type>
+</config>

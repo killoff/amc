@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <remove id="Magento_Backend::dashboard"/>
+        <remove id="Magento_Backend::content"/>
+        <remove id="Magento_Backend::marketing"/>
+        <remove id="Magento_Backend::stores"/>
+        <remove id="Magento_Backend::system_convert"/>
+        <remove id="Magento_Catalog::catalog"/>
+        <remove id="Magento_Customer::customer"/>
+        <remove id="Magento_Marketplace::partners"/>
+        <remove id="Magento_Sales::sales"/>
+        <remove id="Magento_Reports::report_marketing"/>
+        <remove id="Magento_Reports::report_statistics"/>
+        <remove id="Magento_Reports::report_salesroot_tax"/>
+        <remove id="Magento_Reports::report_salesroot_shipping"/>
+        <remove id="Magento_Reports::report_products_viewed"/>
+        <remove id="Magento_Paypal::report_salesroot_paypal_settlement_reports"/>
+        <remove id="Magento_Review::report_review"/>
+        <remove id="Magento_Downloadable::report_products_downloads"/>
+        <remove id="Magento_User::system_acl"/>
+        <remove id="Magento_Integration::system_extensions"/>
+
+        <add id="Amc_Menu::sales_order" title="Orders" module="Amc_Menu" sortOrder="10" action="sales/order" resource="Magento_Sales::sales_order"/>
+        <add id="Amc_Menu::customer" title="Customers" module="Amc_Menu" sortOrder="20" action="customer/index/" resource="Magento_Customer::customer"/>
+
+        <add id="Amc_Menu::clinic_users" title="Employees" module="Amc_Menu" sortOrder="10" parent="Amc_Clinic::clinic" resource="Magento_User::acl"/>
+        <add id="Amc_Menu::clinic_users_users" title="All Employees" module="Amc_Menu" sortOrder="10" parent="Amc_Menu::clinic_users" action="adminhtml/user" resource="Magento_User::acl_users"/>
+        <add id="Amc_Menu::clinic_users_roles" title="Employee Roles" module="Amc_Menu" sortOrder="30" parent="Amc_Menu::clinic_users" action="adminhtml/user_role" resource="Magento_User::acl_roles"/>
+        <add id="Amc_Menu::clinic_catalog" title="Catalog" module="Amc_Menu" sortOrder="20" parent="Amc_Clinic::clinic" resource="Magento_Catalog::catalog"/>
+        <add id="Amc_Menu::clinic_catalog_products" title="Products" module="Amc_Menu" sortOrder="10" parent="Amc_Menu::clinic_catalog" action="catalog/product/" resource="Magento_Catalog::products"/>
+        <add id="Amc_Menu::clinic_catalog_categories" title="Categories" module="Amc_Menu" sortOrder="20" parent="Amc_Menu::clinic_catalog" action="catalog/category/" resource="Magento_Catalog::categories"/>
+
+        <add id="Amc_Menu::system_attributes" title="Attributes" module="Amc_Menu" sortOrder="40" parent="Magento_Backend::system" resource="Magento_Backend::stores_attributes"/>
+        <add id="Amc_Menu::system_catalog_attributes" title="Attributes" module="Amc_Menu" sortOrder="30" parent="Amc_Menu::system_attributes" action="catalog/product_attribute/" resource="Magento_Catalog::attributes_attributes"/>
+        <add id="Amc_Menu::system_catalog_attributes_sets" title="Attribute Set" module="Amc_Menu" sortOrder="40" parent="Amc_Menu::system_attributes" action="catalog/product_set/" resource="Magento_Catalog::sets"/>
+        <add id="Amc_Menu::system_settings" title="Settings" module="Amc_Menu" sortOrder="0" parent="Magento_Backend::system" resource="Magento_Config::config"/>
+        <add id="Amc_Menu::system_configuration" title="Configuration" module="Amc_Menu" sortOrder="0" parent="Amc_Menu::system_settings" action="adminhtml/system_config" resource="Magento_Config::config"/>
+        <add id="Amc_Menu::system_customer_group" title="Customer Groups" module="Amc_Menu" sortOrder="10" parent="Amc_Menu::system_settings" action="customer/group" resource="Magento_Customer::group"/>
+        <add id="Amc_Menu::system_currency_rates" title="Currency Rates" module="Amc_Menu" sortOrder="20" parent="Amc_Menu::system_settings" action="adminhtml/system_currency" resource="Magento_CurrencySymbol::currency_rates"/>
+        <add id="Amc_Menu::system_currency_symbols" title="Currency Symbols" module="Amc_Menu" sortOrder="30" parent="Amc_Menu::system_settings" action="adminhtml/system_currencysymbol" resource="Magento_CurrencySymbol::symbols"/>
+        <add id="Amc_Menu::system_tax_rules" title="Tax Rules" module="Amc_Menu" sortOrder="40" parent="Amc_Menu::system_settings" action="tax/rule" resource="Magento_Tax::manage_tax"/>
+        <add id="Amc_Menu::system_tax_rates" title="Tax Zones and Rates" module="Amc_Menu" sortOrder="50" parent="Amc_Menu::system_settings" action="tax/rate" resource="Magento_Tax::manage_tax"/>
+        <add id="Amc_Menu::system_users_locks" title="Locked Users" module="Amc_Menu" sortOrder="100" parent="Magento_Backend::system_tools" action="adminhtml/locks" resource="Magento_User::locks"/>
+
+    </menu>
+</config>

@@ -1,0 +1,70 @@
+<?php /** @var $block \Amc\Timetable\Block\Adminhtml\Index\Timetable */ ?>
+<div id="index-timetable"></div>
+
+<script>
+    require([
+        "moment",
+        "jquery",
+        "jquery/jquery-ui",
+        "fullcalendar",
+        "fullcalendarScheduler"
+    ], function(moment, $){
+
+        $(function() { // document ready
+//            $( "#datepicker" ).datepicker($.calendarConfig);
+            var $timetable = $('#index-timetable');
+            window.index_timetable = $timetable;
+
+            $timetable.fullCalendar({
+                defaultDate: '<?php echo $block->getInitialDate() ?>',
+                editable: false,
+                contentHeight: 'auto',
+                scrollTime: '00:00',
+                header: {
+                    left: 'today prev,next',
+                    center: 'title',
+                    right: 'timelineDay,timelineThreeDays'
+                },
+                defaultView: 'timelineDay',
+                views: {
+                    timelineThreeDays: {
+                        type: 'timeline',
+                        duration: { days: 3 }
+                    }
+                },
+                businessHours: {
+                    start: '9:00',
+                    end: '20:00',
+                    dow: [ 1, 2, 3, 4, 5 ]
+                },
+                minTime: '09:00', // todo: impldement config "Working hours"
+                maxTime: '20:00', // todo: impldement config "Working hours"
+                slotLabelFormat: 'HH:mm',
+                eventOverlap: true, // will cause the event to take up entire resource height
+                resourceAreaWidth: '25%',
+                resourceLabelText: "<?php echo $block->escapeQuote(__('Executant')) ?>",
+                selectable: false,
+                selectHelper: true,
+                slotDuration: '00:15',
+                slotWidth: 15,
+                eventClick: function(event, jsEvent, view) {
+                    location.href = "<?php echo $block->getUrl('timetable/index/gotoevent') ?>item/" + event.order_item_id;
+                },
+
+                resources: {
+                    url: '<?php echo $block->getUrl('timetable/index/resourcesJson') ?>',
+                    type: 'GET'
+//                    date: $('#index-timetable').fullCalendar('getDate').format()
+                },
+                events: {
+                    url: '<?php echo $block->getUrl('timetable/index/eventsJson') ?>',
+                    type: 'GET'
+                },
+                loading: function(isLoading, view) {
+                    console.log(isLoading ? 'start loading' : 'end loading')
+                    console.log(view)
+                }
+            });
+        });
+    });
+</script>

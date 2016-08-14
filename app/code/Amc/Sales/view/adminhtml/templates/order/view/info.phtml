@@ -1,0 +1,56 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php /** @var $block \Magento\Sales\Block\Adminhtml\Order\View\Info */ ?>
+<?php $_order = $block->getOrder() ?>
+<?php
+$orderAdminDate = $block->formatDate(
+    $block->getOrderAdminDate($_order->getCreatedAt()),
+    \IntlDateFormatter::MEDIUM,
+    true
+);
+$orderStoreDate = $block->formatDate(
+    $_order->getCreatedAt(),
+    \IntlDateFormatter::MEDIUM,
+    true,
+    $block->getTimezoneForStore($_order->getStore())
+);
+?>
+
+<section class="admin__page-section order-view-account-information">
+    <div class="admin__page-section-title">
+        <span class="title">
+            <?php /* @escapeNotVerified */ echo $orderAdminDate ?>
+            &nbsp;|&nbsp;
+
+            <?php if ($_customerUrl = $block->getCustomerViewUrl()) : ?>
+                <a href="<?php /* @escapeNotVerified */ echo $_customerUrl ?>" target="_blank">
+                    <span><?php echo $block->escapeHtml($_order->getCustomerName()) ?></span>
+                </a>
+            <?php else: ?>
+                <?php echo $block->escapeHtml($_order->getCustomerName()) ?>
+            <?php endif; ?>
+
+            <?php if ($_order->getRelationChildId()): ?>
+                &nbsp;|&nbsp;
+                <a href="<?php /* @escapeNotVerified */ echo $block->getViewUrl($_order->getRelationChildId()) ?>">
+                    <?php /* @escapeNotVerified */ echo __('Link to the New Order') ?>: <?php /* @escapeNotVerified */ echo $_order->getRelationChildRealId() ?>
+                </a>
+            <?php endif; ?>
+
+            <?php if ($_order->getRelationParentId()): ?>
+                &nbsp;|&nbsp;
+                <a href="<?php /* @escapeNotVerified */ echo $block->getViewUrl($_order->getRelationParentId()) ?>">
+                    <?php /* @escapeNotVerified */ echo __('Link to the Previous Order') ?>: <?php /* @escapeNotVerified */ echo $_order->getRelationParentRealId() ?>
+                </a>
+            <?php endif; ?>
+        </span>
+    </div>
+
+</section>

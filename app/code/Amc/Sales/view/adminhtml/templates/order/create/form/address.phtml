@@ -1,0 +1,78 @@
+<?php
+// @codingStandardsIgnoreFile
+
+/**
+ * @var \Magento\Sales\Block\Adminhtml\Order\Create\Billing\Address|\Magento\Sales\Block\Adminhtml\Order\Create\Shipping\Address $block
+ */
+if ($block->getIsShipping()):
+    $_fieldsContainerId = 'order-shipping_address_fields';
+    $_addressChoiceContainerId = 'order-shipping_address_choice';
+    ?>
+    <script>
+    require(["Magento_Sales/order/create/form"], function(){
+
+        order.shippingAddressContainer = '<?php /* @escapeNotVerified */ echo $_fieldsContainerId ?>';
+        order.setAddresses(<?php /* @escapeNotVerified */ echo $block->getAddressCollectionJson() ?>);
+
+    });
+    </script>
+    <?php
+else:
+    $_fieldsContainerId = 'order-billing_address_fields';
+    $_addressChoiceContainerId = 'order-billing_address_choice';
+    ?>
+    <script>
+        require(["Magento_Sales/order/create/form"], function(){
+            order.billingAddressContainer = '<?php /* @escapeNotVerified */ echo $_fieldsContainerId ?>';
+        });
+    </script>
+    <?php
+endif; ?>
+
+
+<fieldset id="<?php /* @escapeNotVerified */ echo $_addressChoiceContainerId ?>" class="admin__fieldset order-choose-address">
+<?php if ($block->getIsShipping()): ?>
+    <div class="admin__field admin__field-option">
+        <input type="hidden" id="order-shipping_same_as_billing" name="shipping_same_as_billing" value="1" />
+    </div>
+<?php endif; ?>
+</fieldset>
+
+<?php $_id = $block->getForm()->getHtmlIdPrefix() . 'customer_address_id' ?>
+<input id="<?php /* @escapeNotVerified */ echo $_id ?>"
+    type="hidden"
+    name="<?php echo $block->getForm()->getHtmlNamePrefix() ?>[customer_address_id]"
+    value=""/>
+
+
+<div class="order-address" id="<?php /* @escapeNotVerified */ echo $_fieldsContainerId ?>">
+
+    <?php echo $block->getForm()->getElement('lastname')->toHtml() ?>
+    <?php echo $block->getForm()->getElement('firstname')->toHtml() ?>
+    <?php echo $block->getForm()->getElement('middlename')->toHtml() ?>
+    <?php echo $block->getForm()->getElement('telephone')->toHtml() ?>
+
+    <input type="hidden" name="<?php echo $block->getForm()->getHtmlNamePrefix() ?>[street][0]" value="ADDRESS_PLACEHOLDER" />
+    <input type="hidden" name="<?php echo $block->getForm()->getHtmlNamePrefix() ?>[city]" value="CITY_PLACEHOLDER" />
+    <input type="hidden" name="<?php echo $block->getForm()->getHtmlNamePrefix() ?>[country_id]" value="UA" />
+    <input type="hidden" name="<?php echo $block->getForm()->getHtmlNamePrefix() ?>[region_id]" value="REGION_PLACEHOLDER" />
+    <input type="hidden" name="<?php echo $block->getForm()->getHtmlNamePrefix() ?>[postcode]" value="POSTCODE_PLACEHOLDER" />
+    <input name="<?php echo $block->getForm()->getHtmlNamePrefix() ?>[save_in_address_book]"
+           type="hidden"
+           id="<?php echo $block->getForm()->getHtmlIdPrefix() ?>save_in_address_book"
+           value="0" />
+</div>
+
+<?php $hideElement = 'address-' . ($block->getIsShipping() ? 'shipping' : 'billing') . '-overlay'; ?>
+<div style="display: none;" id="<?php /* @escapeNotVerified */ echo $hideElement ?>" class="order-methods-overlay">
+</div>
+
+<script>
+    require(["Magento_Sales/order/create/form"], function(){
+            order.bindAddressFields('<?php /* @escapeNotVerified */ echo $_fieldsContainerId ?>');
+            order.bindAddressFields('<?php /* @escapeNotVerified */ echo $_addressChoiceContainerId ?>');
+            <?php if ($block->getIsShipping() && $block->getIsAsBilling()): ?>
+            order.disableShippingAddress(true);
+            <?php endif; ?>
+    });
+</script>

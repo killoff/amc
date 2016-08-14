@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Amc_UserSchedule::user_schedule" title="Schedule" parent="Amc_Menu::clinic_users" module="Amc_UserSchedule" sortOrder="20" action="user_schedule/schedule/" resource="Amc_UserSchedule::user_schedule"/>
+    </menu>
+</config>

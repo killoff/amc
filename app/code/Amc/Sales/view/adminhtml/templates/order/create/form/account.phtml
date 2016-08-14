@@ -1,0 +1,12 @@
+<?php
+/* only render form elements without fieldset */
+?>
+
+<?php foreach($block->getForm()->getElement('main')->getElements() as $element): ?>
+    <?php echo $element->toHtml() ?>
+<?php endforeach ?>
+<script>
+    require(["prototype", "Magento_Sales/order/create/form"], function(){
+        order.accountFieldsBind($('order-form_account'));
+    });
+</script>
