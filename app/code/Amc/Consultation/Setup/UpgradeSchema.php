@@ -24,11 +24,13 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 'nullable' => true,
                 'unsigned' => true,
-                'after'    => 'user_id'
+                'after'    => 'user_id',
+                'comment'  => 'Order id'
             ]
         );
         $setup->getConnection()->addForeignKey(
             $setup->getFkName('amc_consultation_entity', 'order_id', 'sales_order', 'entity_id'),
+            $setup->getTable('amc_consultation_entity'),
             'order_id',
             $setup->getTable('sales_order'),
             'entity_id',
@@ -42,11 +44,13 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
                 'nullable' => true,
                 'unsigned' => true,
-                'after'    => 'order_id'
+                'after'    => 'order_id',
+                'comment'  => 'Order item id'
             ]
         );
         $setup->getConnection()->addForeignKey(
             $setup->getFkName('amc_consultation_entity', 'order_item_id', 'sales_order_item', 'item_id'),
+            $setup->getTable('amc_consultation_entity'),
             'order_item_id',
             $setup->getTable('sales_order_item'),
             'item_id',
@@ -59,6 +63,15 @@ class UpgradeSchema implements UpgradeSchemaInterface
     private function fixForeignKeys(SchemaSetupInterface $setup)
     {
         $fkName = $setup->getFkName('amc_consultation_entity', 'product_id', 'catalog_product_entity', 'entity_id');
+        $setup->getConnection()->changeColumn(
+            $setup->getTable('amc_consultation_entity'),
+            'product_id', 'product_id',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                'nullable' => true,
+                'unsigned' => true,
+            ]
+        );
         $setup->getConnection()->addForeignKey(
             $fkName,
             $setup->getTable('amc_consultation_entity'),
@@ -69,6 +82,15 @@ class UpgradeSchema implements UpgradeSchemaInterface
         );
 
         $fkName = $setup->getFkName('amc_consultation_entity', 'customer_id', 'customer_entity', 'entity_id');
+        $setup->getConnection()->changeColumn(
+            $setup->getTable('amc_consultation_entity'),
+            'customer_id', 'customer_id',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                'nullable' => true,
+                'unsigned' => true,
+            ]
+        );
         $setup->getConnection()->addForeignKey(
             $fkName,
             $setup->getTable('amc_consultation_entity'),
@@ -79,6 +101,15 @@ class UpgradeSchema implements UpgradeSchemaInterface
         );
 
         $fkName = $setup->getFkName('amc_consultation_entity', 'user_id', 'admin_user', 'user_id');
+        $setup->getConnection()->changeColumn(
+            $setup->getTable('amc_consultation_entity'),
+            'user_id', 'user_id',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+                'nullable' => true,
+                'unsigned' => true,
+            ]
+        );
         $setup->getConnection()->addForeignKey(
             $fkName,
             $setup->getTable('amc_consultation_entity'),
