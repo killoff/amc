@@ -24,7 +24,7 @@ class Grid extends \Magento\Framework\View\Element\UiComponent\DataProvider\Sear
         FetchStrategy $fetchStrategy,
         EventManager $eventManager,
         $mainTable = 'amc_consultation_entity',
-        $resourceModel = '\Amc\Consultation\Model\ResourceModel\Consultation'
+        $resourceModel = 'Amc\Consultation\Model\ResourceModel\Consultation'
     ) {
         parent::__construct($entityFactory, $logger, $fetchStrategy, $eventManager, $mainTable, $resourceModel);
     }
