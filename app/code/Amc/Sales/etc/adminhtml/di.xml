@@ -4,4 +4,7 @@
     <type name="\Magento\Sales\Controller\Adminhtml\Order\View">
         <plugin name="amc_sales_order_view" type="Amc\Sales\Model\Plugin\Order\ViewAction"/>
     </type>
+    <type name="Magento\Backend\Block\Widget\Button\Toolbar">
+        <plugin name="amc_sales_order_buttons" type="Amc\Sales\Model\Plugin\Order\Buttons" />
+    </type>
 </config>

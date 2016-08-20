@@ -44,6 +44,16 @@ abstract class Index extends \Magento\Backend\App\Action
     protected $_customerRepository;
 
     /**
+     * @var \Magento\Sales\Api\OrderRepositoryInterface
+     */
+    protected $_orderRepository;
+
+    /**
+     * @var \Amc\User\Model\UserProductLink
+     */
+    protected $_userProductLink;
+
+    /**
      * @var \Amc\Consultation\Model\Consultation
      */
     protected $_consultation;
@@ -51,13 +61,17 @@ abstract class Index extends \Magento\Backend\App\Action
 
     protected $_productFactory;
 
-
     /**
      * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
      * @param \Amc\Consultation\Model\ConsultationFactory $consultationFactory
      * @param \Magento\Backend\Model\Auth\Session $authSession
      * @param \Psr\Log\LoggerInterface $loggerInterface
      * @param Action\Context $context
+     * @param \Magento\Framework\Registry $registry
+     * @param \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository
+     * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
+     * @param \Amc\User\Model\UserProductLink $userProductLink
+     * @param \Magento\Catalog\Model\ProductFactory $productFactory
      */
     public function __construct(
         \Magento\Framework\View\Result\PageFactory $resultPageFactory,
@@ -67,6 +81,8 @@ abstract class Index extends \Magento\Backend\App\Action
         Action\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
+        \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
+        \Amc\User\Model\UserProductLink $userProductLink,
         \Magento\Catalog\Model\ProductFactory $productFactory
     ) {
         parent::__construct($context);
@@ -77,6 +93,8 @@ abstract class Index extends \Magento\Backend\App\Action
         $this->_authSession = $authSession;
         $this->_coreRegistry = $registry;
         $this->_customerRepository = $customerRepository;
+        $this->_orderRepository = $orderRepository;
+        $this->_userProductLink = $userProductLink;
         $this->_productFactory = $productFactory;
     }
 
