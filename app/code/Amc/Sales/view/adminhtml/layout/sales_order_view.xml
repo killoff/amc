@@ -12,29 +12,19 @@
                 <argument name="template" xsi:type="string">Amc_Sales::order/view/info.phtml</argument>
             </action>
         </referenceBlock>
-        <referenceBlock name="order_items">
-            <action method="setTemplate">
-                <argument name="template" xsi:type="string">Amc_Sales::order/view/items.phtml</argument>
+
+        <!-- todo: this does not work - order tabs remain on the page -->
+        <referenceBlock name="sales_order_tabs">
+            <action method="removeTab">
+                <argument name="name" xsi:type="string">order_invoices</argument>
             </action>
-            <arguments>
-                <argument name="template" xsi:type="string">Amc_Sales::order/view/items.phtml</argument>
-                <argument name="columns" xsi:type="array">
-                    <item name="product" xsi:type="string" translate="true">Product</item>
-                    <item name="price" xsi:type="string" translate="true">Price</item>
-                    <item name="ordered-qty" xsi:type="string" translate="true">Qty</item>
-                    <item name="total" xsi:type="string" translate="true">Row Total</item>
-                </argument>
-            </arguments>
+            <action method="removeTab">
+                <argument name="name" xsi:type="string">order_creditmemos</argument>
+            </action>
+            <action method="removeTab">
+                <argument name="name" xsi:type="string">order_history</argument>
+            </action>
         </referenceBlock>
-        <referenceBlock name="default">
-            <arguments>
-                <argument name="columns" xsi:type="array">
-                    <item name="product" xsi:type="string" translate="false">col-product</item>
-                    <item name="price" xsi:type="string" translate="false">col-price</item>
-                    <item name="qty" xsi:type="string" translate="false">col-ordered-qty</item>
-                    <item name="total" xsi:type="string" translate="false">col-total</item>
-                </argument>
-            </arguments>
-        </referenceBlock>
+
     </body>
 </page>

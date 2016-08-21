@@ -12,9 +12,9 @@ class Edit extends \Amc\Consultation\Controller\Adminhtml\Index
     public function execute()
     {
         try {
-            $this->_initProduct();
-            $this->_initConsultation();
-            $this->_initCustomer();
+//            $this->_initProduct();
+//            $this->_initConsultation();
+//            $this->_initCustomer();
         } catch (NoSuchEntityException $e) {
             $this->messageManager->addException($e, __('An error occurred while editing the customer.'));
             $resultRedirect = $this->resultRedirectFactory->create();

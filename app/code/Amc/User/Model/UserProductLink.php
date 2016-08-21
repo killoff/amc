@@ -95,17 +95,22 @@ class UserProductLink
     }
 
     /**
-     * @param \Magento\User\Model\User $user
+     * @param int $userId
      * @return array
      */
-    public function getUserProducts(\Magento\User\Model\User $user)
+    public function getUserProducts($userId)
     {
         $connection = $this->resource->getConnection();
         $select = $connection->select()
             ->from($this->getRelationTableName(), ['product_id'])
             ->where('user_id = :user_id');
 
-        return $connection->fetchCol($select, ['user_id' => $user->getId()]);
+        return $connection->fetchCol($select, ['user_id' => $userId]);
+    }
+
+    public function isProductAssignedToUser($userId, $productId)
+    {
+        return in_array($productId, $this->getUserProducts($userId));
     }
 
     /**

@@ -1,6 +1,33 @@
 <?xml version="1.0"?>
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
+        <referenceBlock name="order_items">
+            <action method="setColumns">
+                <argument name="columns" xsi:type="array">
+                    <item name="product" xsi:type="string" translate="true">Product</item>
+                    <item name="price" xsi:type="string" translate="true">Price</item>
+                    <item name="ordered-qty" xsi:type="string" translate="true">Qty</item>
+                    <item name="discont" xsi:type="string" translate="true">Discount Amount</item>
+                    <item name="total" xsi:type="string" translate="true">Row Total</item>
+                    <item name="consultation-button" xsi:type="string" translate="true">Consultation</item>
+                </argument>
+            </action>
+            <block class="Amc\Consultation\Block\Adminhtml\Order\Items\Column\Button" name="column_consultation_button" template="Amc_Consultation::order/items/column/button.phtml" group="column"/>
+
+        </referenceBlock>
+        <referenceBlock name="order_items_schedule_block2"> <!-- item renderer -->
+            <action method="setColumns">
+                <argument name="columns" xsi:type="array">
+                    <item name="product" xsi:type="string" translate="false">col-product</item>
+                    <item name="price" xsi:type="string" translate="false">col-price</item>
+                    <item name="qty" xsi:type="string" translate="false">col-ordered-qty</item>
+                    <item name="discont" xsi:type="string" translate="false">col-discont</item>
+                    <item name="total" xsi:type="string" translate="false">col-total</item>
+                    <item name="consultation_button" xsi:type="string" translate="false">col-consultation-button</item>
+                </argument>
+            </action>
+        </referenceBlock>
+
         <referenceBlock name="sales_order_tabs">
             <block class="Amc\Consultation\Block\Adminhtml\Order\View\Tab\Consultation" name="consultation.grid.container"/>
             <action method="addTab">

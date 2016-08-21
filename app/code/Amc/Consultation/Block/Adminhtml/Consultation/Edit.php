@@ -54,8 +54,7 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
      */
     public function getBackUrl()
     {
-        /** @var \Magento\Customer\Model\Data\Customer $customer */
-        $customer = $this->_coreRegistry->registry('current_customer');
-        return $this->getUrl('customer/*/edit', ['id' => $customer->getId()]);
+        $order = $this->_coreRegistry->registry('current_order');
+        return $this->getUrl('sales/order/view', ['order_id' => $order->getId()]);
     }
 }
