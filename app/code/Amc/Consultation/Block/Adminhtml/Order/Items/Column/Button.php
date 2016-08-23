@@ -33,21 +33,13 @@ class Button extends \Magento\Sales\Block\Adminhtml\Items\Column\DefaultColumn
         return $this->getUrl('consultation/index/create',
             [
                 'order_id' => $this->getItem()->getOrderId(),
-                'product_id' => $this->getItem()->getProductId()
+                'product_id' => $this->getItem()->getProductId(),
+                'order_item_id' => $this->getItem()->getId()
             ]
         );
     }
 
-    protected function _toHtml()
-    {
-        if ($this->isAllowed()) {
-            return parent::_toHtml();
-        } else {
-            return '';
-        }
-    }
-
-    private function isAllowed()
+    public function isAllowed()
     {
         return $this->userProductRelation->isProductAssignedToUser(
             $this->authSession->getUser()->getId(),

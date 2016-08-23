@@ -12,7 +12,6 @@ class Save extends \Amc\Consultation\Controller\Adminhtml\Index
      */
     public function execute()
     {
-        $customerId = $this->getRequest()->getParam('customer_id');
         $consultationId = $this->getRequest()->getParam('consultation_id');
         $returnToEdit = false;
         $editMode = false;
@@ -26,12 +25,34 @@ class Save extends \Amc\Consultation\Controller\Adminhtml\Index
             }
 
             $consultation->addData($this->getRequest()->getParams());
+            if ($this->getRequest()->getParam('user_date')) {
+                $userDate = \DateTime::createFromFormat('d/m/Y', $this->getRequest()->getParam('user_date'));
+                $consultation->setUserDate($userDate->format('Y-m-d H:i:s'));
+            } else {
+                $consultation->setUserDate(null);
+            }
+            $createdAt = new \DateTime('now');
+            $consultation->setCreatedAt($createdAt->format('Y-m-d H:i:s'));
             $consultation->setUserId($this->_authSession->getUser()->getId());
+            $order = $this->_orderRepository->get($this->getRequest()->getParam('order_id'));
+            $consultation->setCustomerId($order->getCustomerId());
             $consultation->save();
 
             $editMode
                 ? $this->messageManager->addSuccess(__('You have updated the consultation.'))
                 : $this->messageManager->addSuccess(__('You have created the consultation.'));
+
+            $resultRedirect = $this->resultRedirectFactory->create();
+            if ($returnToEdit && $consultationId) {
+                $resultRedirect->setPath(
+                    'consultation/*/edit',
+                    ['consultation_id' => $consultationId, '_current' => true]
+                );
+            } else {
+                $resultRedirect->setPath('sales/order/view', ['order_id' => $order->getEntityId()]);
+            }
+            return $resultRedirect;
+
         } catch (NoSuchEntityException $e) {
             $this->messageManager->addException($e, __('An error occurred while saving the consultation.'));
             $returnToEdit = true;
@@ -41,22 +62,5 @@ class Save extends \Amc\Consultation\Controller\Adminhtml\Index
             $returnToEdit = true;
         }
 
-        $resultRedirect = $this->resultRedirectFactory->create();
-        if ($returnToEdit) {
-            if ($consultationId) {
-                $resultRedirect->setPath(
-                    'consultation/*/edit',
-                    ['consultation_id' => $consultationId, '_current' => true]
-                );
-            } else {
-                $resultRedirect->setPath(
-                    'consultation/*/edit',
-                    ['customer_id' => $customerId, '_current' => true]
-                );
-            }
-        } else {
-            $resultRedirect->setPath('customer/index/edit', ['id' => $customerId, '_current' => true]);
-        }
-        return $resultRedirect;
     }
 }

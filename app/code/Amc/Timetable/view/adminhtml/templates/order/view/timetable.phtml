@@ -1,11 +1,11 @@
 <div id="order-timetable"></div>
 <div>
     <div id="timetable-state" class="timetable-state"></div>
-    <div class="timetable-save">
-        <button id="timetable-save" title="Save" type="button" class="action-default scalable save primary" onclick="">
-            <span>Save</span>
-        </button>
-    </div>
+<!--    <div class="timetable-save">-->
+<!--        <button id="timetable-save" title="Save" type="button" class="action-default scalable save primary" onclick="">-->
+<!--            <span>Save</span>-->
+<!--        </button>-->
+<!--    </div>-->
 </div>
 
 <?php /** @var $this \Amc\Timetable\Block\Adminhtml\Order\Tab\Timetable */ ?>
@@ -55,7 +55,7 @@
                 eventOverlap: true, // will cause the event to take up entire resource height
                 resourceAreaWidth: '25%',
                 resourceLabelText: "<?php echo $this->escapeQuote(__('Executant')) ?>",
-                selectable: true,
+                selectable: false, //true,
                 selectHelper: true,
                 slotDuration: '00:15',
                 slotWidth: 15,
@@ -79,6 +79,7 @@
                 },
                 eventClick: function(event, jsEvent, view) {
 
+                    return false;
                     if (window.confirm('Delete time slot?')) {
                         event.deleted = 1;
                         registry[event.uuid] = event;
@@ -140,11 +141,9 @@
                     resources = timetable.fullCalendar('getResources'),
                     resource,
                     i, j, k;
-                console.log('rendering state');
-                console.log(resources);
                 for(i = 0; i < resources.length; i++) {
                     resource = resources[i];
-                    stateRow = { title: resource.title, children: [] }
+                    stateRow = { title: resource.title, sales_item_id: resource.sales_item_id, children: [] }
 //                    console.log('resource children:');
 //                    console.log(resource.children);
                     for(j = 0; j < resource.children.length; j++) {
@@ -153,7 +152,7 @@
 //                        console.log('row events:');
 //                        console.log(events);
                         for(k = 0; k < events.length; k++) {
-                            if (events[k].type == 'order') {
+                            if (events[k].belongs_to_current_order) {
                                 stateRowEvents.push(events[k]);
                             }
                         }
@@ -168,31 +167,42 @@
             };
 
             var renderTimetableState = function(state) {
-                gotoEvent('qqqqq');
                 var i, j, k,
                     events,
-                    html = '';
+                // html = '',
+                    salesItemHtml = '';
+//                moment.locale('es');
+//                console.log('rendering state');
+//                console.log(state);
                 for(i = 0; i < state.length; i++) {
-                    html += '<div class="parent">'
-                        + state[i].title
-                        + (state[i].children.length == 0 ? '<span class="not-assigned">&ndash; not assigned</span>' : '')
-                        + '</div>';
+                    // this is for rendering timetable right next to calendar
+                    //html += '<div class="parent">'
+                    //    + state[i].title
+                    //    + (state[i].children.length == 0 ? '<span class="not-assigned">&ndash; not assigned</span>' : '')
+                    //   + '</div>';
 
                     for(j = 0; j < state[i].children.length; j++) {
-                        html += '<div class="child">'
-                            + '<?php echo __('by') ?> ' + '<span class="who">' + state[i].children[j].title + '</span>';
+                        salesItemHtml = '<div class="child">'
+                                // + '<?php //echo __('by') ?>// ' + '<span class="who">' + state[i].children[j].title + '</span>';
+                            + '<span class="who">' + state[i].children[j].title + '</span>';
                         events = state[i].children[j].events;
-                        html += '<?php echo __('at') ?>';
-                        html += '<span class="times">';
+                        // salesItemHtml += '<?php echo __('at') ?>';
+                        salesItemHtml += '<span class="times">';
                         for(k = 0; k < events.length; k++) {
-                            html += '<span class="time" data-event-id="' + events[k].uuid + '" onclick="gotoEvent(this);">' + events[k].start.format("ddd D.MM, HH:mm") + '</span>';
+                            salesItemHtml += '<span class="time" data-event-id="' + events[k].uuid + '" onclick="gotoEvent(this);">' + events[k].start.format("ddd D.MM, HH:mm") + '</span>';
                         }
-                        html.replace(/;$/g, '');
-                        html += '</span>';
-                        html += '</div>';
+                        salesItemHtml.replace(/;$/g, '');
+                        salesItemHtml += '</span>';
+                        salesItemHtml += '</div>';
+                        console.log('#timetable-state-' + state[i].sales_item_id);
+                        console.log(salesItemHtml);
+                        $('#timetable-state-' + state[i].sales_item_id).html(salesItemHtml);
+
+                        // html += salesItemHtml;
                     }
                 }
-                $('#timetable-state').html(html);
+                // this is for rendering timetable right next to calendar
+                // $('#timetable-state').html(html);
             };
 
             window.gotoEvent = function(timeSlot) {
@@ -206,7 +216,7 @@
                 var i, random;
                 var uuid = '';
 
-                for (i = 0; i < 32; i++) {
+                for (i = 0; i < 3; i++) {
                     random = Math.random() * 16 | 0;
                     if (i === 8 || i === 12 || i === 16 || i === 20) {
                         uuid += '-';
@@ -218,15 +228,7 @@
                 return uuid;
             };
 
-            // re-render calendar on tab activated
-            $("#sales_order_view_tabs").on("tabsactivate", function(event, ui) {
-                if(ui.newTab.attr('data-ui-id').indexOf('order-info') !== -1) {
-                    $timetable.fullCalendar('render');
-                    renderTimetableState(
-                        getTimetableState($timetable)
-                    );
-                }
-            });
+            renderTimetableState(getTimetableState($timetable));
 
             $("#timetable-save").on("click", function() {
                 var changedEvents = [];

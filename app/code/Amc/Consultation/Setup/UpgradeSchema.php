@@ -57,6 +57,16 @@ class UpgradeSchema implements UpgradeSchemaInterface
             \Magento\Framework\DB\Ddl\Table::ACTION_CASCADE
         );
 
+        $setup->getConnection()->addColumn(
+            $setup->getTable('amc_consultation_entity'),
+            'user_date',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_DATETIME,
+                'nullable' => true,
+                'after'    => 'recommendation',
+                'comment'  => 'User input date'
+            ]
+        );
         $setup->endSetup();
     }
 

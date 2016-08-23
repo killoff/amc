@@ -69,6 +69,7 @@ abstract class Timetable extends \Magento\Backend\Block\Template
      *
      * @return array ['resources' => resources_json, 'events' => events_json]
      * @todo: refactor occupiedSchedule
+     * @todo: remove dependency on product => no product load, what will happen if product deleted?
      */
     public function getResourcesAndEvents()
     {
@@ -87,6 +88,8 @@ abstract class Timetable extends \Magento\Backend\Block\Template
             $productUserIds = [];
             foreach ($scheduleCollection->getItems() as $schedule) {
                 $productUserIds[] = $schedule->getData('user_id');
+
+                // events that represent employee's schedule = working time slots
                 $events[] = [
                     'resourceId' => sprintf('i%s_u%s', $item->getId(), $schedule->getData('user_id')),
                     'id'         => sprintf('u%s_s%s', $schedule->getData('user_id'), $schedule->getId()),
@@ -101,6 +104,7 @@ abstract class Timetable extends \Magento\Backend\Block\Template
                     'sales_item_id' => $item->getId(),
                 ];
 
+                // events that represent real orders
                 $roomOccupiedSchedule = $occupiedSchedule->getItemsByColumnValue('room_id', $schedule->getRoomId());
                 foreach ($roomOccupiedSchedule as $occupied) {
                     $scheduleStart = new \DateTime($schedule->getStartAt());
@@ -117,8 +121,9 @@ abstract class Timetable extends \Magento\Backend\Block\Template
                             // todo: refactor
                             'rendering'  => $occupied->getOrderItemId() === $item->getId() ? '' : 'background',
                             'color'      => $occupied->getOrderItemId() === $item->getId() ? '#00c853' : '#ff8a80',
+                            'belongs_to_current_order' => $occupied->getOrderItemId() === $item->getId() ? true : false,
                             'overlap'    => true,
-                            'title'      => 'room '.$occupied->getRoomId(),
+                            'title'      => '', // 'room '.$occupied->getRoomId(),
                             'type'       => 'schedule',
                             'room_id'    => $occupied->getRoomId(),
                             'user_id'    => $occupied->getData('user_id'),

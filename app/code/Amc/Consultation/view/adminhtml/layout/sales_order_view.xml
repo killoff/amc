@@ -16,6 +16,9 @@
 
         </referenceBlock>
         <referenceBlock name="order_items_schedule_block2"> <!-- item renderer -->
+            <action method="setTemplate">
+                <argument name="template" xsi:type="string">Amc_Consultation::order/items/renderer/default.phtml</argument>
+            </action>
             <action method="setColumns">
                 <argument name="columns" xsi:type="array">
                     <item name="product" xsi:type="string" translate="false">col-product</item>

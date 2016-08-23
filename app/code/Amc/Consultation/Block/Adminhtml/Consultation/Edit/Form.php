@@ -70,40 +70,25 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
             ['legend' => __('%1 for %2',$this->getProduct()->getName(), $fullName), 'class' => 'fieldset-wide']
         );
 
-        if ($customer) {
-            $fieldset->addField('customer_id', 'hidden', ['name' => 'customer_id', 'value' => $customer->getId()]);
-        }
-
-        if ($model) {
-            $fieldset->addField('entity_id', 'hidden', ['name' => 'consultation_id', 'value' => $model->getId()]);
-        }
-//
-//        $fieldset->addField(
-//            'product_id',
-//            'select',
-//            [
-//                'name' => 'product_id',
-//                'label' => __('Product'),
-//                'title' => __('Product'),
-//                'values' => $this->getProductCollectionOptions(__('-- Please Select --')),
-//                'class' => 'select',
-//                'required' => true,
-//                'disabled' => $isEditMode
-//            ]
-//        );
+        $fieldset->addField('order_id', 'hidden', ['name' => 'order_id', 'value' => $this->_request->getParam('order_id')]);
+        $fieldset->addField('product_id', 'hidden', ['name' => 'product_id', 'value' => $this->_request->getParam('product_id')]);
+        $fieldset->addField('order_item_id', 'hidden', ['name' => 'order_item_id', 'value' => $this->_request->getParam('order_item_id')]);
 
         $dateFormat = $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT);
+        $timeFormat = $this->_localeDate->getTimeFormat(\IntlDateFormatter::MEDIUM);
+
         $fieldset->addField(
-            'created_at',
+            'user_date',
             'date',
             [
-                'name' => 'created_at',
+                'name' => 'user_date',
                 'label' => __('Date'),
-                'id' => 'created_at',
+                'id' => 'user_date',
                 'title' => __('Date'),
                 'date_format' => $dateFormat,
-                'disabled' => $isEditMode
-//                'value' => $this->_localeDate->date()->format(\IntlDateFormatter::SHORT)
+//                'time_format' => $timeFormat,
+                'disabled' => $isEditMode,
+//                'value' => $this->_localeDate->date(new \DateTime('now'))->format(\IntlDateFormatter::SHORT)
             ]
         );
 
@@ -125,8 +110,11 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'name' => 'conclusion',
                 'label' => __('Conclusion'),
                 'title' => __('Conclusion'),
-                'wysiwyg' => false,
-                'required' => false
+                'state' => 'html',
+                'wysiwyg' => true,
+                'required' => false,
+                'style' => 'height: 250px;',
+                'config' => []
             ]
         );
 
@@ -137,23 +125,24 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 'name' => 'recommendation',
                 'label' => __('Recommendation'),
                 'title' => __('Recommendation'),
-                'wysiwyg' => false,
+                'wysiwyg' => true,
+                'style' => 'height: 250px;',
                 'required' => false
             ]
         );
 
         $fieldset->addType('protocol', 'Amc\Protocol\Block\Adminhtml\Renderer');
 
-        $fieldset->addField(
-            'dialog',
-            'protocol',
-            [
-                'name' => 'dialog',
-                'label' => __(''),
-                'title' => __(''),
-                'required' => false,
-            ]
-        );
+//        $fieldset->addField(
+//            'dialog',
+//            'protocol',
+//            [
+//                'name' => 'dialog',
+//                'label' => __(''),
+//                'title' => __(''),
+//                'required' => false,
+//            ]
+//        );
 
         if (null !== $model) {
             $form->setValues($model->getData());
