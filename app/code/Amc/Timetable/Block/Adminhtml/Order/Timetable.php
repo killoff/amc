@@ -133,12 +133,17 @@ abstract class Timetable extends \Magento\Backend\Block\Template
                 }
             }
 
-            $product = $item->getProduct()->load($item->getProductId());
+            $product = $item->getProduct();
+            if ($product) {
+                $duration = $product->load($item->getProductId())->getData('duration');
+            } else {
+                $duration = '15';
+            }
             $resource = [
                 'id'    => 'i' . $item->getId(),
                 'title' => $item->getName(),
                 'type'  => 'item',
-                'duration' => $product->getData('duration'),
+                'duration' => $duration,
                 'sales_item_id' => $item->getId()
             ];
             foreach (array_unique($productUserIds) as $userId) {
