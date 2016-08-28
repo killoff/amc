@@ -108,6 +108,20 @@ class UserProductLink
         return $connection->fetchCol($select, ['user_id' => $userId]);
     }
 
+    /**
+     * @param int $productId
+     * @return array
+     */
+    public function getProductUsers($productId)
+    {
+        $connection = $this->resource->getConnection();
+        $select = $connection->select()
+            ->from($this->getRelationTableName(), ['user_id'])
+            ->where('product_id = :product_id');
+
+        return $connection->fetchCol($select, ['product_id' => $productId]);
+    }
+
     public function isProductAssignedToUser($userId, $productId)
     {
         return in_array($productId, $this->getUserProducts($userId));

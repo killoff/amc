@@ -125,8 +125,17 @@
                     return event.rendering === 'background';
                 },
 
-                resources: <?php echo $resourcesAndEvents['resources'] ?>,
-                events:  <?php echo $resourcesAndEvents['events'] ?>
+                resources: {
+                    url: '<?php echo $block->getUrl('timetable/order_view/resourcesJson') ?>',
+                    type: 'GET'
+//                    date: $('#index-timetable').fullCalendar('getDate').format()
+                },
+                events: {
+                    url: '<?php echo $block->getUrl('timetable/order_view/eventsJson') ?>',
+                    type: 'GET'
+                }
+//                resources: <?php //echo $resourcesAndEvents['resources'] ?>//,
+//                events:  <?php //echo $resourcesAndEvents['events'] ?>
 
             });
 
