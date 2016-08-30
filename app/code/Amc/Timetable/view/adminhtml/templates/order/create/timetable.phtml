@@ -5,9 +5,6 @@
 <div>
     <div id="timetable-state" class="timetable-state"></div>
 </div>
-<pre>
-    <?php print_r($block->getQuote()); ?>
-</pre>
 <input type="hidden" name="order[timetable_json]" id="timetable_json" value=""/>
 <?php /** @var $this \Amc\Timetable\Block\Adminhtml\Order\Tab\Timetable */ ?>
 <?php $resourcesAndEvents = $this->getResourcesAndEvents() ?>
@@ -155,15 +152,19 @@
                 },
 
                 resources: {
-                    url: '<?php echo $block->getUrl('timetable/order_view/resourcesJson') ?>',
+                    url: '<?php echo $block->getUrl('timetable/order/resourcesJson') ?>',
                     type: 'GET',
-                    quote_id: '<?php echo $block->getQuoteId() ?>'
+                    data: {
+                        quote_id: '<?php echo $block->getQuoteId() ?>'
+                    }
                 },
                 events: {
-                    url: '<?php echo $block->getUrl('timetable/order_view/eventsJson') ?>',
+                    url: '<?php echo $block->getUrl('timetable/order/eventsJson') ?>',
                     type: 'GET',
-                    quote_id: '<?php echo $block->getQuoteId() ?>'
-                },
+                    data: {
+                        quote_id: '<?php echo $block->getQuoteId() ?>'
+                    }
+                }
 
             });
 

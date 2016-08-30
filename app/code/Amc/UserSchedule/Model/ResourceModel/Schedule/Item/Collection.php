@@ -32,13 +32,17 @@ class Collection extends AbstractCollection
             return $this;
         } elseif (1 === count($productIds)) {
             $condition = $this->getConnection()->quoteInto('main_table.user_id = up.user_id AND up.product_id = ?', $productIds[0]);
+            $columns = [];
         } else {
             $condition = $this->getConnection()->quoteInto('main_table.user_id = up.user_id AND up.product_id IN(?)', $productIds);
+            // join product ids to be able to know which user has which products assigned
+            $columns = [ 'product_ids' => new \Zend_Db_Expr('GROUP_CONCAT(up.product_id)') ];
+            $this->getSelect()->group('main_table.entity_id');
         }
         $this->getSelect()->joinInner(
             ['up' => $this->getTable('amc_user_products')],
             $condition,
-            []
+            $columns
         );
         return $this;
     }
