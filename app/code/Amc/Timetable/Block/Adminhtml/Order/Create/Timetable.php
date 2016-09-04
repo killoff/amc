@@ -35,4 +35,16 @@ class Timetable extends \Magento\Backend\Block\Template
     {
         return $this->sessionQuote->getQuote()->getId();
     }
+
+    public function getWidgetOptionsJson()
+    {
+        $options = [
+            'resources' => ['url' => $this->getUrl('timetable/order/resourcesJson'), 'data' => ['quote_id' => $this->getQuoteId()]],
+            'events' => ['url' => $this->getUrl('timetable/order/eventsJson'), 'data' => ['quote_id' => $this->getQuoteId()]],
+            'defaultDate' => $this->getInitialDate(),
+            'resourceLabelText' => __('Executant')
+        ];
+        return \Zend_Json::encode($options);
+    }
+
 }
