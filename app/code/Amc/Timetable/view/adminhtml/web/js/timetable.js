@@ -28,7 +28,8 @@ define([
             minTime: '09:00',
             maxTime: '19:00',
             resourceLabelText: '',
-            slotDuration: '00:15'
+            slotDuration: '00:15',
+            registry_json_field_name: 'registry_json'
         },
 
         _create: function() {
@@ -45,17 +46,11 @@ define([
                 contentHeight: 'auto',
                 scrollTime: '00:00',
                 header: {
-                    left: 'today prev,next',
+                    left: '',
                     center: 'title',
-                    right: 'timelineDay,timelineThreeDays'
+                    right: 'today prev,next'
                 },
                 defaultView: 'timelineDay',
-                views: {
-                    timelineThreeDays: {
-                        type: 'timeline',
-                        duration: { days: 3 }
-                    }
-                },
                 businessHours: this.options.businessHours,
                 minTime: this.options.minTime,
                 maxTime: this.options.maxTime,
@@ -226,6 +221,7 @@ define([
                 salesItemHtml,
                 i;
 
+            // aggregate events, users and products
             $.each(events, function(uuid, data) {
                 userResource = this.element.fullCalendar('getResourceById', data.resourceId);
                 productResource = userResource.parent;
@@ -246,6 +242,11 @@ define([
                 aggregated[productResource.id]['users'][userResource.id]['events'].push(data);
             }.bind(this));
 
+            /**
+             * render events under correspondent order items
+             */
+            // first remove all timetable for order items
+            $('.timetable-state').remove();
             $.each(aggregated, function(key, salesItem) {
                 salesItemHtml = '';
                 $.each(salesItem.users, function(ukey, user) {
@@ -264,9 +265,10 @@ define([
                     .insertAfter('#order_item_' + salesItem.sales_item_id + '_title');
 
             }.bind(this));
-
+            // attach 'click' event to all events under order items
             $('.timetable-state').find('[data-event-id]').click(this.gotoEvent.bind(this));
 
+            // write all the changes to hidden field for backend processing
             var changedEvents = [];
             $.each(this.registry.events(), function(uuid, event) {
                 changedEvents.push({
@@ -279,8 +281,14 @@ define([
                     deleted: event.deleted
                 });
             });
-            $('#timetable_json').val(JSON.stringify(changedEvents));
-
+            var hiddenFieldId = this.options.registry_json_field_name + this.uuid;
+            var hiddenField = $('#' + hiddenFieldId);
+            if (hiddenField.length == 0) {
+                hiddenField = $('<input id="' + hiddenFieldId + '" type="hidden" name="' + this.options.registry_json_field_name + '">');
+                hiddenField.insertAfter(this.element);
+            }
+            hiddenField.val(JSON.stringify(changedEvents));
+            console.log(hiddenField.val());
         },
 
         generateUuid: function () {
@@ -325,7 +333,7 @@ define([
             },
             _dispatchChange: function() {
                 //console.log('events in registry:')
-                //console.log(this._events);
+                console.log(this._events);
                 $.each(this._listeners, function(i, listener) {
                     listener(this._events);
                 }.bind(this));
