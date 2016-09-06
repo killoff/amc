@@ -3,7 +3,6 @@
     <body>
         <referenceBlock name="data">
             <action method="setTemplate"><argument name="template" xsi:type="string">Amc_Sales::order/create/data.phtml</argument></action>
-            <block class="Magento\Backend\Block\Template" template="Amc_Sales::order/create/search_modal.phtml" name="search_modal" />
         </referenceBlock>
 
         <referenceBlock name="search">

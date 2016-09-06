@@ -7,11 +7,12 @@ define([
     "jquery",
     'Magento_Ui/js/modal/confirm',
     'Magento_Ui/js/modal/alert',
+    'Magento_Ui/js/modal/modal',
     "mage/translate",
     "prototype",
     "Magento_Catalog/catalog/product/composite/configure",
     'Magento_Ui/js/lib/view/utils/async'
-], function(jQuery, confirm, alert){
+], function(jQuery, confirm, alert, modal){
 
     window.AdminOrder = new Class.create();
 
@@ -55,17 +56,34 @@ define([
                     }
                 });
 
+                var searchModalOptions = {
+                    type: 'popup',
+                    responsive: true,
+                    innerScroll: true,
+                    buttons: [{
+                        text: jQuery.mage.__('Continue'),
+                        click: function () {
+                            this.closeModal();
+                            order.productGridAddSelected();
+                        }
+                    }]
+                };
+
                 var searchButton = new ControlButton(jQuery.mage.__('Add Products')),
-                    searchAreaId = this.getAreaId('search');
+                    searchAreaId = this.getAreaId('search'),
+                    searchModal;
+
                 searchButton.onClick = function() {
                     $(searchAreaId).show();
-                    var el = this;
-                    window.setTimeout(function () {
-                        el.remove();
-                    }, 10);
+                    searchModal.openModal();
                 };
 
                 if (jQuery('#' + this.getAreaId('items')).is(':visible')) {
+
+                    // always open Add Products modal on page load
+                    //$(searchAreaId).show();
+                    //searchModal.openModal();
+
                     this.dataArea.onLoad = this.dataArea.onLoad.wrap(function(proceed) {
                         proceed();
                         this._parent.itemsArea.setNode($(this._parent.getAreaId('items')));
@@ -74,8 +92,10 @@ define([
 
                     this.itemsArea.onLoad = this.itemsArea.onLoad.wrap(function(proceed) {
                         proceed();
-                        if ($(searchAreaId) && !$(searchAreaId).visible()) {
+                        if ($(searchAreaId)) {
                             this.addControlButton(searchButton);
+                            searchModal = modal(searchModalOptions, jQuery('#' + searchAreaId));
+                            searchModal.openModal();
                         }
                     });
                     this.areasLoaded();

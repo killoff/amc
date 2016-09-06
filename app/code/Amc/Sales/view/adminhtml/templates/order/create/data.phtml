@@ -18,11 +18,6 @@
             <?php echo $block->getChildHtml('search') ?>
         </div>
 
-        <?php echo $block->getChildHtml('search_modal') ?>
-        <div class="actions-amc actions" style="display: none;">
-            <button class="action-secondary action-add" type="button"><span><?php /* @escapeNotVerified */ echo __('Add Products') ?></span></button>
-        </div>
-
         <section id="order-items" class="admin__page-section order-items" data-mage-init='{"loader": {}}'>
             <?php echo $block->getChildHtml('items') ?>
         </section>
