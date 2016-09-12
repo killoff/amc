@@ -41,62 +41,16 @@ define([
             this.summarizePrice = true;
             jQuery.async('#order-items', (function(){
                 this.dataArea = new OrderFormArea('data', $(this.getAreaId('data')), this);
-                this.itemsArea = Object.extend(new OrderFormArea('items', $(this.getAreaId('items')), this), {
-                    addControlButton: function(button){
-                        var controlButtonArea = $(this.node).select('.actions')[0];
-                        if (typeof controlButtonArea != 'undefined') {
-                            var buttons = controlButtonArea.childElements();
-                            for (var i = 0; i < buttons.length; i++) {
-                                if (buttons[i].innerHTML.include(button.label)) {
-                                    return ;
-                                }
-                            }
-                            button.insertIn(controlButtonArea, 'top');
-                        }
-                    }
-                });
-
-                var searchModalOptions = {
-                    type: 'popup',
-                    responsive: true,
-                    innerScroll: true,
-                    buttons: [{
-                        text: jQuery.mage.__('Continue'),
-                        click: function () {
-                            this.closeModal();
-                            order.productGridAddSelected();
-                        }
-                    }]
-                };
-
-                var searchButton = new ControlButton(jQuery.mage.__('Add Products')),
-                    searchAreaId = this.getAreaId('search'),
-                    searchModal;
-
-                searchButton.onClick = function() {
-                    $(searchAreaId).show();
-                    searchModal.openModal();
-                };
+                this.itemsArea = Object.extend(new OrderFormArea('items', $(this.getAreaId('items')), this), {});
 
                 if (jQuery('#' + this.getAreaId('items')).is(':visible')) {
-
-                    // always open Add Products modal on page load
-                    //$(searchAreaId).show();
-                    //searchModal.openModal();
-
                     this.dataArea.onLoad = this.dataArea.onLoad.wrap(function(proceed) {
                         proceed();
                         this._parent.itemsArea.setNode($(this._parent.getAreaId('items')));
                         this._parent.itemsArea.onLoad();
                     });
-
                     this.itemsArea.onLoad = this.itemsArea.onLoad.wrap(function(proceed) {
                         proceed();
-                        if ($(searchAreaId)) {
-                            this.addControlButton(searchButton);
-                            searchModal = modal(searchModalOptions, jQuery('#' + searchAreaId));
-                            searchModal.openModal();
-                        }
                     });
                     this.areasLoaded();
                     this.itemsArea.onLoad();
@@ -108,6 +62,26 @@ define([
                     jQuery(this).trigger('realOrder');
                 })
                 .on('realOrder', this._realSubmit.bind(this));
+        },
+
+        searchProducts: function() {
+            var searchModalOptions = {
+                type: 'popup',
+                responsive: true,
+                innerScroll: true,
+                buttons: [{
+                    text: jQuery.mage.__('Continue'),
+                    click: function () {
+                        this.closeModal();
+                        order.productGridAddSelected();
+                    }
+                }]
+            };
+            var searchAreaId = this.getAreaId('search'),
+                searchModal = modal(searchModalOptions, jQuery('#' + searchAreaId));
+
+            $(searchAreaId).show();
+            searchModal.openModal();
         },
 
         areasLoaded: function(){

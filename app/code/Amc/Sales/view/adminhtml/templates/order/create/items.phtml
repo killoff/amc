@@ -1,0 +1,10 @@
+<div class="admin__page-section-title">
+    <strong class="title"><?php /* @escapeNotVerified */ echo $block->getHeaderText() ?></strong>
+    <div class="actions">
+        <?php echo $block->getButtonsHtml() ?>
+        <button class="action-secondary action-add" type="button" onclick="order.searchProducts();">
+            <span>Add Products</span>
+        </button>
+    </div>
+</div>
+<?php echo $block->getChildHtml() ?>

@@ -5,6 +5,10 @@
             <action method="setTemplate"><argument name="template" xsi:type="string">Amc_Sales::order/create/data.phtml</argument></action>
         </referenceBlock>
 
+        <referenceBlock name="items">
+            <action method="setTemplate"><argument name="template" xsi:type="string">Amc_Sales::order/create/items.phtml</argument></action>
+        </referenceBlock>
+
         <referenceBlock name="search">
             <action method="setTemplate"><argument name="template" xsi:type="string">Amc_Sales::order/create/search.phtml</argument></action>
         </referenceBlock>
