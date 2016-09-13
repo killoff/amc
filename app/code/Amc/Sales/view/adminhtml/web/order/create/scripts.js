@@ -50,6 +50,11 @@ define([
                         this._parent.itemsArea.onLoad();
                     });
                     this.itemsArea.onLoad = this.itemsArea.onLoad.wrap(function(proceed) {
+                        // rerender timetable if it has been initialized and items area got updated
+                        var timetableContainer = jQuery('#timetable-fullcalendar');
+                        if (timetableContainer.length > 0 && timetableContainer.timetable) {
+                            timetableContainer.timetable('render');
+                        }
                         proceed();
                     });
                     this.areasLoaded();

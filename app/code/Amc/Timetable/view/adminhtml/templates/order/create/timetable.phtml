@@ -2,14 +2,11 @@
 <div class="admin__page-section-title">
     <strong class="title"><?php echo __('Order Timetable') ?></strong>
 </div>
-<div id="order-timetable"></div>
-<?php if (false): ?>
+<div id="timetable-fullcalendar"></div>
 <script type="text/x-magento-init">
 {
-    "#order-timetable": {
+    "#timetable-fullcalendar": {
         "Amc_Timetable/js/timetable": <?php echo $block->getWidgetOptionsJson() ?>
     }
 }
 </script>
-
-<?php endif ?>

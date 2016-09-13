@@ -7,7 +7,7 @@ define([
 ], function($, moment){
     "use strict";
 
-    $.widget("amc.timetable", {
+    $.widget("mage.timetable", {
         options: {
             resources: {
                 url: '',
@@ -33,8 +33,15 @@ define([
         },
 
         _create: function() {
+            console.log('timetable init');
             this.initFullcalendar();
             this.registry.subscribe(this.onRegistryChange, this);
+        },
+
+        render: function() {
+            console.log('timetable render');
+            this.element.fullCalendar('refetchResources');
+            this.element.fullCalendar('refetchEvents');
         },
 
         initFullcalendar: function() {
@@ -342,5 +349,5 @@ define([
 
     });
 
-    return $.amc.timetable;
+    return $.mage.timetable;
 });

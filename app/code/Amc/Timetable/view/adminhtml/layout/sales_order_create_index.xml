@@ -12,7 +12,7 @@
         <css src="Amc_Timetable::css/order-timetable.css"/>
     </head>
     <body>
-        <referenceBlock name="items">
+        <referenceBlock name="data">
             <block class="Amc\Timetable\Block\Adminhtml\Order\Create\Timetable" name="timetable" as="timetable" template="order/create/timetable.phtml" />
         </referenceBlock>
     </body>
