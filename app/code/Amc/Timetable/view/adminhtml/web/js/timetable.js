@@ -33,13 +33,14 @@ define([
         },
 
         _create: function() {
-            console.log('timetable init');
             this.initFullcalendar();
             this.registry.subscribe(this.onRegistryChange, this);
+            $(document).on("orderLoadArea", function(e) {
+                this.render();
+            }.bind(this));
         },
 
         render: function() {
-            console.log('timetable render');
             this.element.fullCalendar('refetchResources');
             this.element.fullCalendar('refetchEvents');
         },

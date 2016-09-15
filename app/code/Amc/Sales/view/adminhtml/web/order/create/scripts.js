@@ -50,11 +50,6 @@ define([
                         this._parent.itemsArea.onLoad();
                     });
                     this.itemsArea.onLoad = this.itemsArea.onLoad.wrap(function(proceed) {
-                        // rerender timetable if it has been initialized and items area got updated
-                        var timetableContainer = jQuery('#timetable-fullcalendar');
-                        if (timetableContainer.length > 0 && timetableContainer.timetable) {
-                            timetableContainer.timetable('render');
-                        }
                         proceed();
                     });
                     this.areasLoaded();
@@ -988,6 +983,11 @@ define([
                     onSuccess: function(transport) {
                         var response = transport.responseText.evalJSON();
                         this.loadAreaResponseHandler(response);
+                        jQuery.event.trigger({
+                            type: "orderLoadArea",
+                            area: area,
+                            areas: this.loadingAreas
+                        });
                         deferred.resolve();
                     }.bind(this)
                 });
@@ -997,6 +997,11 @@ define([
                     parameters:params,
                     loaderArea: indicator,
                     onSuccess: function(transport) {
+                        jQuery.event.trigger({
+                            type: "orderLoadArea",
+                            area: area,
+                            areas: this.loadingAreas
+                        });
                         deferred.resolve();
                     }
                 });
