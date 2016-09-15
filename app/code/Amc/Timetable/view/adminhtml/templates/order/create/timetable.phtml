@@ -2,11 +2,4 @@
 <div class="admin__page-section-title">
     <strong class="title"><?php echo __('Order Timetable') ?></strong>
 </div>
-<div id="timetable-fullcalendar"></div>
-<script type="text/x-magento-init">
-{
-    "#timetable-fullcalendar": {
-        "Amc_Timetable/js/timetable": <?php echo $block->getWidgetOptionsJson() ?>
-    }
-}
-</script>
+<div id="timetable-fullcalendar" data-mage-init='{"Amc_Timetable/js/timetable": <?php echo $block->getWidgetOptionsJson() ?>}'></div>
