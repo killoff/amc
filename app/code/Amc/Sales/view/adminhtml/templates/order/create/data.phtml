@@ -76,6 +76,7 @@
         <div class="admin__field field-comment">
 
             <section id="order-addresses" >
+                <!-- address container also contains account fields in order to manage fields order -->
                 <div id="order-billing_address">
                     <?php echo $block->getChildHtml('billing_address') ?>
                 </div>
@@ -83,8 +84,8 @@
                 </div>
             </section>
 
-            <section id="order-form_account" class="">
-                <?php echo $block->getChildHtml('form_account') ?>
+            <!-- keep container for safe, account fields moved to address container -->
+            <section id="order-form_account" style="display: none;">
             </section>
         </div>
 
@@ -105,7 +106,7 @@
                     <?php endforeach; ?>
                 </select>
             </div>
-            <div class="customer-current-activity" id="order-sidebar">
+            <div class="customer-current-activity" id="order-sidebar" style="margin-top: 40px;">
                 <?php echo $block->getChildHtml('sidebar') ?>
             </div>
         <?php endif; ?>

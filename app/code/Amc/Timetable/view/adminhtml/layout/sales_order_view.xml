@@ -7,7 +7,7 @@
     </head>
     <body>
         <referenceBlock name="items_after_container">
-            <block class="Amc\Timetable\Block\Adminhtml\Order\Tab\Timetable" name="order_timetable" template="Amc_Timetable::order/view/timetable.phtml" />
+            <block class="Amc\Timetable\Block\Adminhtml\Order\View\Timetable" name="order_timetable" template="Amc_Timetable::order/view/timetable.phtml" />
         </referenceBlock>
     </body>
 </page>

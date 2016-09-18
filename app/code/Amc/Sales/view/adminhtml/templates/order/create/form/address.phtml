@@ -47,10 +47,46 @@ endif; ?>
 
 <div class="order-address" id="<?php /* @escapeNotVerified */ echo $_fieldsContainerId ?>">
 
-    <?php echo $block->getForm()->getElement('lastname')->toHtml() ?>
-    <?php echo $block->getForm()->getElement('firstname')->toHtml() ?>
-    <?php echo $block->getForm()->getElement('middlename')->toHtml() ?>
-    <?php echo $block->getForm()->getElement('telephone')->toHtml() ?>
+    <?php
+    $accountBlock = $block->getParentBlock()->getChildBlock('form_account');
+    $lastname = $block->getForm()->getElement('lastname');
+    $firstname = $block->getForm()->getElement('firstname');
+    $middlename = $block->getForm()->getElement('middlename');
+    $telephone = $block->getForm()->getElement('telephone');
+    $dob = $accountBlock->getForm()->getElement('dob');
+    $gender = $accountBlock->getForm()->getElement('gender');
+    $group_id = $accountBlock->getForm()->getElement('group_id');
+    $email = $accountBlock->getForm()->getElement('email');
+    ?>
+
+    <div id="order-form_account">
+        <?php if ($block->getCustomerId()): ?>
+            <div class="admin__field field">
+                <h2><?php echo $lastname->getEscapedValue() ?> <?php echo $firstname->getEscapedValue() ?> <?php echo $middlename->getEscapedValue() ?></h2>
+                <h3><?php echo $dob->getEscapedValue() ?></h3>
+                <h3><?php echo $telephone->getEscapedValue() ?></h3>
+                <div style="display: none;">
+                    <?php echo $lastname->getElementHtml() ?>
+                    <?php echo $firstname->getElementHtml() ?>
+                    <?php echo $middlename->getElementHtml() ?>
+                    <?php echo $telephone->getElementHtml() ?>
+                    <?php echo $dob->getElementHtml() ?>
+                    <?php echo $gender->getElementHtml() ?>
+                    <?php echo $group_id->getElementHtml() ?>
+                    <?php echo $email->getElementHtml() ?>
+                </div>
+            </div>
+        <?php else: ?>
+            <?php echo $lastname->toHtml() ?>
+            <?php echo $firstname->toHtml() ?>
+            <?php echo $middlename->toHtml() ?>
+            <?php echo $dob->toHtml() ?>
+            <?php echo $telephone->toHtml() ?>
+            <?php echo $gender->toHtml() ?>
+            <?php echo $group_id->toHtml() ?>
+            <?php echo $email->toHtml() ?>
+        <?php endif ?>
+    </div>
 
     <input type="hidden" name="<?php echo $block->getForm()->getHtmlNamePrefix() ?>[street][0]" value="ADDRESS_PLACEHOLDER" />
     <input type="hidden" name="<?php echo $block->getForm()->getHtmlNamePrefix() ?>[city]" value="CITY_PLACEHOLDER" />
@@ -60,7 +96,7 @@ endif; ?>
     <input name="<?php echo $block->getForm()->getHtmlNamePrefix() ?>[save_in_address_book]"
            type="hidden"
            id="<?php echo $block->getForm()->getHtmlIdPrefix() ?>save_in_address_book"
-           value="0" />
+           value="<?php echo $block->getCustomerId() ? '0' : '1' ?>" />
 </div>
 
 <?php $hideElement = 'address-' . ($block->getIsShipping() ? 'shipping' : 'billing') . '-overlay'; ?>
@@ -68,9 +104,10 @@ endif; ?>
 </div>
 
 <script>
-    require(["Magento_Sales/order/create/form"], function(){
+    require(["prototype", "Magento_Sales/order/create/form"], function(){
             order.bindAddressFields('<?php /* @escapeNotVerified */ echo $_fieldsContainerId ?>');
             order.bindAddressFields('<?php /* @escapeNotVerified */ echo $_addressChoiceContainerId ?>');
+            order.accountFieldsBind('order-form_account');
             <?php if ($block->getIsShipping() && $block->getIsAsBilling()): ?>
             order.disableShippingAddress(true);
             <?php endif; ?>

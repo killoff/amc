@@ -153,6 +153,8 @@ class Aggregated
                 'start_at' => $schedule->getData('start_at'),
                 'end_at' => $schedule->getData('end_at'),
                 'type' => 'schedule',
+                'order_id' => null, // fill with null for convention
+                'order_item_id' => null // fill with null for convention
             ];
             // collect mapping user_id => product_ids for next procedure
             $userToProductsMapping[$schedule->getData('user_id')] = explode(',', $schedule->getData('product_ids'));
@@ -186,6 +188,7 @@ class Aggregated
         $orderEventCollection = $this->orderEventCollectionFactory->create();
         $orderEventCollection
             ->whereUserIdIn($userIds)
+            ->joinOrderItemsInformation()
             ->whereStartIsBefore(new \DateTime($dateTo))
             ->whereEndIsAfter(new \DateTime($dateFrom));
         foreach ($orderEventCollection->getItems() as $orderEvent) {
@@ -195,6 +198,8 @@ class Aggregated
                 'start_at' => $orderEvent->getData('start_at'),
                 'end_at' => $orderEvent->getData('end_at'),
                 'type' => 'order',
+                'order_id' => $orderEvent->getData('order_id'),
+                'order_item_id' => $orderEvent->getData('order_item_id')
             ];
         }
 

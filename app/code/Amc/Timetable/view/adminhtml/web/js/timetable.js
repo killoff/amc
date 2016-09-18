@@ -36,7 +36,9 @@ define([
             this.initFullcalendar();
             this.registry.subscribe(this.onRegistryChange, this);
             $(document).on("orderLoadArea", function(e) {
-                this.render();
+                if (e.area || e.areas) {
+                    this.render();
+                }
             }.bind(this));
         },
 
@@ -289,14 +291,13 @@ define([
                     deleted: event.deleted
                 });
             });
-            var hiddenFieldId = this.options.registry_json_field_name + this.uuid;
+            var hiddenFieldId = 'registry_json' + this.uuid;
             var hiddenField = $('#' + hiddenFieldId);
             if (hiddenField.length == 0) {
                 hiddenField = $('<input id="' + hiddenFieldId + '" type="hidden" name="' + this.options.registry_json_field_name + '">');
                 hiddenField.insertAfter(this.element);
             }
             hiddenField.val(JSON.stringify(changedEvents));
-            console.log(hiddenField.val());
         },
 
         generateUuid: function () {

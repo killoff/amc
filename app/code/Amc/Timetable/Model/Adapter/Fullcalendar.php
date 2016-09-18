@@ -18,6 +18,16 @@ class Fullcalendar
      */
     public function getSchedulerResources(array $aggregated)
     {
+        /* duration - TODO
+        $item;// sales quote item
+        $product = $item->getProduct();
+        if ($product) {
+            $duration = $product->load($item->getProductId())->getData('duration');
+        } else {
+            $duration = '15';
+        }
+        */
+
         $resources = [];
         foreach ($aggregated['products'] as $product) {
             $resource = [
@@ -59,6 +69,7 @@ class Fullcalendar
         $schedulerResources = $this->getSchedulerResources($aggregated);
         foreach ($schedulerResources as $productResource) {
             foreach ($productResource['children'] as $userResource) {
+                // todo: rename?
                 $userSchedule = array_filter($aggregated['events'], function ($event) use ($userResource) {
                     return $event['user_id'] == $userResource['user_id'];
                 });
@@ -69,9 +80,9 @@ class Fullcalendar
 //                        'id'         => $event['id'], // todo
                         'start'      => $event['start_at'],
                         'end'        => $event['end_at'],
-                        'rendering'  => 'background', //$event['end_at'] === $item->getId() ? '' : 'background',
-                        'color'      => $event['type'] === 'schedule' ? '#00c853' : '#ff8a80',
-                        'belongs_to_current_order' => false,// $occupied->getOrderItemId() === $item->getId() ? true : false,
+                        'rendering'  => $event['order_item_id'] === $userResource['sales_item_id'] ? '' : 'background',
+                        // todo: make it human-readable
+                        'color'      => $event['type'] === 'schedule' ? '#00c853' : ($event['order_item_id'] === $userResource['sales_item_id'] ? '#5300c8' : '#ff8a80'),
                         'overlap'    => true,
                         'title'      => '', // 'room '.$occupied->getRoomId(),
                         'type'       => $event['type'],

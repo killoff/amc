@@ -11,6 +11,8 @@ class Collection extends AbstractCollection
      */
     protected $_idFieldName = 'event_id';
 
+    protected $_orderItemsTableJoined = false;
+
     /**
      * Define resource model
      *
@@ -35,12 +37,9 @@ class Collection extends AbstractCollection
         if (empty($userIds)) {
             return $this;
         }
-        $condition = $this->getConnection()->quoteInto('main_table.order_item_id = oi.item_id AND oi.product_id IN(?)', $productIds);
-        $this->getSelect()->joinInner(
-            ['oi' => $this->getTable('sales_order_item')],
-            $condition,
-            []
-        );
+        $this->joinOrderItemsInformation();
+        $condition = $this->getConnection()->quoteInto('order_item.product_id IN(?)', $productIds);
+        $this->getSelect()->where($condition);
         return $this;
     }
 
@@ -53,6 +52,19 @@ class Collection extends AbstractCollection
     public function whereEndIsAfter(\DateTime $date)
     {
         $this->addFieldToFilter('end_at', ['gt' => $date->format('Y-m-d H:i:s')]);
+        return $this;
+    }
+
+    public function joinOrderItemsInformation()
+    {
+        if (false === $this->_orderItemsTableJoined) {
+            $this->getSelect()->joinInner(
+                ['order_item' => $this->getTable('sales_order_item')],
+                'main_table.order_item_id = order_item.item_id',
+                ['product_id', 'order_id', 'name']
+            );
+            $this->_orderItemsTableJoined = true;
+        }
         return $this;
     }
 }

@@ -1,17 +1,18 @@
 <?php
-namespace Amc\Timetable\Block\Adminhtml\Order\Create;
+namespace Amc\Timetable\Block\Adminhtml\Order\View;
 
 use \Amc\Timetable\Block\Adminhtml\Order\TimetableInterface;
 use \Magento\Backend\Block\Template;
 
 class Timetable extends Template implements TimetableInterface
 {
+
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
-        \Magento\Backend\Model\Session\Quote $sessionQuote,
+        \Magento\Framework\Registry $registry,
         array $data = []
     ) {
-        $this->sessionQuote = $sessionQuote;
+        $this->coreRegistry = $registry;
         parent::__construct($context, $data);
     }
 
@@ -21,13 +22,13 @@ class Timetable extends Template implements TimetableInterface
             'resources' => [
                 'url' => $this->getUrl('timetable/order/resourcesJson'),
                 'data' => [
-                    'quote_id' => $this->getQuoteId()
+                    'order_id' => $this->getOrderId()
                 ]
             ],
             'events' => [
                 'url' => $this->getUrl('timetable/order/eventsJson'),
                 'data' => [
-                    'quote_id' => $this->getQuoteId()
+                    'order_id' => $this->getOrderId()
                 ]
             ],
             'defaultDate' => $this->getInitialDate(),
@@ -39,11 +40,16 @@ class Timetable extends Template implements TimetableInterface
 
     private function getInitialDate()
     {
-        return date('Y-m-d');
+        return $this->getData('initial_date') ? $this->getData('initial_date') : $this->getOrder()->getCreatedAt();
     }
 
-    private function getQuoteId()
+    private function getOrder()
     {
-        return $this->sessionQuote->getQuote()->getId();
+        return $this->coreRegistry->registry('current_order');
+    }
+
+    private function getOrderId()
+    {
+        return $this->getOrder()->getId();
     }
 }
