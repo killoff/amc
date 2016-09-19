@@ -2,8 +2,8 @@
 
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <css src="fullcalendar-scheduler-1.0.2/lib/fullcalendar.min.css"/>
-        <css src="fullcalendar-scheduler-1.0.2/scheduler.min.css"/>
+        <css src="fullcalendar-scheduler/lib/fullcalendar.min.css"/>
+        <css src="fullcalendar-scheduler/scheduler.min.css"/>
         <css src="Amc_UserSchedule::styles.css"/>
     </head>
     <body>

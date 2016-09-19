@@ -1,11 +1,11 @@
 var config = {
     map: {
         '*': {
-            fullcalendar: 'fullcalendar-scheduler-1.0.2/lib/fullcalendar.min',
-            fullcalendarScheduler: 'fullcalendar-scheduler-1.0.2/scheduler'
+            fullcalendar: 'fullcalendar-scheduler/lib/fullcalendar.min',
+            fullcalendarScheduler: 'fullcalendar-scheduler/scheduler'
         }
     },
     shim: {
-        "fullcalendar-scheduler-1.0.2/scheduler": [ "fullcalendar"  ]
+        "fullcalendar-scheduler/scheduler": [ "fullcalendar"  ]
     }
 };

@@ -43,8 +43,10 @@ define([
         },
 
         render: function() {
+            console.log('re-render calendar');
             this.element.fullCalendar('refetchResources');
             this.element.fullCalendar('refetchEvents');
+            //this.element.fullCalendar('render');
         },
 
         initFullcalendar: function() {
