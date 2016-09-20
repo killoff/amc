@@ -42,19 +42,23 @@ class Aggregated
     /** @var \Magento\User\Model\ResourceModel\User\CollectionFactory */
     protected $userCollectionFactory;
 
+    /** @var \Magento\Catalog\Model\ProductFactory */
+    protected $productFactory;
+
     public function __construct(
         \Amc\UserSchedule\Model\ResourceModel\Schedule\Item\CollectionFactory $scheduleCollectionFactory,
         \Amc\Timetable\Model\ResourceModel\OrderEvent\CollectionFactory $orderEventCollectionFactory,
         \Magento\User\Model\ResourceModel\User\CollectionFactory $userCollectionFactory,
         \Amc\User\Model\UserProductLink $userProductLink,
-        \Amc\User\Helper\Data $userHelper
-    )
-    {
+        \Amc\User\Helper\Data $userHelper,
+        \Magento\Catalog\Model\ProductFactory $productFactory
+    ) {
         $this->scheduleCollectionFactory = $scheduleCollectionFactory;
         $this->orderEventCollectionFactory = $orderEventCollectionFactory;
         $this->userCollectionFactory = $userCollectionFactory;
         $this->userProductLink = $userProductLink;
         $this->userHelper = $userHelper;
+        $this->productFactory = $productFactory;
     }
 
     /**
@@ -67,14 +71,7 @@ class Aggregated
      */
     public function getForQuote(\Magento\Quote\Model\Quote $quote, $dateFrom, $dateTo)
     {
-        $items = array_map(function($item) {
-            return [
-                'id'         => $item->getId(),
-                'product_id' => $item->getProductId(),
-                'name'       => $item->getName()
-            ];
-        }, $quote->getAllVisibleItems());
-
+        $items = $this->prepareItems($quote->getAllVisibleItems());
         return $this->getAggregated($items, $dateFrom, $dateTo);
     }
 
@@ -88,14 +85,7 @@ class Aggregated
      */
     public function getForOrder(\Magento\Sales\Model\Order $order, $dateFrom, $dateTo)
     {
-        $items = array_map(function($item) {
-            return [
-                'id'         => $item->getId(),
-                'product_id' => $item->getProductId(),
-                'name'       => $item->getName()
-            ];
-        }, $order->getAllVisibleItems());
-
+        $items = $this->prepareItems($quote->getAllVisibleItems());
         return $this->getAggregated($items, $dateFrom, $dateTo);
     }
 
@@ -124,7 +114,8 @@ class Aggregated
             $result['products'][] = [
                 'id' => $salesItem['product_id'],
                 'sales_item_id' => $salesItem['id'],
-                'name' => $salesItem['name']
+                'name' => $salesItem['name'],
+                'duration' => $salesItem['duration']
             ];
         }
         $allProductIds = array_column($result['products'], 'id');
@@ -204,5 +195,20 @@ class Aggregated
         }
 
         return $result;
+    }
+
+    private function prepareItems($items)
+    {
+        $items = array_map(function($item) {
+            $product = $this->productFactory->create()->load($item->getProductId());
+            return [
+                'id'         => $item->getId(),
+                'product_id' => $item->getProductId(),
+                'name'       => $item->getName(),
+                'duration'   => $product->getData('duration')
+            ];
+        }, $items);
+
+        return $items;
     }
 }

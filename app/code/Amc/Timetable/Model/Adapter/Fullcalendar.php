@@ -18,16 +18,6 @@ class Fullcalendar
      */
     public function getSchedulerResources(array $aggregated)
     {
-        /* duration - TODO
-        $item;// sales quote item
-        $product = $item->getProduct();
-        if ($product) {
-            $duration = $product->load($item->getProductId())->getData('duration');
-        } else {
-            $duration = '15';
-        }
-        */
-
         $resources = [];
         foreach ($aggregated['products'] as $product) {
             $resource = [
@@ -36,7 +26,7 @@ class Fullcalendar
                 'sales_item_id' => $product['sales_item_id'],
                 'title' => $product['name'],
                 'type' => 'item',
-                'duration' => '15', // @todo
+                'duration' => empty($product['duration']) ? 15 : $product['duration'],
                 'children' => []
             ];
             $productUsers = array_filter($aggregated['users'], function ($user) use ($product) {
