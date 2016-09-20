@@ -10,6 +10,7 @@
         <css src="fullcalendar-scheduler/lib/fullcalendar.min.css"/>
         <css src="fullcalendar-scheduler/scheduler.min.css"/>
         <css src="Amc_Timetable::css/order-timetable.css"/>
+        <css src="Amc_Timetable::css/modals.css"/>
     </head>
     <body>
         <referenceBlock name="data">
