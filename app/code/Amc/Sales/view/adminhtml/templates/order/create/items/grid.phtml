@@ -71,7 +71,7 @@
                 <?php $i = 0 ?>
                 <?php foreach ($_items as $_item):$i++ ?>
                 <tbody class="<?php /* @escapeNotVerified */ echo($i%2) ? 'even' : 'odd' ?>">
-                    <tr>
+                    <tr data-order-item="<?php /* @escapeNotVerified */ echo $_item->getId() ?>">
                         <td class="col-product">
                             <span id="order_item_<?php /* @escapeNotVerified */ echo $_item->getId() ?>_title">
                                 <?php echo $block->escapeHtml($_item->getName()) ?>

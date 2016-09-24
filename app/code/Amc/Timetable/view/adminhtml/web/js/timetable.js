@@ -32,21 +32,25 @@ define([
             registry_json_field_name: 'registry_json'
         },
 
-        _create: function() {
+        _create: function(params) {
+            console.log('calendar initialized');
+            this.orderItemsState = ''; // concatenated order item IDs to track order items changes
             this.initFullcalendar();
             this.registry.subscribe(this.onRegistryChange, this);
             $(document).on("orderLoadArea", function(e) {
-                if (e.area || e.areas) {
+                if (this.areOrderItemsChanged()) {
+                    this.updateOrderItemsState();
                     this.render();
                 }
             }.bind(this));
         },
 
         render: function() {
-            console.log('re-render calendar');
+            console.log('re-render calendar start');
             this.element.fullCalendar('refetchResources');
-            this.element.fullCalendar('refetchEvents');
-            //this.element.fullCalendar('render');
+            window.setTimeout(function () {this.element.fullCalendar('refetchEvents');}.bind(this), 1000);
+            this.element.fullCalendar('render');
+            console.log('re-render calendar stop');
         },
 
         initFullcalendar: function() {
@@ -349,6 +353,23 @@ define([
                     listener(this._events);
                 }.bind(this));
             }
+        },
+
+        getOrderItemsState: function() {
+            var state = '';
+            $('[data-order-item]').each(function() {
+                state += $(this).attr('data-order-item') + '-';
+            });
+            return state;
+        },
+
+        areOrderItemsChanged: function() {
+            console.log('state: '+this.orderItemsState + ' <> '+this.getOrderItemsState())
+            return this.orderItemsState !== this.getOrderItemsState();
+        },
+
+        updateOrderItemsState: function() {
+            this.orderItemsState = this.getOrderItemsState();
         }
 
     });

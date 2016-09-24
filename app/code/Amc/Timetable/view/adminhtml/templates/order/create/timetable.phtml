@@ -2,4 +2,15 @@
 <div class="admin__page-section-title">
     <strong class="title"><?php echo __('Order Timetable') ?></strong>
 </div>
-<div id="timetable-fullcalendar" data-mage-init='{"Amc_Timetable/js/timetable": <?php echo $block->getWidgetOptionsJson() ?>}'></div>
+<div id="timetable-fullcalendar"></div>
+
+<script>
+    require([
+        'jquery',
+        'Amc_Timetable/js/timetable'
+    ], function ($) {
+        $(function () {
+            $('#timetable-fullcalendar:visible').timetable(<?php echo $block->getWidgetOptionsJson() ?>);
+        });
+    });
+</script>

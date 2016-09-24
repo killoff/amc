@@ -1003,7 +1003,7 @@ define([
                             areas: this.loadingAreas
                         });
                         deferred.resolve();
-                    }
+                    }.bind(this)
                 });
             }
             if (typeof productConfigure != 'undefined' && area instanceof Array && area.indexOf('items') != -1) {
