@@ -5,54 +5,27 @@ namespace Amc\Consultation\Block\Adminhtml\Consultation\Edit;
 class Form extends \Magento\Backend\Block\Widget\Form\Generic
 {
     /**
-     * @var \Magento\Catalog\Model\ProductFactory
+     * @var \Amc\Consultation\Model\Layout
      */
-    protected $_productFactory;
+    protected $consultationLayout;
 
-    /**
-     * @var \Amc\User\Model\UserProductLink
-     */
-    protected $relationManager;
-
-    /**
-     * @var \Magento\Backend\Model\Auth\Session
-     */
-    protected $authSession;
-
-    /**
-     * @param \Magento\Backend\Block\Template\Context $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Framework\Data\FormFactory $formFactory
-     * @param \Amc\User\Model\UserProductLink $relationManager
-     * @param \Magento\Backend\Model\Auth\Session $authSession
-     * @param array $data
-     * @param \Magento\Catalog\Model\ProductFactory $productFactory
-     */
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\Registry $registry,
         \Magento\Framework\Data\FormFactory $formFactory,
-        \Amc\User\Model\UserProductLink $relationManager,
-        \Magento\Backend\Model\Auth\Session $authSession,
-        array $data = [],
-        \Magento\Catalog\Model\ProductFactory $productFactory
-    )
-    {
-        $this->_productFactory = $productFactory;
-        $this->relationManager = $relationManager;
-        $this->authSession = $authSession;
+        \Amc\Consultation\Model\Layout $consultationLayout,
+        array $data = []
+    ) {
         parent::__construct($context, $registry, $formFactory, $data);
+        $this->consultationLayout = $consultationLayout;
     }
+
     protected function _construct()
     {
         parent::_construct();
         $this->setId('edit_consultation');
     }
 
-    /**
-     * @return $this
-     * @throws \Magento\Framework\Exception\LocalizedException
-     */
     protected function _prepareForm()
     {
         $model = $this->getCurrentConsultation();
@@ -60,7 +33,12 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
 
         /** @var \Magento\Framework\Data\Form $form */
         $form = $this->_formFactory->create(
-            ['data' => ['id' => 'edit_form', 'action' => $this->getData('action'), 'method' => 'post']]
+            [
+                'data' => [
+                    'id' => 'edit_form',
+                    'method' => 'post'
+                ]
+            ]
         );
 
         $customer = $this->getCustomer();
@@ -76,63 +54,16 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
 
         $dateFormat = $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT);
         $timeFormat = $this->_localeDate->getTimeFormat(\IntlDateFormatter::MEDIUM);
+//        'date_format' => $dateFormat,
+//        'time_format' => $timeFormat,
+//        'value' => $this->_localeDate->date(new \DateTime('now'))->format(\IntlDateFormatter::SHORT)
+//        for wysiwyg:
+//          'config' => []
 
-        $fieldset->addField(
-            'user_date',
-            'date',
-            [
-                'name' => 'user_date',
-                'label' => __('Date'),
-                'id' => 'user_date',
-                'title' => __('Date'),
-                'date_format' => $dateFormat,
-//                'time_format' => $timeFormat,
-                'disabled' => $isEditMode,
-//                'value' => $this->_localeDate->date(new \DateTime('now'))->format(\IntlDateFormatter::SHORT)
-            ]
-        );
+        // todo accomplish wysiwyg fields
+        // todo accomplish date fields
 
-        $fieldset->addField(
-            'comment',
-            'editor',
-            [
-                'name' => 'comment',
-                'label' => __('Comment'),
-                'title' => __('Comment'),
-                'required' => false
-            ]
-        );
-
-        $fieldset->addField(
-            'conclusion',
-            'editor',
-            [
-                'name' => 'conclusion',
-                'label' => __('Conclusion'),
-                'title' => __('Conclusion'),
-                'state' => 'html',
-                'wysiwyg' => true,
-                'required' => false,
-                'style' => 'height: 250px;',
-                'config' => []
-            ]
-        );
-
-        $fieldset->addField(
-            'recommendation',
-            'editor',
-            [
-                'name' => 'recommendation',
-                'label' => __('Recommendation'),
-                'title' => __('Recommendation'),
-                'wysiwyg' => true,
-                'style' => 'height: 250px;',
-                'required' => false
-            ]
-        );
-
-        $fieldset->addType('protocol', 'Amc\Protocol\Block\Adminhtml\Renderer');
-
+//        $fieldset->addType('protocol', 'Amc\Protocol\Block\Adminhtml\Renderer');
 //        $fieldset->addField(
 //            'dialog',
 //            'protocol',
@@ -143,6 +74,21 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
 //                'required' => false,
 //            ]
 //        );
+
+
+        $layoutConfig = $this->getLayoutConfig();
+        foreach ($layoutConfig['fields'] as $field) {
+            $type = $field['type'];
+            unset($field['type']);
+            $fieldOptions = $field;
+            if ($type == 'date') {
+                $fieldOptions['date_format'] = $dateFormat;
+                $fieldOptions['time_format'] = $timeFormat;
+            }
+            $fieldset->addField($field['name'], $type, $fieldOptions);
+        }
+
+//
 
         if (null !== $model) {
             $form->setValues($model->getData());
@@ -156,7 +102,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     /**
      * @return \Amc\Consultation\Model\Consultation|null
      */
-    public function getCurrentConsultation()
+    private function getCurrentConsultation()
     {
         return $this->_coreRegistry->registry('current_consultation');
     }
@@ -164,43 +110,28 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     /**
      * @return \Magento\Customer\Model\Data\Customer
      */
-    public function getCustomer()
+    private function getCustomer()
     {
         return $this->_coreRegistry->registry('current_customer');
     }
 
     /**
-     * @return \Magento\Customer\Model\Data\Customer
+     * @return \Magento\Catalog\Model\Product
      */
-    public function getProduct()
+    private function getProduct()
     {
         return $this->_coreRegistry->registry('current_product');
     }
 
     /**
-     * @param null|string $emptyElement
-     * @return array
+     * @return \Magento\Customer\Model\Data\Customer
      */
-    public function getProductCollectionOptions($emptyElement = null)
+    private function getLayoutConfig()
     {
-        $options = [];
-
-        $productIds = $this->relationManager->getUserProducts(
-            $this->authSession->getUser()
-        );
-
-        $collection = $this->_productFactory->create()->getCollection()
-            ->addAttributeToSelect('name')
-            ->addIdFilter($productIds);
-        foreach ($collection as $product) {
-            /** @var \Magento\Catalog\Api\Data\ProductInterface $product */
-            $options[$product->getId()] = $product->getName();
+        $layoutName = $this->getProduct()->getData('consultation_layout_name');
+        if (!$layoutName) {
+            $layoutName = 'generic';
         }
-
-        if ($emptyElement) {
-            array_unshift($options, ['value' => '', 'label' => $emptyElement]);
-        }
-
-        return $options;
+        return $this->consultationLayout->getLayoutConfig($layoutName);
     }
 }

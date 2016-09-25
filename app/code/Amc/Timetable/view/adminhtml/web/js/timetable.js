@@ -32,7 +32,7 @@ define([
             registry_json_field_name: 'registry_json'
         },
 
-        _create: function(params) {
+        _create: function() {
             console.log('calendar initialized');
             this.orderItemsState = ''; // concatenated order item IDs to track order items changes
             this.initFullcalendar();
@@ -49,7 +49,7 @@ define([
             console.log('re-render calendar start');
             this.element.fullCalendar('refetchResources');
             window.setTimeout(function () {this.element.fullCalendar('refetchEvents');}.bind(this), 1000);
-            this.element.fullCalendar('render');
+            this.registry.dispatchChange();
             console.log('re-render calendar stop');
         },
 
@@ -231,6 +231,8 @@ define([
         },
 
         onRegistryChange: function(events) {
+            console.log('onRegistryChange:')
+            console.log(events);
             var aggregated = {},
                 userResource,
                 productResource,
@@ -327,15 +329,15 @@ define([
             _listeners: [],
             add: function(uuid, data) {
                 this._events[uuid] = data;
-                this._dispatchChange();
+                this.dispatchChange();
             },
             update: function(uuid, data) {
                 this._events[uuid] = data;
-                this._dispatchChange();
+                this.dispatchChange();
             },
             delete: function(uuid) {
                 delete this._events[uuid];
-                this._dispatchChange();
+                this.dispatchChange();
             },
             event: function(uuid) {
                 return this._events.hasOwnProperty(uuid) ? this._events[uuid] : {};
@@ -346,9 +348,9 @@ define([
             subscribe: function(handler, context) {
                 this._listeners.push(handler.bind(context));
             },
-            _dispatchChange: function() {
+            dispatchChange: function() {
                 //console.log('events in registry:')
-                console.log(this._events);
+                //console.log(this._events);
                 $.each(this._listeners, function(i, listener) {
                     listener(this._events);
                 }.bind(this));

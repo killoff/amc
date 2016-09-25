@@ -58,8 +58,15 @@ abstract class Index extends \Magento\Backend\App\Action
      */
     protected $_consultation;
 
-
+    /**
+     * @var \Magento\Catalog\Model\ProductFactory
+     */
     protected $_productFactory;
+
+    /**
+     * @var \Magento\Catalog\Model\ProductRepository
+     */
+    protected $_productRepository;
 
     /**
      * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
@@ -72,6 +79,7 @@ abstract class Index extends \Magento\Backend\App\Action
      * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
      * @param \Amc\User\Model\UserProductLink $userProductLink
      * @param \Magento\Catalog\Model\ProductFactory $productFactory
+     * @param \Magento\Catalog\Model\ProductRepository $productRepository
      */
     public function __construct(
         \Magento\Framework\View\Result\PageFactory $resultPageFactory,
@@ -83,7 +91,8 @@ abstract class Index extends \Magento\Backend\App\Action
         \Magento\Customer\Api\CustomerRepositoryInterface $customerRepository,
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         \Amc\User\Model\UserProductLink $userProductLink,
-        \Magento\Catalog\Model\ProductFactory $productFactory
+        \Magento\Catalog\Model\ProductFactory $productFactory,
+        \Magento\Catalog\Model\ProductRepository $productRepository
     ) {
         parent::__construct($context);
 
@@ -96,6 +105,7 @@ abstract class Index extends \Magento\Backend\App\Action
         $this->_orderRepository = $orderRepository;
         $this->_userProductLink = $userProductLink;
         $this->_productFactory = $productFactory;
+        $this->_productRepository = $productRepository;
     }
 
     /**

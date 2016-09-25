@@ -57,4 +57,9 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
         $order = $this->_coreRegistry->registry('current_order');
         return $this->getUrl('sales/order/view', ['order_id' => $order->getId()]);
     }
+
+    public function getFormActionUrl()
+    {
+
+    }
 }

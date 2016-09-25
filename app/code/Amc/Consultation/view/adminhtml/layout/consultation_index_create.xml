@@ -11,8 +11,5 @@
         <referenceContainer name="left">
             <block class="Amc\Protocol\Block\Adminhtml\Protocol" name="amc_consultation.edit.protocol"/>
         </referenceContainer>
-        <!--<referenceContainer name="content">-->
-            <!--<block class="Amc\Consultation\Block\Adminhtml\Consultation\ProductSelection" name="amc_consultation.edit.product_selection"/>-->
-        <!--</referenceContainer>-->
     </body>
 </page>
