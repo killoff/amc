@@ -2,6 +2,8 @@
 
 namespace Amc\Consultation\Block\Adminhtml\Consultation\Edit;
 
+use Magento\Framework\Exception\NoSuchEntityException;
+
 class Form extends \Magento\Backend\Block\Widget\Form\Generic
 {
     /**
@@ -43,27 +45,22 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
 
         $customer = $this->getCustomer();
         $fullName = implode(' ', [$customer->getLastname(), $customer->getFirstname(), $customer->getMiddlename()]);
-        $fieldset = $form->addFieldset(
+        $fieldSet = $form->addFieldset(
             'base_fieldset',
             ['legend' => __('%1 for %2',$this->getProduct()->getName(), $fullName), 'class' => 'fieldset-wide']
         );
 
-        $fieldset->addField('order_id', 'hidden', ['name' => 'order_id', 'value' => $this->_request->getParam('order_id')]);
-        $fieldset->addField('product_id', 'hidden', ['name' => 'product_id', 'value' => $this->_request->getParam('product_id')]);
-        $fieldset->addField('order_item_id', 'hidden', ['name' => 'order_item_id', 'value' => $this->_request->getParam('order_item_id')]);
+        $fieldSet->addField('order_id', 'hidden', ['name' => 'order_id', 'value' => $this->_request->getParam('order_id')]);
+        $fieldSet->addField('product_id', 'hidden', ['name' => 'product_id', 'value' => $this->_request->getParam('product_id')]);
+        $fieldSet->addField('order_item_id', 'hidden', ['name' => 'order_item_id', 'value' => $this->_request->getParam('order_item_id')]);
 
-        $dateFormat = $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT);
-        $timeFormat = $this->_localeDate->getTimeFormat(\IntlDateFormatter::MEDIUM);
-//        'date_format' => $dateFormat,
-//        'time_format' => $timeFormat,
 //        'value' => $this->_localeDate->date(new \DateTime('now'))->format(\IntlDateFormatter::SHORT)
 //        for wysiwyg:
 //          'config' => []
 
-        // todo accomplish wysiwyg fields
-        // todo accomplish date fields
 
-//        $fieldset->addType('protocol', 'Amc\Protocol\Block\Adminhtml\Renderer');
+        $fieldSet->addType('protocol', 'Amc\Protocol\Block\Adminhtml\Renderer');
+
 //        $fieldset->addField(
 //            'dialog',
 //            'protocol',
@@ -79,16 +76,9 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         $layoutConfig = $this->getLayoutConfig();
         foreach ($layoutConfig['fields'] as $field) {
             $type = $field['type'];
-            unset($field['type']);
-            $fieldOptions = $field;
-            if ($type == 'date') {
-                $fieldOptions['date_format'] = $dateFormat;
-                $fieldOptions['time_format'] = $timeFormat;
-            }
-            $fieldset->addField($field['name'], $type, $fieldOptions);
+            $fieldConfig = $this->getFieldConfig($field);
+            $fieldSet->addField($field['name'], $type, $fieldConfig);
         }
-
-//
 
         if (null !== $model) {
             $form->setValues($model->getData());
@@ -128,10 +118,36 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
      */
     private function getLayoutConfig()
     {
-        $layoutName = $this->getProduct()->getData('consultation_layout_name');
-        if (!$layoutName) {
-            $layoutName = 'generic';
+        $layoutName = $this->getProduct()->getData('consultation_layout');
+        try {
+            return $this->consultationLayout->getLayoutConfig($layoutName);
+        } catch (NoSuchEntityException $e) {
+            return [];
         }
-        return $this->consultationLayout->getLayoutConfig($layoutName);
+    }
+
+    private function getFieldConfig($options)
+    {
+        // accomplish complex UI elements with necessary options
+        $type = $options['type'];
+        switch ($type) {
+            case 'date':
+                $dateFormat = $this->_localeDate->getDateFormat(\IntlDateFormatter::SHORT);
+                $timeFormat = $this->_localeDate->getTimeFormat(\IntlDateFormatter::MEDIUM);
+                $options['date_format'] = $dateFormat;
+                $options['time_format'] = $timeFormat;
+                break;
+            case 'editor':
+                // ...
+                break;
+            default:
+                break;
+        }
+        unset($options['type']);
+
+        // wrap all option names with data[]
+        $options['name'] = 'data[' . $options['name'] . ']';
+
+        return $options;
     }
 }

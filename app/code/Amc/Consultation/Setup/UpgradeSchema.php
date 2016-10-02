@@ -67,6 +67,21 @@ class UpgradeSchema implements UpgradeSchemaInterface
                 'comment'  => 'User input date'
             ]
         );
+
+        $setup->getConnection()->dropColumn($setup->getTable('amc_consultation_entity'), 'comment');
+        $setup->getConnection()->dropColumn($setup->getTable('amc_consultation_entity'), 'conclusion');
+        $setup->getConnection()->dropColumn($setup->getTable('amc_consultation_entity'), 'recommendation');
+
+        $setup->getConnection()->addColumn(
+            $setup->getTable('amc_consultation_entity'),
+            'json_data',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+                'after'    => 'user_date',
+                'comment'  => 'JSON encoded data'
+            ]
+        );
+
         $setup->endSetup();
     }
 

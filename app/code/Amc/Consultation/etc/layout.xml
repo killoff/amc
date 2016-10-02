@@ -3,8 +3,8 @@
     <layout name="generic" label="Generic">
         <field name="user_date" type="date" label="Date" required="1" />
         <field name="comment" type="editor" label="Comment" required="1" />
-        <field name="conclusion" type="editor" label="Conclusion" wysiwyg="true" state="html" style="height: 250px;" />
-        <field name="recommendation" type="editor" label="Recommendation" />
+        <field name="conclusion" type="protocol" label="Conclusion" protocol_id="1" />
+        <field name="recommendation" type="editor" label="Recommendation" wysiwyg="true" state="html" style="height: 250px;"  />
     </layout>
     <layout name="uzi" label="USD">
         <field name="comment" type="textarea" />

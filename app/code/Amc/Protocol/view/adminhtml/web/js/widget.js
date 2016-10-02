@@ -32,9 +32,9 @@ require([
                     $(this).html($('.loading-mask').show());
 
 
-                    //$.get('/index.php/admin/protocol/index/load/', {protocol_id: 2}, function(response) {
-                    //    $('#protocol-dialog').html(response);
-                    //});
+                    $.get('/index.php/admin/protocol/index/load/', {protocol_id: 1}, function(response) {
+                        $('#protocol-dialog').html(response);
+                    });
 
 
                 },

@@ -25,7 +25,7 @@ class Protocol extends \Magento\Backend\Block\Template
     protected function _construct()
     {
         parent::_construct();
-        $items = $this->protocol->getProtocolItems(2);
+        $items = $this->protocol->getProtocolItems(1);
         $metadata = array();
         $children = array();
         if (is_array($items)) {

@@ -13,6 +13,11 @@ class Button extends \Magento\Sales\Block\Adminhtml\Items\Column\DefaultColumn
      */
     private $userProductRelation;
 
+    /**
+     * @var \Magento\Catalog\Model\ProductFactory
+     */
+    private $productFactory;
+
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry,
@@ -21,11 +26,13 @@ class Button extends \Magento\Sales\Block\Adminhtml\Items\Column\DefaultColumn
         \Magento\Catalog\Model\Product\OptionFactory $optionFactory,
         \Magento\Backend\Model\Auth\Session $authSession,
         \Amc\User\Model\UserProductLink $userProductRelation,
+        \Magento\Catalog\Model\ProductFactory $productFactory,
         array $data = []
     ) {
         parent::__construct($context, $stockRegistry, $stockConfiguration, $registry, $optionFactory, $data);
         $this->authSession = $authSession;
         $this->userProductRelation = $userProductRelation;
+        $this->productFactory = $productFactory;
     }
 
     public function getCreateUrl()
@@ -45,5 +52,12 @@ class Button extends \Magento\Sales\Block\Adminhtml\Items\Column\DefaultColumn
             $this->authSession->getUser()->getId(),
             $this->getItem()->getProductId()
         );
+    }
+
+    public function isLayoutAssigned()
+    {
+        $product = $this->productFactory->create();
+        $product->load($this->getItem()->getProductId());
+        return (bool)$product->getData('consultation_layout');
     }
 }

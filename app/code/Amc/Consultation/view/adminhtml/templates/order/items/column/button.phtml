@@ -1,7 +1,11 @@
 <?php /** @var $block \Amc\Consultation\Block\Adminhtml\Order\Items\Column\Button */ ?>
-<button title="Save"
-        type="button"
-        class="action-default scalable save primary <?php echo $block->isAllowed() ? '' : '' ?>"
-        onclick="setLocation('<?php echo $block->getCreateUrl() ?>')">
-    <span><?php echo __('Create') ?></span>
-</button>
+<?php if ($block->isLayoutAssigned()): ?>
+    <button title="Save"
+            type="button"
+            class="action-default scalable save primary <?php echo $block->isAllowed() ? '' : '' ?>"
+            onclick="setLocation('<?php echo $block->getCreateUrl() ?>')">
+        <span><?php echo __('Create') ?></span>
+    </button>
+<?php else: ?>
+    <span>&mdash;</span>
+<?php endif ?>
