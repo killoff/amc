@@ -54,12 +54,12 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
      */
     public function getBackUrl()
     {
-        $order = $this->_coreRegistry->registry('current_order');
+        $order = $this->_coreRegistry->registry('current_consultation')->getOrder();
         return $this->getUrl('sales/order/view', ['order_id' => $order->getId()]);
     }
 
     public function getFormActionUrl()
     {
-
+        return $this->getUrl('consultation/index/save');
     }
 }

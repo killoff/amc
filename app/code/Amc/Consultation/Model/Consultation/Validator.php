@@ -48,8 +48,12 @@ class Validator extends \Magento\Framework\Validator\AbstractValidator
 
         $messages = [];
         $requiredFields = [
-            'product_id' => $value->getProductId(),
-            'created_at' => $value->getCreatedAt()
+            'product_id'    => $value->getProductId(),
+            'customer_id'   => $value->getCustomerId(),
+            'user_id'       => $value->getUserId(),
+            'order_id'      => $value->getOrderId(),
+            'order_item_id' => $value->getOrderItemId(),
+            'created_at'    => $value->getCreatedAt()
         ];
         foreach ($requiredFields as $requiredField => $requiredValue) {
             if (!$this->notEmpty->isValid(trim($requiredValue))) {

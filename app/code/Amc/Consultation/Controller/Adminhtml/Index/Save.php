@@ -1,55 +1,67 @@
 <?php
-
 namespace Amc\Consultation\Controller\Adminhtml\Index;
 
 use Magento\Backend\App\Action;
+use Amc\Consultation\Model\ConsultationFactory;
+use Psr\Log\LoggerInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 
-class Save extends \Amc\Consultation\Controller\Adminhtml\Index
+class Save extends Action
 {
+    /** @var ConsultationFactory */
+    private $consultationFactory;
+
+    /** @var LoggerInterface */
+    private $loggerInterface;
+
+    public function __construct(
+        ConsultationFactory $consultationFactory,
+        LoggerInterface $loggerInterface,
+        Action\Context $context
+    ) {
+        $this->consultationFactory = $consultationFactory;
+        $this->loggerInterface = $loggerInterface;
+        parent::__construct($context);
+    }
+
     /**
      * Consultation save action
      */
     public function execute()
     {
-        $consultationId = $this->getRequest()->getParam('consultation_id');
-        $returnToEdit = false;
-        $editMode = false;
-
         try {
             $consultation = $this->consultationFactory->create();
+            $consultation->setProductId($this->getRequest()->getParam('product_id'));
+            $consultation->setCustomerId($this->getRequest()->getParam('customer_id'));
+            $consultation->setUserId($this->_auth->getUser()->getId());
+            $consultation->setOrderId($this->getRequest()->getParam('order_id'));
+            $consultation->setOrderItemId($this->getRequest()->getParam('order_item_id'));
+            $createdAt = new \DateTime('now');
+            $consultation->setCreatedAt($createdAt->format('Y-m-d H:i:s'));
 
-            if ($consultationId) {
-                $consultation->load($consultationId);
-                $editMode = true;
-            }
+            $data = $this->getRequest()->getParam('data');
+            $jsonData = \Zend_Json::encode($data);
+            $consultation->setJsonData($jsonData);
 
-            $consultation->addData($this->getRequest()->getParams());
-            if ($this->getRequest()->getParam('user_date')) {
-                $userDate = \DateTime::createFromFormat('d/m/Y', $this->getRequest()->getParam('user_date'));
-                $consultation->setUserDate($userDate->format('Y-m-d H:i:s'));
+            if (isset($data['user_date'])) {
+//                $userDate = \DateTime::createFromFormat('m/d/Y H:i:s', $data['user_date']);
+//                   $consultation->setUserDate($userDate->format('Y-m-d H:i:s'));
             } else {
                 $consultation->setUserDate(null);
             }
-            $createdAt = new \DateTime('now');
-            $consultation->setCreatedAt($createdAt->format('Y-m-d H:i:s'));
-            $consultation->setUserId($this->_authSession->getUser()->getId());
-            $order = $this->_orderRepository->get($this->getRequest()->getParam('order_id'));
-            $consultation->setCustomerId($order->getCustomerId());
+            print_r($consultation->getData());
+            exit;
             $consultation->save();
-
-            $editMode
-                ? $this->messageManager->addSuccess(__('You have updated the consultation.'))
-                : $this->messageManager->addSuccess(__('You have created the consultation.'));
+            $this->messageManager->addSuccessMessage(__('You have created the consultation.'));
 
             $resultRedirect = $this->resultRedirectFactory->create();
-            if ($returnToEdit && $consultationId) {
-                $resultRedirect->setPath(
-                    'consultation/*/edit',
-                    ['consultation_id' => $consultationId, '_current' => true]
-                );
+            if ($this->getRequest()->getParam('back_url')) {
+                $resultRedirect->setPath($this->getRequest()->getParam('back_url'));
             } else {
-                $resultRedirect->setPath('sales/order/view', ['order_id' => $order->getEntityId()]);
+                $resultRedirect->setPath(
+                    'consultation/index/edit',
+                    ['consultation_id' => $consultation->getId(), '_current' => true]
+                );
             }
             return $resultRedirect;
 
@@ -57,8 +69,9 @@ class Save extends \Amc\Consultation\Controller\Adminhtml\Index
             $this->messageManager->addException($e, __('An error occurred while saving the consultation.'));
             $returnToEdit = true;
         } catch (\Exception $e) {
+
             $this->loggerInterface->critical($e);
-            $this->messageManager->addError($e->getMessage());
+            $this->messageManager->addErrorMessage($e->getMessage());
             $returnToEdit = true;
         }
 

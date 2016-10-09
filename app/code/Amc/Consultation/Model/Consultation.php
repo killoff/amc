@@ -41,4 +41,44 @@ class Consultation extends AbstractModel implements \Magento\Framework\DataObjec
         }
         return $identities;
     }
+
+    public function getProductId()
+    {
+        return $this->getData('product_id');
+    }
+
+    public function getCustomerId()
+    {
+        return $this->getData('customer_id');
+    }
+
+    public function getUserId()
+    {
+        return $this->getData('user_id');
+    }
+
+    public function getOrderId()
+    {
+        return $this->getData('order_id');
+    }
+
+    public function getOrderItemId()
+    {
+        return $this->getData('order_item_id');
+    }
+
+    public function getUserDate()
+    {
+        return $this->getData('user_date');
+    }
+
+    public function getJsonData()
+    {
+        return $this->getData('json_data');
+    }
+
+    public function getCreatedAt()
+    {
+        return $this->getData('created_at');
+    }
 }

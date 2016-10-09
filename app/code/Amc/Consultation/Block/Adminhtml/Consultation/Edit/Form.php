@@ -30,7 +30,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
 
     protected function _prepareForm()
     {
-        $model = $this->getCurrentConsultation();
+        $model = $this->getConsultation();
         $isEditMode = (null !== $model && $model->getId());
 
         /** @var \Magento\Framework\Data\Form $form */
@@ -38,7 +38,8 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
             [
                 'data' => [
                     'id' => 'edit_form',
-                    'method' => 'post'
+                    'method' => 'post',
+                    'action' => $this->getData('action'),
                 ]
             ]
         );
@@ -61,18 +62,6 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
 
         $fieldSet->addType('protocol', 'Amc\Protocol\Block\Adminhtml\Renderer');
 
-//        $fieldset->addField(
-//            'dialog',
-//            'protocol',
-//            [
-//                'name' => 'dialog',
-//                'label' => __(''),
-//                'title' => __(''),
-//                'required' => false,
-//            ]
-//        );
-
-
         $layoutConfig = $this->getLayoutConfig();
         foreach ($layoutConfig['fields'] as $field) {
             $type = $field['type'];
@@ -92,7 +81,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     /**
      * @return \Amc\Consultation\Model\Consultation|null
      */
-    private function getCurrentConsultation()
+    private function getConsultation()
     {
         return $this->_coreRegistry->registry('current_consultation');
     }
@@ -102,7 +91,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
      */
     private function getCustomer()
     {
-        return $this->_coreRegistry->registry('current_customer');
+        return $this->getConsultation()->getCustomer();
     }
 
     /**
@@ -110,7 +99,7 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
      */
     private function getProduct()
     {
-        return $this->_coreRegistry->registry('current_product');
+        return $this->getConsultation()->getProduct();
     }
 
     /**

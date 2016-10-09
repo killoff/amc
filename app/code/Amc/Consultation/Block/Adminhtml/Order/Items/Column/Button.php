@@ -40,7 +40,6 @@ class Button extends \Magento\Sales\Block\Adminhtml\Items\Column\DefaultColumn
         return $this->getUrl('consultation/index/create',
             [
                 'order_id' => $this->getItem()->getOrderId(),
-                'product_id' => $this->getItem()->getProductId(),
                 'order_item_id' => $this->getItem()->getId()
             ]
         );

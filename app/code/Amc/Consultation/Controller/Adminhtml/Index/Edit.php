@@ -1,26 +1,37 @@
 <?php
-
 namespace Amc\Consultation\Controller\Adminhtml\Index;
 
-use Magento\Framework\Exception\NoSuchEntityException;
-
-class Edit extends \Amc\Consultation\Controller\Adminhtml\Index
+class Edit extends \Amc\Consultation\Controller\Adminhtml\Index\Create
 {
     /**
-     * Consultation edit action
+     * Consultation save action
      */
     public function execute()
     {
         try {
-//            $this->_initProduct();
-//            $this->_initConsultation();
-//            $this->_initCustomer();
+            $consultationId = $this->getRequest()->getParam('consultation_id');
+            $consultation = $this->consultationBuilder->loadConsultation($consultationId);
+            $this->registry->register('current_consultation', $consultation);
+
+            $currentUser = $this->authSession->getUser();
+            $this->throwExceptionIfUserNotAllowed($currentUser->getId(), $consultation->getProduct()->getId());
+
+            return $this->pageFactory->create();
+
         } catch (NoSuchEntityException $e) {
-            $this->messageManager->addException($e, __('An error occurred while editing the customer.'));
-            $resultRedirect = $this->resultRedirectFactory->create();
-            $resultRedirect->setPath('customer/*/index');
-            return $resultRedirect;
+            $this->messageManager->addExceptionMessage($e, __('Entity not found.'));
+            if ($this->getRequest()->getParam('order_id')) {
+                $resultRedirect = $this->resultRedirectFactory->create();
+                $resultRedirect->setPath('sales/order/view', ['order_id' => $this->getRequest()->getParam('order_id')]);
+                return $resultRedirect;
+            }
+        } catch (\Exception $e) {
+            $this->messageManager->addExceptionMessage($e, __('An error occurred while creating the consultation.'));
+            if ($this->getRequest()->getParam('order_id')) {
+                $resultRedirect = $this->resultRedirectFactory->create();
+                $resultRedirect->setPath('sales/order/view', ['order_id' => $this->getRequest()->getParam('order_id')]);
+                return $resultRedirect;
+            }
         }
-        return $this->resultPageFactory->create();
     }
 }
