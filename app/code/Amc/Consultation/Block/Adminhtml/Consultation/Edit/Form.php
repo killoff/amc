@@ -48,17 +48,12 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         $fullName = implode(' ', [$customer->getLastname(), $customer->getFirstname(), $customer->getMiddlename()]);
         $fieldSet = $form->addFieldset(
             'base_fieldset',
-            ['legend' => __('%1 for %2',$this->getProduct()->getName(), $fullName), 'class' => 'fieldset-wide']
+            ['legend' => __('%1 for %2',$this->getOrderItem()->getName(), $fullName), 'class' => 'fieldset-wide']
         );
 
-        $fieldSet->addField('order_id', 'hidden', ['name' => 'order_id', 'value' => $this->_request->getParam('order_id')]);
-        $fieldSet->addField('product_id', 'hidden', ['name' => 'product_id', 'value' => $this->_request->getParam('product_id')]);
-        $fieldSet->addField('order_item_id', 'hidden', ['name' => 'order_item_id', 'value' => $this->_request->getParam('order_item_id')]);
-
-//        'value' => $this->_localeDate->date(new \DateTime('now'))->format(\IntlDateFormatter::SHORT)
-//        for wysiwyg:
-//          'config' => []
-
+        $fieldSet->addField('order_id', 'hidden', ['name' => 'order_id', 'value' => $this->getOrder()->getId()]);
+        $fieldSet->addField('product_id', 'hidden', ['name' => 'product_id', 'value' => $this->getProduct()->getId()]);
+        $fieldSet->addField('order_item_id', 'hidden', ['name' => 'order_item_id', 'value' => $this->getOrderItem()->getId()]);
 
         $fieldSet->addType('protocol', 'Amc\Protocol\Block\Adminhtml\Renderer');
 
@@ -78,12 +73,13 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
         return parent::_prepareForm();
     }
 
-    /**
-     * @return \Amc\Consultation\Model\Consultation|null
-     */
     private function getConsultation()
     {
-        return $this->_coreRegistry->registry('current_consultation');
+        $consultation = $this->_coreRegistry->registry('current_consultation');
+        if (null === $consultation) {
+            throw new NoSuchEntityException('Consultation object not found in registry');
+        }
+        return $consultation;
     }
 
     /**
@@ -103,6 +99,22 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
     }
 
     /**
+     * @return \Magento\Sales\Model\Order
+     */
+    private function getOrder()
+    {
+        return $this->getConsultation()->getOrder();
+    }
+
+    /**
+     * @return \Magento\Sales\Model\Order\Item
+     */
+    private function getOrderItem()
+    {
+        return $this->getConsultation()->getOrderItem();
+    }
+
+    /**
      * @return \Magento\Customer\Model\Data\Customer
      */
     private function getLayoutConfig()
@@ -117,6 +129,11 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
 
     private function getFieldConfig($options)
     {
+//        'value' => $this->_localeDate->date(new \DateTime('now'))->format(\IntlDateFormatter::SHORT)
+//        for wysiwyg:
+//          'config' => []
+
+
         // accomplish complex UI elements with necessary options
         $type = $options['type'];
         switch ($type) {
@@ -127,6 +144,9 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
                 $options['time_format'] = $timeFormat;
                 break;
             case 'editor':
+                // ...
+                break;
+            case 'protocol':
                 // ...
                 break;
             default:

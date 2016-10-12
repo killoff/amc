@@ -38,9 +38,13 @@ class Builder
         $customer = $this->customerRepositoryInterface->getById($order->getCustomerId());
         $product = $this->productFactory->create()->load($orderItem->getProductId());
         $consultation->setOrder($order);
+        $consultation->setOrderId($order->getEntityId());
         $consultation->setOrderItem($orderItem);
+        $consultation->setOrderItemId($orderItem->getItemId());
         $consultation->setCustomer($customer);
+        $consultation->setCustomerId($customer->getId());
         $consultation->setProduct($product);
+        $consultation->setProductId($product->getId());
         return $consultation;
     }
 
@@ -57,9 +61,13 @@ class Builder
         $customer = $this->customerRepositoryInterface->getById($consultation->getCustomerId());
         $product = $this->productFactory->create()->load($consultation->getProductId());
         $consultation->setOrder($order);
+        $consultation->setOrderId($order->getEntityId());
         $consultation->setOrderItem($orderItem);
+        $consultation->setOrderItemId($orderItem->getItemId());
         $consultation->setCustomer($customer);
+        $consultation->setCustomerId($customer->getId());
         $consultation->setProduct($product);
+        $consultation->setProductId($product->getId());
         return $consultation;
     }
 }

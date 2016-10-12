@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <!--<virtualType name="Amc\Consultation\Model\ResourceModel\Order\Collection\Grid">-->
-        <!--<arguments>-->
-            <!--<argument name="mainTable" xsi:type="string">amc_consultation_entity</argument>-->
-            <!--<argument name="resourceModel" xsi:type="string">Amc\Consultation\Model\ResourceModel\Consultation</argument>-->
-        <!--</arguments>-->
-    <!--</virtualType>-->
+    <type name="Amc\Consultation\Model\ResourceModel\Order\Collection\Grid">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">amc_consultation_entity</argument>
+            <argument name="resourceModel" xsi:type="string">Amc\Consultation\Model\ResourceModel\Consultation</argument>
+        </arguments>
+    </type>
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">

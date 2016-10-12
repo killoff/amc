@@ -35,7 +35,7 @@ class Edit extends \Magento\Backend\Block\Widget\Form\Container
         $this->_objectId = 'consultation_id';
         $this->_controller = 'adminhtml_consultation';
         $this->_blockGroup = 'Amc_Consultation';
-
+        $this->removeButton('reset');
         parent::_construct();
     }
 

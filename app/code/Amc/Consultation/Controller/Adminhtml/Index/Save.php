@@ -2,24 +2,24 @@
 namespace Amc\Consultation\Controller\Adminhtml\Index;
 
 use Magento\Backend\App\Action;
-use Amc\Consultation\Model\ConsultationFactory;
+use Amc\Consultation\Model\Consultation\Builder;
 use Psr\Log\LoggerInterface;
 use Magento\Framework\Exception\NoSuchEntityException;
 
 class Save extends Action
 {
-    /** @var ConsultationFactory */
-    private $consultationFactory;
+    /** @var Builder */
+    private $consultationBuilder;
 
     /** @var LoggerInterface */
     private $loggerInterface;
 
     public function __construct(
-        ConsultationFactory $consultationFactory,
+        Builder $consultationBuilder,
         LoggerInterface $loggerInterface,
         Action\Context $context
     ) {
-        $this->consultationFactory = $consultationFactory;
+        $this->consultationBuilder = $consultationBuilder;
         $this->loggerInterface = $loggerInterface;
         parent::__construct($context);
     }
@@ -30,12 +30,10 @@ class Save extends Action
     public function execute()
     {
         try {
-            $consultation = $this->consultationFactory->create();
-            $consultation->setProductId($this->getRequest()->getParam('product_id'));
-            $consultation->setCustomerId($this->getRequest()->getParam('customer_id'));
+            $orderItemId = $this->getRequest()->getParam('order_item_id');
+            $consultation = $this->consultationBuilder->createConsultation($orderItemId);
             $consultation->setUserId($this->_auth->getUser()->getId());
-            $consultation->setOrderId($this->getRequest()->getParam('order_id'));
-            $consultation->setOrderItemId($this->getRequest()->getParam('order_item_id'));
+
             $createdAt = new \DateTime('now');
             $consultation->setCreatedAt($createdAt->format('Y-m-d H:i:s'));
 
@@ -49,8 +47,8 @@ class Save extends Action
             } else {
                 $consultation->setUserDate(null);
             }
-            print_r($consultation->getData());
-            exit;
+//            print_r($consultation->getData());
+//            exit;
             $consultation->save();
             $this->messageManager->addSuccessMessage(__('You have created the consultation.'));
 
@@ -59,21 +57,15 @@ class Save extends Action
                 $resultRedirect->setPath($this->getRequest()->getParam('back_url'));
             } else {
                 $resultRedirect->setPath(
-                    'consultation/index/edit',
-                    ['consultation_id' => $consultation->getId(), '_current' => true]
+                    'sales/order/view',
+                    ['order_id' => $consultation->getOrderId()]
                 );
             }
             return $resultRedirect;
 
-        } catch (NoSuchEntityException $e) {
-            $this->messageManager->addException($e, __('An error occurred while saving the consultation.'));
-            $returnToEdit = true;
         } catch (\Exception $e) {
-
-            $this->loggerInterface->critical($e);
-            $this->messageManager->addErrorMessage($e->getMessage());
-            $returnToEdit = true;
+            $this->messageManager->addExceptionMessage($e, $e->getMessage());
+            $this->loggerInterface->error($e->getMessage());
         }
-
     }
 }

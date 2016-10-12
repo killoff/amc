@@ -38,6 +38,22 @@
                 </item>
             </argument>
         </column>
+        <column name="product_name">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">Product</item>
+                </item>
+            </argument>
+        </column>
+        <column name="username">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filter" xsi:type="string">text</item>
+                    <item name="label" xsi:type="string" translate="true">User Name</item>
+                </item>
+            </argument>
+        </column>
         <column name="created_at" class="Magento\Ui\Component\Listing\Columns\Date">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -45,22 +61,6 @@
                     <item name="component" xsi:type="string">Magento_Ui/js/grid/columns/date</item>
                     <item name="dataType" xsi:type="string">date</item>
                     <item name="label" xsi:type="string" translate="true">Created At</item>
-                </item>
-            </argument>
-        </column>
-        <column name="product_id">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="filter" xsi:type="string">text</item>
-                    <item name="label" xsi:type="string" translate="true">Order #</item>
-                </item>
-            </argument>
-        </column>
-        <column name="user_id">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="filter" xsi:type="string">text</item>
-                    <item name="label" xsi:type="string" translate="true">Order #</item>
                 </item>
             </argument>
         </column>
@@ -74,23 +74,14 @@
                 <!--</item>-->
             <!--</argument>-->
         <!--</column>-->
-        <!--<column name="customer_name">-->
-            <!--<argument name="data" xsi:type="array">-->
-                <!--<item name="config" xsi:type="array">-->
-                    <!--<item name="filter" xsi:type="string">text</item>-->
-                    <!--<item name="visible" xsi:type="boolean">false</item>-->
-                    <!--<item name="label" xsi:type="string" translate="true">Customer Name</item>-->
-                <!--</item>-->
-            <!--</argument>-->
-        <!--</column>-->
-        <!--<actionsColumn name="actions" class="Magento\Sales\Ui\Component\Listing\Column\ViewAction">-->
-            <!--<argument name="data" xsi:type="array">-->
-                <!--<item name="config" xsi:type="array">-->
-                    <!--<item name="indexField" xsi:type="string">increment_id</item>-->
-                    <!--<item name="viewUrlPath" xsi:type="string">sales/order_invoice/view</item>-->
-                    <!--<item name="urlEntityParamName" xsi:type="string">invoice_id</item>-->
-                <!--</item>-->
-            <!--</argument>-->
-        <!--</actionsColumn>-->
+        <actionsColumn name="actions" class="Amc\Consultation\Ui\Listing\Column\ViewAction">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="indexField" xsi:type="string">increment_id</item>
+                    <item name="viewUrlPath" xsi:type="string">sales/order_invoice/view</item>
+                    <item name="urlEntityParamName" xsi:type="string">invoice_id</item>
+                </item>
+            </argument>
+        </actionsColumn>
     </columns>
 </listing>
