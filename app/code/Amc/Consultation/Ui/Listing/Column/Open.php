@@ -6,10 +6,7 @@ use Magento\Framework\View\Element\UiComponent\ContextInterface;
 use Magento\Framework\View\Element\UiComponentFactory;
 use Magento\Ui\Component\Listing\Columns\Column;
 
-/**
- * Class ViewAction
- */
-class ViewAction extends Column
+class Open extends Column
 {
     /**
      * @var UrlInterface
@@ -45,32 +42,20 @@ class ViewAction extends Column
     public function prepareDataSource(array $dataSource)
     {
         if (isset($dataSource['data']['items'])) {
+            $fieldName = $this->getData('name');
             foreach ($dataSource['data']['items'] as & $item) {
-                if (isset($item['entity_id'])) {
-                    $item[$this->getData('name')] = [
-                        'view' => [
-                            'href' => $this->urlBuilder->getUrl(
-                                'consultation/index/edit',
-                                [
-                                    'consultation_id' => $item['entity_id']
-                                ]
-                            ),
-                            'label' => __('Edit')
-                        ],
-//                        'print' => [
-//                            'href' => $this->urlBuilder->getUrl(
-//                                $viewUrlPath,
-//                                [
-//                                    $urlEntityParamName => $item['entity_id']
-//                                ]
-//                            ),
-//                            'label' => __('Print')
-//                        ]
-                    ];
-                }
+                $item[$fieldName . '_html'] = "<button class='button'><span>" . __('Open') . "</span></button>";
+//                $item[$fieldName . '_title'] = __('Please enter a message that you want to send to customer');
+//                $item[$fieldName . '_submitlabel'] = __('Send');
+//                $item[$fieldName . '_cancellabel'] = __('Reset');
+//                $item[$fieldName . '_customerid'] = $item['entity_id'];
+
+                $item[$fieldName . '_ajax_url'] = $this->urlBuilder->getUrl(
+                    'consultation/ajax/open',
+                    ['consultation_id' => $item['entity_id']]
+                );
             }
         }
-
         return $dataSource;
     }
 }

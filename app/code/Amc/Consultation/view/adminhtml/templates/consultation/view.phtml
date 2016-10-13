@@ -1,0 +1,16 @@
+<?php
+/** @var $block \Magento\Backend\Block\Template */
+$layoutConfig = $block->getData('layout');
+$values = $block->getData('values');
+?>
+
+<?php foreach ($layoutConfig['fields'] as $field): ?>
+    <br>
+    <br>
+    <h2><?php echo $field['label'] ?></h2>
+    <p>
+        <?php echo isset($values[$field['name']]) ? $values[$field['name']] : '' ?>
+    </p>
+<?php endforeach ?>
+<br>
+<br>

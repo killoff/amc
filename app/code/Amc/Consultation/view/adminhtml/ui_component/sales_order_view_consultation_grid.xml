@@ -64,16 +64,17 @@
                 </item>
             </argument>
         </column>
-        <!--<column name="billing_address" class="Magento\Sales\Ui\Component\Listing\Column\Address">-->
-            <!--<argument name="data" xsi:type="array">-->
-                <!--<item name="config" xsi:type="array">-->
-                    <!--<item name="filter" xsi:type="string">text</item>-->
-                    <!--<item name="bodyTmpl" xsi:type="string">ui/grid/cells/html</item>-->
-                    <!--<item name="visible" xsi:type="boolean">false</item>-->
-                    <!--<item name="label" xsi:type="string" translate="true">Billing Address</item>-->
-                <!--</item>-->
-            <!--</argument>-->
-        <!--</column>-->
+        <actionsColumn name="view" class="Amc\Consultation\Ui\Listing\Column\Open">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="component" xsi:type="string">Amc_Consultation/js/grid/open</item>
+                    <item name="indexField" xsi:type="string">consultation_id</item>
+                    <item name="sortable" xsi:type="boolean">false</item>
+                    <item name="label" xsi:type="string" translate="true">View</item>
+                </item>
+            </argument>
+        </actionsColumn>
+
         <actionsColumn name="actions" class="Amc\Consultation\Ui\Listing\Column\ViewAction">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">

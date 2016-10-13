@@ -57,15 +57,13 @@ class Form extends \Magento\Backend\Block\Widget\Form\Generic
 
         $fieldSet->addType('protocol', 'Amc\Protocol\Block\Adminhtml\Renderer');
 
+        $values = $model->getId() ? json_decode($model->getJsonData(), true) : [];
         $layoutConfig = $this->getLayoutConfig();
         foreach ($layoutConfig['fields'] as $field) {
             $type = $field['type'];
             $fieldConfig = $this->getFieldConfig($field);
+            $fieldConfig['value'] = isset($values[ $field['name'] ]) ? $values[ $field['name'] ] : '';
             $fieldSet->addField($field['name'], $type, $fieldConfig);
-        }
-
-        if (null !== $model) {
-            $form->setValues($model->getData());
         }
         $form->setUseContainer(true);
         $this->setForm($form);
