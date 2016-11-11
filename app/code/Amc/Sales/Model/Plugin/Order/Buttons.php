@@ -22,8 +22,8 @@ class Buttons
         if (!$context instanceof \Magento\Sales\Block\Adminhtml\Order\View) {
             return [$context, $buttonList];
         }
-        $buttonList->remove('order_invoice');
-        $buttonList->remove('order_creditmemo');
+//        $buttonList->remove('order_invoice');
+//        $buttonList->remove('order_creditmemo');
         $buttonList->remove('void_payment');
         $buttonList->remove('order_hold');
         $buttonList->remove('order_unhold');

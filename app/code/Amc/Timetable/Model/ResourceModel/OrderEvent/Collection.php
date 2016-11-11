@@ -13,6 +13,10 @@ class Collection extends AbstractCollection
 
     protected $_orderItemsTableJoined = false;
 
+    protected $_isUserTableJoined = false;
+
+    protected $_isCustomerTableJoined = false;
+
     /**
      * Define resource model
      *
@@ -66,5 +70,29 @@ class Collection extends AbstractCollection
             $this->_orderItemsTableJoined = true;
         }
         return $this;
+    }
+
+    public function joinUsersInformation()
+    {
+        if (!$this->_isUserTableJoined) {
+            $this->getSelect()->join(
+                ['user_table' => $this->getTable('admin_user')],
+                'user_table.user_id=main_table.user_id',
+                ['username', 'firstname', 'lastname', 'user_fathername', 'user_position']
+            );
+            $this->_isUserTableJoined = true;
+        }
+    }
+
+    public function joinCustomersInformation()
+    {
+        if (!$this->_isCustomerTableJoined) {
+            $this->getSelect()->join(
+                ['customers' => $this->getTable('customer_grid_flat')],
+                'customers.entity_id=main_table.customer_id',
+                ['customer_name' => 'name']
+            );
+            $this->_isCustomerTableJoined = true;
+        }
     }
 }
