@@ -1,0 +1,14 @@
+<div>
+    <div data-bind="foreach: queue">
+        <div>
+            <span data-bind="text: customer.name"></span>
+        </div>
+        <div>
+            <ul>
+                <li data-bind="foreach: events">
+                    <span data-bind="text: start_at" /> <span data-bind="text: lastname" /> <span data-bind="text: firstname" /> / <span data-bind="text: product_name" />
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

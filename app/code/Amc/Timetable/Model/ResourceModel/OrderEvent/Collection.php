@@ -65,7 +65,7 @@ class Collection extends AbstractCollection
             $this->getSelect()->joinInner(
                 ['order_item' => $this->getTable('sales_order_item')],
                 'main_table.order_item_id = order_item.item_id',
-                ['product_id', 'order_id', 'name']
+                ['product_id', 'order_id', 'product_name' => 'name']
             );
             $this->_orderItemsTableJoined = true;
         }

@@ -1,0 +1,16 @@
+<?php /** @var $block \Amc\Timetable\Block\Adminhtml\Queue */ ?>
+<div data-bind="scope: 'timetableQueue'">
+    <!-- ko template: getTemplate() --><!-- /ko -->
+</div>
+
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "Magento_Ui/js/core/app": {
+                "components": {
+                    "timetableQueue": <?php echo $block->getComponentOptionsJson() ?>
+                }
+            }
+        }
+    }
+</script>

@@ -1,7 +1,7 @@
 <?php
-namespace Amc\Timetable\Block\Adminhtml\Index;
+namespace Amc\Timetable\Block\Adminhtml;
 
-class Timetable extends \Magento\Backend\Block\Widget\Form\Generic
+class Schedule extends \Magento\Backend\Block\Widget\Form\Generic
 {
     protected function _construct()
     {
