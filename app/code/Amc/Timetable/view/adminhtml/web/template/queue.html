@@ -1,14 +1,26 @@
-<div>
-    <div data-bind="foreach: queue">
-        <div>
+<div data-bind="foreach: queue">
+    <div class="queue-customer">
+        <div class="queue-customer-name">
             <span data-bind="text: customer.name"></span>
+            <a href="" data-bind="click: $parent.changeStatus.bind($parent)">Change status</a>
         </div>
-        <div>
-            <ul>
-                <li data-bind="foreach: events">
-                    <span data-bind="text: start_at" /> <span data-bind="text: lastname" /> <span data-bind="text: firstname" /> / <span data-bind="text: product_name" />
+        <div class="queue-schedule">
+            <ul data-bind="foreach: events">
+                <li class="queue-schedule-item">
+                    <span data-bind="text: start_at_time" /><sup data-bind="text: minutes + ' min'" /> <span data-bind="text: lastname" /> <span data-bind="text: firstname" /> / <span data-bind="text: product_name" />
                 </li>
             </ul>
+        </div>
+    </div>
+</div>
+
+<div id="change-status-form" style="display: none;">
+    <div class="fieldset-wrapper-title">
+        <span class="title" data-bind="i18n: 'Change status'"></span>
+    </div>
+    <div data-bind="foreach: statuses">
+        <div>
+            <input type="radio" name="status" id="status"> <label for="" data-bind="text: label"></label>
         </div>
     </div>
 </div>

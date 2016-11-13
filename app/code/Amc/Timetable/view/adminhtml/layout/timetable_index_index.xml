@@ -15,7 +15,7 @@
     </head>
     <body>
         <referenceContainer name="content">
-            <block class="Amc\Timetable\Block\Adminhtml\Schedule" name="index.schedule" template="Amc_Timetable::schedule.phtml"/>
+            <!--<block class="Amc\Timetable\Block\Adminhtml\Schedule" name="index.schedule" template="Amc_Timetable::schedule.phtml"/>-->
             <block class="Amc\Timetable\Block\Adminhtml\Queue" name="index.queue" template="Amc_Timetable::queue.phtml"/>
         </referenceContainer>
     </body>

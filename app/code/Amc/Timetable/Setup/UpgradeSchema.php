@@ -5,7 +5,10 @@ namespace Amc\Timetable\Setup;
 use Magento\Framework\Setup\UpgradeSchemaInterface;
 use Magento\Framework\Setup\ModuleContextInterface;
 use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Sales\Setup\SalesSetupFactory;
+use Magento\Customer\Setup\CustomerSetup;
+use Magento\Customer\Setup\CustomerSetupFactory;
 use Magento\Framework\DB\Ddl\Table;
 
 /**
@@ -19,13 +22,27 @@ class UpgradeSchema implements UpgradeSchemaInterface
      */
     protected $salesSetupFactory;
 
+    /**
+     * @var CustomerSetupFactory
+     */
+    private $customerSetupFactory;
+
+    /**
+     * @var ModuleDataSetupInterface
+     */
+    private $moduleDataSetup;
 
     /**
      * @param SalesSetupFactory $salesSetupFactory
      */
-    public function __construct(SalesSetupFactory $salesSetupFactory)
-    {
+    public function __construct(
+        SalesSetupFactory $salesSetupFactory,
+        CustomerSetupFactory $customerSetupFactory,
+        ModuleDataSetupInterface $moduleDataSetup
+    ) {
         $this->salesSetupFactory = $salesSetupFactory;
+        $this->customerSetupFactory = $customerSetupFactory;
+        $this->moduleDataSetup = $moduleDataSetup;
     }
 
     /**
@@ -113,7 +130,7 @@ class UpgradeSchema implements UpgradeSchemaInterface
             \Magento\Framework\DB\Adapter\AdapterInterface::INDEX_TYPE_UNIQUE
         );
 
-        $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $setup]);
+        $salesInstaller = $this->salesSetupFactory->create(['resourceName' => 'sales_setup', 'setup' => $this->moduleDataSetup]);
         $salesInstaller->addAttribute(
             'order',
             'timetable_start_at',
@@ -123,6 +140,32 @@ class UpgradeSchema implements UpgradeSchemaInterface
             'order',
             'timetable_end_at',
             ['type' => 'datetime', 'visible' => false, 'default' => null]
+        );
+
+        /** @var CustomerSetup $customerSetup */
+        $customerSetup = $this->customerSetupFactory->create(['setup' => $this->moduleDataSetup]);
+        $attributesInfo = [
+            'timetable_status' => [
+                'label' => 'Timetable Status',
+                'type' => 'static',
+                'input' => 'text',
+                'visible' => false,
+                'required' => false,
+            ],
+        ];
+
+        foreach ($attributesInfo as $attributeCode => $attributeParams) {
+            $customerSetup->addAttribute('customer', $attributeCode, $attributeParams);
+        }
+        $setup->getConnection()->addColumn(
+            $setup->getTable('customer_entity'),
+            'timetable_status',
+            [
+                'type' => \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+                'nullable' => true,
+                'unsigned' => true,
+                'comment'  => 'Timetable Status'
+            ]
         );
 
         $installer->endSetup();

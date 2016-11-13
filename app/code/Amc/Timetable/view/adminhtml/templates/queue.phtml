@@ -1,4 +1,9 @@
 <?php /** @var $block \Amc\Timetable\Block\Adminhtml\Queue */ ?>
+
+<div class="fieldset-wrapper-title" style="margin: 50px 0px 20px;">
+    <span class="title"><?php echo __('Schedule for today %1', $block->getTodayDate()) ?></span>
+</div>
+
 <div data-bind="scope: 'timetableQueue'">
     <!-- ko template: getTemplate() --><!-- /ko -->
 </div>
