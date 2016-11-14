@@ -13,11 +13,110 @@ define(
                 this._super();
                 this.debug = true;
                 this.queue = ko.observableArray([]);
+                this.customer_dues = ko.observableArray([]);
                 this.form_key = $.cookie('form_key');
+                this.reload();
+            },
 
+            changeStatus: function (entity) {
+                var statusForm = $("#change-status-form");
+                statusForm.find('input[type="radio"]').prop('checked', false);
+                statusForm.find('.customer-name').html(entity.customer.name);
+                statusForm.find('.customer-status').html(entity.customer.status);
+                statusForm.find('#customer_id').val(entity.customer.id);
+                statusForm.modal({
+                    autoOpen: true,
+                    buttons: [
+                        {
+                            text: 'Apply',
+                            class: 'primary',
+                            click: this.changeStatusSubmit.bind(this)
+                        },
+                        {
+                            text: 'Cancel',
+                            click: this.closeModal
+                        }
+                    ],
+                    opened: function () {
+                    }.bind(this),
+                    closed: function () {
+                    }.bind(this)
+                });
+
+                statusForm.modal('openModal');
+            },
+
+            changeStatusSubmit: function() {
+                var statusForm = $("#change-status-form");
+                var newStatus = statusForm.find('input[name="status"]:checked').val();
+                var customerId = statusForm.find('#customer_id').val();
+                var data = {customer_id: customerId, status: newStatus, form_key: FORM_KEY};
+                this.log('data', data);
+                this.log('form', FORM_KEY);
+                $.ajax({
+                    url: this.change_status_url,
+                    method: 'POST',
+                    data: data,
+                    success: function(response) {
+                        this.log('response', response);
+                        this.reload();
+                        statusForm.modal('closeModal');
+                    }.bind(this)
+                })
+                .fail(function(exception) {
+                    this._handleFail(exception);
+                }.bind(this));
+            },
+
+            invoice: function(entity) {
+                $.getJSON( this.invoice_url, {customer_id: entity.customer.id}, function(response) {
+                    //var orders = response.map(function (order) {
+                    //    order.items = order.items.map(function (item) {
+                    //        //item.start_at_time = moment(item.start_at).format('HH:mm');
+                    //        //item.minutes =  moment.duration(moment(item.end_at).diff(moment(item.start_at))).asMinutes();
+                    //        return item;
+                    //    });
+                    //    return order;
+                    //});
+                    this.log('orders', response);
+                    this.customer_dues(response);
+
+                    var invoiceForm = $("#invoice-form");
+                    invoiceForm.find('.customer-name').html(entity.customer.name);
+                    invoiceForm.modal({
+                        autoOpen: true,
+                        buttons: [
+                            {
+                                text: 'Pay',
+                                class: 'primary',
+                                click: this.pay.bind(this)
+                            },
+                            {
+                                text: 'Cancel',
+                                click: this.closeModal
+                            }
+                        ],
+                        opened: function () {
+                        }.bind(this),
+                        closed: function () {
+                        }.bind(this)
+                    });
+
+                    invoiceForm.modal('openModal');
+
+                }.bind(this))
+                .fail(function(exception) {
+                    this._handleFail(exception);
+                }.bind(this));
+            },
+
+            pay: function() {
+
+            },
+
+            reload: function() {
                 $.getJSON( this.source_url, function(response) {
                     var queue = response.map(function (customer) {
-                        console.log(customer);
                         customer.events = customer.events.map(function (e) {
                             e.start_at_time = moment(e.start_at).format('HH:mm');
                             e.minutes =  moment.duration(moment(e.end_at).diff(moment(e.start_at))).asMinutes();
@@ -26,37 +125,10 @@ define(
                         return customer;
                     });
                     this.queue(queue);
-                    this.log('loaded queue on init', this.queue());
                 }.bind(this))
                 .fail(function(exception) {
                     this._handleFail(exception);
                 }.bind(this));
-            },
-
-            changeStatus: function () {
-                var changeStatusForm = $("#change-status-form");
-                this.log('open', 'changeStatus');
-                changeStatusForm.modal({
-                    //modalClass: 'modal-timetable modal-' + proposal.id + '-is-initialized',
-                    autoOpen: true,
-                    buttons: [{
-                        text: 'Close',
-                        class: '',
-                        click: function() {
-                            //this.closeModal();
-                        }
-                    }],
-                    opened: function () {
-                        this.log('proposal was opened: ' + proposal.id);
-                    }.bind(this),
-                    closed: function () {
-                        this.log('proposal was closed: ' + proposal.id);
-                        //this.stopTimer();
-                        //this.packagesResult([]);
-                    }.bind(this)
-                });
-
-                changeStatusForm.modal('openModal');
             },
 
             _handleFail: function (exception) {

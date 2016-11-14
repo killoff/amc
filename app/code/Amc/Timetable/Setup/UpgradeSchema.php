@@ -162,7 +162,8 @@ class UpgradeSchema implements UpgradeSchemaInterface
             'timetable_status',
             [
                 'type' => \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
-                'nullable' => true,
+                'nullable' => false,
+                'default'  => '0',
                 'unsigned' => true,
                 'comment'  => 'Timetable Status'
             ]

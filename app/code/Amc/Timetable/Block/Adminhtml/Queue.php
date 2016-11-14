@@ -30,7 +30,9 @@ class Queue extends Template
         $options = [
             'component' => 'Amc_Timetable/js/queue',
             'template' => 'Amc_Timetable/queue',
-            'source_url' => $this->urlBuilder->getUrl('timetable/index/queueJson'),
+            'source_url' => $this->urlBuilder->getUrl('timetable/queue/jsonFeed'),
+            'invoice_url' => $this->urlBuilder->getUrl('timetable/queue/invoice'),
+            'change_status_url' => $this->urlBuilder->getUrl('timetable/queue/changeStatus'),
             'statuses' => $this->getStatuses(),
 //            'add_to_cart_url' => $this->urlBuilder->getUrl('smc_checkout/cart/add'),
 //            'cart_url' => $this->urlBuilder->getUrl('checkout'),

@@ -1,12 +1,12 @@
 <?php
-namespace Amc\Timetable\Controller\Adminhtml\Index;
+namespace Amc\Timetable\Controller\Adminhtml\Queue;
 
 use Magento\Backend\App\Action;
 
-class QueueJson extends \Magento\Backend\App\Action
+class JsonFeed extends \Magento\Backend\App\Action
 {
     /** @var \Amc\Timetable\Model\ResourceModel\OrderEvent\CollectionFactory */
-    private $collectionFactory;
+    private $orderEventCollectionFactory;
 
     /** @var \Magento\Framework\Controller\Result\JsonFactory */
     private $resultJsonFactory;
@@ -56,7 +56,8 @@ class QueueJson extends \Magento\Backend\App\Action
                 $result[$customerId] = [
                     'customer' => [
                         'id' => $customerId,
-                        'name' => $item['customer_name']
+                        'name' => $item['customer_name'],
+                        'status' => $item['timetable_status']
                     ],
                     'events' => []
                 ];

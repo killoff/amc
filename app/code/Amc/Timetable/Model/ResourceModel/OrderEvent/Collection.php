@@ -88,9 +88,14 @@ class Collection extends AbstractCollection
     {
         if (!$this->_isCustomerTableJoined) {
             $this->getSelect()->join(
-                ['customers' => $this->getTable('customer_grid_flat')],
-                'customers.entity_id=main_table.customer_id',
+                ['customers_grid' => $this->getTable('customer_grid_flat')],
+                'customers_grid.entity_id=main_table.customer_id',
                 ['customer_name' => 'name']
+            );
+            $this->getSelect()->join(
+                ['customer' => $this->getTable('customer_entity')],
+                'customer.entity_id=main_table.customer_id',
+                ['timetable_status']
             );
             $this->_isCustomerTableJoined = true;
         }

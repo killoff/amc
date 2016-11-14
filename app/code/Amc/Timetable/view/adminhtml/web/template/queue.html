@@ -3,11 +3,13 @@
         <div class="queue-customer-name">
             <span data-bind="text: customer.name"></span>
             <a href="" data-bind="click: $parent.changeStatus.bind($parent)">Change status</a>
+            (current is <span data-bind="text: customer.status"></span>)
+            <a href="" data-bind="click: $parent.invoice.bind($parent)">Invoice</a>
         </div>
         <div class="queue-schedule">
             <ul data-bind="foreach: events">
                 <li class="queue-schedule-item">
-                    <span data-bind="text: start_at_time" /><sup data-bind="text: minutes + ' min'" /> <span data-bind="text: lastname" /> <span data-bind="text: firstname" /> / <span data-bind="text: product_name" />
+                    <span data-bind="text: start_at_time" /><sup data-bind="text: minutes + ' min'" /> <span data-bind="text: product_name" /> (<span data-bind="text: lastname + ' ' + firstname" />)
                 </li>
             </ul>
         </div>
@@ -15,12 +17,36 @@
 </div>
 
 <div id="change-status-form" style="display: none;">
+    <input type="hidden" id="customer_id">
     <div class="fieldset-wrapper-title">
-        <span class="title" data-bind="i18n: 'Change status'"></span>
+        <span class="title" data-bind="i18n: 'Change status for'"></span>
+        <span class="title customer-name"></span>
+        <span class="title">|</span>
+        <span class="title" data-bind="i18n: 'current is'"></span> <span class="title customer-status"></span>
     </div>
+    <br>
     <div data-bind="foreach: statuses">
-        <div>
-            <input type="radio" name="status" id="status"> <label for="" data-bind="text: label"></label>
+        <p>
+            <input type="radio" name="status" data-bind="attr: {id: 'status' + status}, value: status"> <label data-bind="attr: {for: 'status' + status}, text: label"></label>
+        </p>
+    </div>
+</div>
+
+<div id="invoice-form" style="display: none;">
+    <div class="fieldset-wrapper-title">
+        <span class="title" data-bind="i18n: 'Invoice for'"></span>
+        <span class="title customer-name"></span>
+    </div>
+    <br>
+    <div data-bind="foreach: customer_dues">
+        <div style="margin-bottom: 30px;">
+            <h2 data-bind="text: 'Order #' + order.increment_id + ' ' + order.created_at"></h2>
+            <div class="items" data-bind="foreach: items">
+                <div>
+                    <input type="checkbox" data-bind="attr: {id: 'item' + item_id}, value: item_id">
+                    <label data-bind="attr: {for: 'item' + item_id}, text: name + ' ' + price"></label>
+                </div>
+            </div>
         </div>
     </div>
 </div>
