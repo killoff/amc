@@ -1,20 +1,37 @@
-<div data-bind="foreach: queue">
-    <div class="queue-customer">
-        <div class="queue-customer-name">
-            <span data-bind="text: customer.name"></span>
-            <a href="" data-bind="click: $parent.changeStatus.bind($parent)">Change status</a>
-            (current is <span data-bind="text: customer.status"></span>)
-            <a href="" data-bind="click: $parent.invoice.bind($parent)">Invoice</a>
-        </div>
-        <div class="queue-schedule">
-            <ul data-bind="foreach: events">
-                <li class="queue-schedule-item">
-                    <span data-bind="text: start_at_time" /><sup data-bind="text: minutes + ' min'" /> <span data-bind="text: product_name" /> (<span data-bind="text: lastname + ' ' + firstname" />)
-                </li>
-            </ul>
-        </div>
+<div>
+    <div style="display:inline-block;">
+        <h1>В ожидании</h1>
+        <!-- ko foreach: queue -->
+            <!-- ko if: ['0','2'].indexOf(customer.status) != -1 -->
+                <div class="queue-customer" data-bind="template: {name: 'queue-customer-tpl'}"></div>
+            <!-- /ko -->
+        <!-- /ko -->
+    </div>
+    <div style="display:inline-block; vertical-align: top;padding-left: 50px;">
+        <h1>На приеме</h1>
+        <!-- ko foreach: queue -->
+            <!-- ko if: ['1'].indexOf(customer.status) != -1 -->
+                <div class="queue-customer" data-bind="template: {name: 'queue-customer-tpl'}"></div>
+            <!-- /ko -->
+        <!-- /ko -->
     </div>
 </div>
+
+<script type="text/html" id="queue-customer-tpl">
+    <div class="queue-customer-name">
+        <a data-bind="attr: {href: customer.url}" target="_blank"><span data-bind="text: customer.name"></span></a>
+        <a href="" data-bind="click: $parent.changeStatus.bind($parent)">Change status</a>
+        (current is <span data-bind="text: customer.status"></span>)
+        <a href="" data-bind="click: $parent.invoice.bind($parent)">Invoice</a>
+    </div>
+    <div class="queue-schedule">
+        <ul data-bind="foreach: events">
+            <li class="queue-schedule-item">
+                <span data-bind="text: start_at_time" /><sup data-bind="text: minutes + ' min'" /> <span data-bind="text: product_name" /> (<span data-bind="text: lastname + ' ' + firstname" />)
+            </li>
+        </ul>
+    </div>
+</script>
 
 <div id="change-status-form" style="display: none;">
     <input type="hidden" id="customer_id">

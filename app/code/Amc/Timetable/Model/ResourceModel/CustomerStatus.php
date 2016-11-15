@@ -21,7 +21,7 @@ class CustomerStatus extends AbstractDb
             self::STATUS_IDLE   => __('None'),
             self::STATUS_IN     => __('Arrived'),
             self::STATUS_LATE   => __('Late'),
-            self::STATUS_IDLE   => __('Cancelled'),
+            self::STATUS_IDLE   => __('Pending'),
         ];
     }
 

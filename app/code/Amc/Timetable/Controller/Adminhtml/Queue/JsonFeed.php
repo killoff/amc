@@ -29,7 +29,9 @@ class JsonFeed extends \Magento\Backend\App\Action
      */
     public function execute()
     {
-        $time = $this->getRequest()->getParam('time', false);
+        $date = $this->getRequest()->getParam('date');
+        $from = (new \DateTime($date))->setTime(0, 0, 0)->format('Y-m-d H:i:s');
+        $to = (new \DateTime($date))->setTime(23, 59, 59)->format('Y-m-d H:i:s');
 
         /** @var \Amc\Timetable\Model\ResourceModel\OrderEvent\Collection $collection */
         $collection = $this->orderEventCollectionFactory->create();
@@ -38,6 +40,10 @@ class JsonFeed extends \Magento\Backend\App\Action
         $collection->joinCustomersInformation();
         $collection->joinOrderItemsInformation();
         $collection->joinUsersInformation();
+        $collection->addFieldToFilter('start_at', ['gt' => $from]);
+        $collection->addFieldToFilter('start_at', ['lt' => $to]);
+        $collection->addOrder('start_at', 'ASC');
+        $collection->addOrder('customer_name', 'ASC');
         $groupedByCustomer = $this->groupByCustomer($collection->getData());
 //        print_r($groupedByCustomer);
 //        exit;

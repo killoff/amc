@@ -30,10 +30,11 @@ class Queue extends Template
         $options = [
             'component' => 'Amc_Timetable/js/queue',
             'template' => 'Amc_Timetable/queue',
-            'source_url' => $this->urlBuilder->getUrl('timetable/queue/jsonFeed'),
+            'source_url' => $this->urlBuilder->getUrl('timetable/queue/jsonFeed', ['date' => $this->getTodayDate()->format('Y-m-d')]),
             'invoice_url' => $this->urlBuilder->getUrl('timetable/queue/invoice'),
             'change_status_url' => $this->urlBuilder->getUrl('timetable/queue/changeStatus'),
-            'statuses' => $this->getStatuses(),
+            'edit_customer_url_prefix' => $this->urlBuilder->getUrl('customer/index/edit') . 'id/',
+            'statuses' => $this->getStatuses()
 //            'add_to_cart_url' => $this->urlBuilder->getUrl('smc_checkout/cart/add'),
 //            'cart_url' => $this->urlBuilder->getUrl('checkout'),
         ];
@@ -50,10 +51,16 @@ class Queue extends Template
         return $result;
     }
 
+    /**
+     * @return \DateTime
+     */
     public function getTodayDate()
     {
-        return (new \DateTime())->setTime(0, 0, 0)->format('D, j.m');
+        return (new \DateTime())->setTime(0, 0, 0);
     }
 
-
+    public function getTodayDateFormat()
+    {
+        return $this->getTodayDate()->format('D, j.m');
+    }
 }

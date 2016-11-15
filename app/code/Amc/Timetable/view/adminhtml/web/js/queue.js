@@ -116,14 +116,15 @@ define(
 
             reload: function() {
                 $.getJSON( this.source_url, function(response) {
-                    var queue = response.map(function (customer) {
-                        customer.events = customer.events.map(function (e) {
+                    var queue = response.map(function (entity) {
+                        entity.events = entity.events.map(function (e) {
                             e.start_at_time = moment(e.start_at).format('HH:mm');
                             e.minutes =  moment.duration(moment(e.end_at).diff(moment(e.start_at))).asMinutes();
                             return e;
                         });
-                        return customer;
-                    });
+                        entity.customer.url = this.edit_customer_url_prefix + entity.customer.id;
+                        return entity;
+                    }.bind(this));
                     this.queue(queue);
                 }.bind(this))
                 .fail(function(exception) {
