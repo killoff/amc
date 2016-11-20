@@ -33,12 +33,12 @@
                     }
                 },
                 businessHours: {
-                    start: '9:00',
-                    end: '20:00',
+                    start: '8:00',
+                    end: '19:00',
                     dow: [ 1, 2, 3, 4, 5 ]
                 },
-                minTime: '09:00', // todo: impldement config "Working hours"
-                maxTime: '20:00', // todo: impldement config "Working hours"
+                minTime: '08:00', // todo: impldement config "Working hours"
+                maxTime: '19:00', // todo: impldement config "Working hours"
                 slotLabelFormat: 'HH:mm',
                 eventOverlap: true, // will cause the event to take up entire resource height
                 resourceAreaWidth: '25%',
@@ -51,18 +51,28 @@
                     location.href = "<?php echo $block->getUrl('timetable/index/gotoevent') ?>item/" + event.order_item_id;
                 },
 
-                resources: {
-                    url: '<?php echo $block->getUrl('timetable/index/resourcesJson') ?>',
-                    type: 'GET'
-//                    date: $('#index-timetable').fullCalendar('getDate').format()
+                resources: function(callback) {
+                    $.getJSON(
+                        '<?php echo $block->getUrl('timetable/index/resourcesJson') ?>',
+                        {date: $timetable.fullCalendar('getDate').format()},
+                        function (data) {
+                            callback(data);
+                        }
+                    );
                 },
+
                 events: {
                     url: '<?php echo $block->getUrl('timetable/index/eventsJson') ?>',
                     type: 'GET'
                 },
-                loading: function(isLoading, view) {
-                    console.log(isLoading ? 'start loading' : 'end loading')
-                    console.log(view)
+
+                resourceRender: function(resource, labelTds) {
+                    $(labelTds).find('.fc-cell-text').html(resource.title + '<br>' + '<small>' + resource.position + '</small>');
+                },
+
+                viewRender: function () {
+                    console.log('viewRender');
+                    $timetable.fullCalendar('refetchResources');
                 }
             });
         });
