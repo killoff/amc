@@ -13,7 +13,9 @@ define(
                 this._super();
                 this.debug = true;
                 this.queue = ko.observableArray([]);
-                this.customer_dues = ko.observableArray([]);
+                this.current_customer_id = ko.observable();
+                this.current_customer_name = ko.observable();
+                this.customer_orders = ko.observableArray([]);
                 this.form_key = $.cookie('form_key');
                 this.reload();
             },
@@ -79,7 +81,9 @@ define(
                     //    return order;
                     //});
                     this.log('orders', response);
-                    this.customer_dues(response);
+                    this.customer_orders(response);
+                    this.current_customer_id(entity.customer.id);
+                    this.current_customer_name(entity.customer.name);
 
                     var invoiceForm = $("#invoice-form");
                     invoiceForm.find('.customer-name').html(entity.customer.name);
@@ -110,6 +114,18 @@ define(
                 }.bind(this));
             },
 
+            updateQty: function() {
+                var queryParams = jQuery('#invoice-form').find('input, select').serialize();
+                $.post(this.invoice_url, queryParams, function (response) {
+                    this.log('update qty resp', response)
+                    this.customer_orders(response);
+
+                }.bind(this))
+                .fail(function(exception) {
+                        this._handleFail(exception);
+                }.bind(this));
+            },
+
             pay: function() {
 
             },
@@ -133,27 +149,10 @@ define(
             },
 
             _handleFail: function (exception) {
-                var errorMessage = '';
-                var errorCode = '';
-
-                this.error('caught an exception', exception);
-
-                // maybe a better way?
-                if (exception && exception.responseJSON) {
-                    errorMessage = exception.responseJSON.errorMessage? exception.responseJSON.errorMessage : exception.responseJSON.message? exception.responseJSON.message : exception.responseText;
-                    errorCode = exception.responseJSON.errorCode? exception.responseJSON.errorCode : '';
+                if(exception.responseJSON.error) {
+                    alert(exception.responseJSON.error);
                 }
-                else {
-                    errorMessage = exception && exception.responseText? exception.responseText : exception && exception.statusText? exception.statusText : exception;
-                }
-
-                this.setAlert(errorMessage, errorCode, 'error');
-            },
-
-            error: function (message, data) {
-                if (this.debug) {
-                    console.error(message, data);
-                }
+                this.log('exception:', exception.responseJSON.error);
             },
 
             log: function (message, data) {
