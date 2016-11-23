@@ -55,15 +55,44 @@
         <span class="title customer-name"></span>
     </div>
     <br>
-    <div data-bind="foreach: customer_dues">
-        <div style="margin-bottom: 30px;">
-            <h2 data-bind="text: 'Order #' + order.increment_id + ' ' + order.created_at"></h2>
-            <div class="items" data-bind="foreach: items">
-                <div>
-                    <input type="checkbox" data-bind="attr: {id: 'item' + item_id}, value: item_id">
-                    <label data-bind="attr: {for: 'item' + item_id}, text: name + ' ' + price"></label>
-                </div>
-            </div>
-        </div>
+    <div class="admin__table-wrapper">
+        <table class="data-table admin__table-primary order-invoice-tables">
+            <thead>
+            <tr class="headings">
+                <th class="col-product"><span>Product</span></th>
+                <th class="col-price"><span>Price</span></th>
+                <th class="col-qty-invoice"><span>Qty to Invoice</span></th>
+                <th class="col-discount"><span>Discount Amount</span></th>
+                <th class="col-total last"><span>Row Total</span></th>
+            </tr>
+            </thead>
+            <tbody class="even">
+            <!-- ko foreach: customer_orders -->
+                <!-- ko foreach: items -->
+                <tr>
+                    <td class="col-product">
+                        <div class="product-title" data-bind="text: name">
+                        </div>
+                        <div class="product-sku-block">
+                            <span>SKU:</span> <span data-bind="text: sku"></span>
+                        </div>
+                    </td>
+                    <td class="col-price">
+                        <div class="price-excl-tax">
+                            <span class="price" data-bind="text: price"></span>
+                        </div>
+                    </td>
+                    <td class="col-qty-invoice">
+                        <input type="text" class="input-text admin__control-text qty-input" name="invoice[items][44]" value="1">
+                    </td>
+                    <td class="col-discount"><span class="price" data-bind="text: discount"></span></td>
+                    <td class="col-total last">
+                        <span class="price" data-bind="text: row_total"></span>
+                    </td>
+                </tr>
+                <!-- /ko -->
+            <!-- /ko -->
+            </tbody>
+        </table>
     </div>
 </div>
