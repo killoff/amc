@@ -15,7 +15,9 @@ define(
                 this.queue = ko.observableArray([]);
                 this.current_customer_id = ko.observable();
                 this.current_customer_name = ko.observable();
-                this.customer_orders = ko.observableArray([]);
+                this.customer_invoices = ko.observableArray([]);
+                // hack to observe object => wrap object with array
+                this.customer_totals = ko.observableArray([]);
                 this.form_key = $.cookie('form_key');
                 this.reload();
             },
@@ -80,8 +82,10 @@ define(
                     //    });
                     //    return order;
                     //});
-                    this.log('orders', response);
-                    this.customer_orders(response);
+                    this.log('invoices', response.invoices);
+                    this.log('totals', response.totals);
+                    this.customer_invoices(response.invoices);
+                    this.customer_totals([response.totals]);
                     this.current_customer_id(entity.customer.id);
                     this.current_customer_name(entity.customer.name);
 
@@ -117,17 +121,22 @@ define(
             updateQty: function() {
                 var queryParams = jQuery('#invoice-form').find('input, select').serialize();
                 $.post(this.invoice_url, queryParams, function (response) {
-                    this.log('update qty resp', response)
-                    this.customer_orders(response);
-
+                    this.customer_invoices(response.invoices);
+                    this.customer_totals([response.totals]);
                 }.bind(this))
                 .fail(function(exception) {
-                        this._handleFail(exception);
+                    this._handleFail(exception);
                 }.bind(this));
             },
 
             pay: function() {
-
+                var queryParams = jQuery('#invoice-form').find('input, select').serialize();
+                $.post(this.pay_url, queryParams, function (response) {
+                    this.log('pay response', response);
+                }.bind(this))
+                    .fail(function(exception) {
+                        this._handleFail(exception);
+                    }.bind(this));
             },
 
             reload: function() {

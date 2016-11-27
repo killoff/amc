@@ -69,7 +69,7 @@
             </tr>
             </thead>
             <tbody class="even">
-            <!-- ko foreach: customer_orders -->
+            <!-- ko foreach: customer_invoices -->
                 <!-- ko foreach: items -->
                 <tr>
                     <td class="col-product">
@@ -90,7 +90,7 @@
                         </a>
                     </td>
                     <td class="col-qty-invoice">
-                        <input data-bind="attr: {name: 'qtys[' + order_item_id + ']', value: qty}" type="text" class="input-text admin__control-text qty-input" />
+                        <input data-bind="attr: {name: 'qtys[' + $parent.order_id + '][' + order_item_id + ']', value: qty, tabindex: '1'}" type="text" class="input-text admin__control-text qty-input" />
                     </td>
                     <td class="col-discount"><span class="price" data-bind="text: discount"></span></td>
                     <td class="col-total last">
@@ -112,5 +112,30 @@
                 </tr>
             </tfoot>
         </table>
+
+        <!-- ko foreach: customer_totals -->
+        <div class="admin__page-section-item order-totals">
+            <table class="data-table admin__table-secondary order-subtotal-table">
+                <tfoot>
+                <tr class="col-1">
+                    <td class="label">
+                        <strong>Discount</strong>
+                    </td>
+                    <td>
+                        <strong><span class="price" data-bind="text: discount"></span></strong>
+                    </td>
+                </tr>
+                <tr class="col-0">
+                    <td class="label">
+                        <strong>Total</strong>
+                    </td>
+                    <td>
+                        <strong><span class="price" data-bind="text: total"></span></strong>
+                    </td>
+                </tr>
+                </tfoot>
+           </table>
+        </div>
+        <!-- /ko -->
     </div>
 </div>

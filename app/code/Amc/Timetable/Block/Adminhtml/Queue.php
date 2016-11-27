@@ -32,6 +32,7 @@ class Queue extends Template
             'template' => 'Amc_Timetable/queue',
             'source_url' => $this->urlBuilder->getUrl('timetable/queue/jsonFeed', ['date' => $this->getTodayDate()->format('Y-m-d')]),
             'invoice_url' => $this->urlBuilder->getUrl('timetable/queue/invoice'),
+            'pay_url' => $this->urlBuilder->getUrl('timetable/queue/pay'),
             'change_status_url' => $this->urlBuilder->getUrl('timetable/queue/changeStatus'),
             'edit_customer_url_prefix' => $this->urlBuilder->getUrl('customer/index/edit') . 'id/',
             'statuses' => $this->getStatuses()
