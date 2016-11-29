@@ -71,7 +71,7 @@
             <tbody class="even">
             <!-- ko foreach: customer_invoices -->
                 <!-- ko foreach: items -->
-                <tr>
+                <tr data-bind="attr: {style: $parent.paid ? 'background-color:#bffcb5' : '', dataid: $parent.increment_id}">
                     <td class="col-product">
                         <div class="product-title" data-bind="text: name">
                         </div>
@@ -86,11 +86,18 @@
                     </td>
                     <td class="col-date">
                         <a data-bind="attr: {href: $parent.order_url}" target="_blank" title="To the Order">
-                            <span data-bind="text: date"></span>
+                            <span data-bind="text: date_text"></span>
                         </a>
                     </td>
                     <td class="col-qty-invoice">
-                        <input data-bind="attr: {name: 'qtys[' + $parent.order_id + '][' + order_item_id + ']', value: qty, tabindex: '1'}" type="text" class="input-text admin__control-text qty-input" />
+                        <input data-bind="
+                            event: {change: $parents[1].changeQty.bind($parents[1])},
+                            attr: {
+                                name: 'qtys[' + $parent.order_id + '][' + order_item_id + ']',
+                                value: qty,
+                                tabindex: '1'
+                            }"
+                            type="text" class="input-text admin__control-text qty-input" />
                     </td>
                     <td class="col-discount"><span class="price" data-bind="text: discount"></span></td>
                     <td class="col-total last">
@@ -104,7 +111,7 @@
                 <tr>
                     <td colspan="3">&nbsp;</td>
                     <td colspan="3">
-                        <button data-bind="click: updateQty" type="button" class="action-default scalable update-button">
+                        <button id="update-qty-btn" data-bind="click: updateQty" type="button" class="action-default scalable update-button">
                             <span>Update Qty's</span>
                         </button>
                     </td>

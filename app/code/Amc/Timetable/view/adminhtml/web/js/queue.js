@@ -97,6 +97,7 @@ define(
                             {
                                 text: 'Pay',
                                 class: 'primary',
+                                id: 'pay-btn',
                                 click: this.pay.bind(this)
                             },
                             {
@@ -123,20 +124,50 @@ define(
                 $.post(this.invoice_url, queryParams, function (response) {
                     this.customer_invoices(response.invoices);
                     this.customer_totals([response.totals]);
+                    this.log('update items qty', response.invoices);
+                    $('.modal-footer .primary').removeClass('disabled');
+                    $('#update-qty-btn').removeClass('primary');
                 }.bind(this))
                 .fail(function(exception) {
                     this._handleFail(exception);
                 }.bind(this));
             },
 
+            changeQty: function() {
+                $('.modal-footer .primary').addClass('disabled');
+                $('#update-qty-btn').addClass('primary');
+            },
+
             pay: function() {
+                $('.modal-footer .primary').addClass('disabled');
+                $('#update-qty-btn').addClass('disabled');
                 var queryParams = jQuery('#invoice-form').find('input, select').serialize();
                 $.post(this.pay_url, queryParams, function (response) {
+                    var invoicedOrderItems = response.map(function(item) {
+                        return item.order_item_id;
+                    });
+                    var oldCustomerInvoices = this.customer_invoices();
+                    var newCustomerInvoices = [];
+                    var invoiceItems = [];
+                    $.each(oldCustomerInvoices, function(i, invoice) {
+                        invoiceItems = invoice.items.filter(function(item) {
+                            return invoicedOrderItems.indexOf(item.order_item_id) !== -1;
+                        });
+                        if (invoiceItems.length > 0) {
+
+                            invoice.items = invoiceItems;
+                            invoice.paid = true;
+                            newCustomerInvoices.push(invoice);
+                            console.log('new invoice:');
+                            console.log(invoice);
+                        }
+                    });
+                    this.customer_invoices(newCustomerInvoices);
                     this.log('pay response', response);
                 }.bind(this))
-                    .fail(function(exception) {
-                        this._handleFail(exception);
-                    }.bind(this));
+                .fail(function(exception) {
+                    this._handleFail(exception);
+                }.bind(this));
             },
 
             reload: function() {

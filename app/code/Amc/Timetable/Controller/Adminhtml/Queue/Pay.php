@@ -3,6 +3,7 @@ namespace Amc\Timetable\Controller\Adminhtml\Queue;
 
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\Service\InvoiceService;
+use Magento\Sales\Api\Data\InvoiceInterface;
 use Magento\Framework\DB\Transaction;
 use Magento\Backend\App\Action;
 use Magento\Framework\Controller\Result\JsonFactory;
@@ -52,21 +53,23 @@ class Pay extends Action
                     $invoice = $this->invoiceService->prepareInvoice($order, $orderItemsQty);
                     $invoice->register();
                     $invoice->save();
-                    $transactionSave = $this->transaction->addObject(
-                        $invoice
-                    )->addObject(
-                        $invoice->getOrder()
-                    );
+                    $transactionSave = $this->transaction
+                        ->addObject($invoice)
+                        ->addObject($invoice->getOrder());
                     $transactionSave->save();
-//                $this->invoiceSender->send($invoice);
-                    //send notification code
-//                $order->addStatusHistoryComment(
-//                    __('Notified customer about invoice #%1.', $invoice->getId())
-//                )
-//                    ->setIsCustomerNotified(true)
-//                    ->save();
+                        // $this->invoiceSender->send($invoice);
+                        // $order->addStatusHistoryComment(
+                        //      __('Notified customer about invoice #%1.', $invoice->getId())
+                        // )
+                        // ->setIsCustomerNotified(true)
+                        // ->save();
+                    // in order to load items from db
+                    $invoice->unsetData(InvoiceInterface::ITEMS);
+                    /** @var \Magento\Sales\Model\Order\Invoice\Item $item */
+                    foreach ($invoice->getItemsCollection() as $item) {
+                        $result[] = ['order_item_id' => $item->getOrderItemId(), 'qty' => $item->getQty()];
+                    }
                 }
-                $result[] = ['order_id' => $orderId, 'invoice_id' => $invoice->getId()];
             }
         } catch (\Exception $e) {
             $resultJson->setHttpResponseCode(400);

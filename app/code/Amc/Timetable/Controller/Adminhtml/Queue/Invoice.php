@@ -8,6 +8,7 @@ use Amc\Timetable\Model\ResourceModel\InvoiceItem;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Magento\Backend\App\Action;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Stdlib\DateTime\DateTime;
 
 class Invoice extends Action
 {
@@ -23,6 +24,12 @@ class Invoice extends Action
     /** @var PriceCurrencyInterface */
     private $priceCurrency;
 
+    /** @var DateTime */
+    private $dateTime;
+
+    /** @var string */
+    private $todayDate;
+
     /** @var JsonFactory */
     private $resultJsonFactory;
 
@@ -31,6 +38,7 @@ class Invoice extends Action
         InvoiceService $invoiceService,
         InvoiceItem $invoiceItem,
         PriceCurrencyInterface $priceCurrency,
+        DateTime $dateTime,
         JsonFactory $resultJsonFactory,
         Action\Context $context
     ) {
@@ -39,7 +47,9 @@ class Invoice extends Action
         $this->invoiceService = $invoiceService;
         $this->invoiceItem = $invoiceItem;
         $this->priceCurrency = $priceCurrency;
+        $this->dateTime = $dateTime;
         $this->resultJsonFactory = $resultJsonFactory;
+        $this->todayDate = $this->dateTime->gmtDate();
     }
 
     public function execute()
@@ -96,6 +106,7 @@ class Invoice extends Action
             $invoiceItems = [];
             /** @var \Magento\Sales\Model\Order\Invoice\Item $item */
             foreach ($invoice->getItemsCollection() as $item) {
+                $itemDate = $this->invoiceItem->calculateItemExecutionDate($item->getOrderItemId());
                 $invoiceItems[] = [
                     'product_id' => $item->getProductId(),
                     'order_item_id' => $item->getOrderItemId(),
@@ -105,7 +116,8 @@ class Invoice extends Action
                     'row_total' => $this->formatPrice($item->getRowTotalInclTax()),
                     'discount' => $this->formatPrice($item->getDiscountAmount()),
                     'qty' => (int)$item->getQty(),
-                    'date' => $this->invoiceItem->calculateItemExecutionDate($item->getOrderItemId()),
+                    'date' => $itemDate,
+                    'date_text' => $this->formatDate($itemDate),
                 ];
             }
 
@@ -128,5 +140,16 @@ class Invoice extends Action
     private function formatPrice($value)
     {
         return $this->priceCurrency->format($value, false);
+    }
+
+    private function formatDate($date)
+    {
+        $todayDate = (new \DateTime($this->todayDate))->format('d.m.Y');
+        $dateTime = new \DateTime($date);
+        if ($todayDate === $dateTime->format('d.m.Y')) {
+            return $dateTime->format('H:i');
+        } else {
+            return $dateTime->format('d.m.Y, H:i');
+        }
     }
 }
