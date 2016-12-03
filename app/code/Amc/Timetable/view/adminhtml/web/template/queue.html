@@ -79,6 +79,15 @@
     </div>
 </div-->
 
+<div id="invoice-form-empty" style="display: none;">
+    <div class="fieldset-wrapper-title">
+        <span class="title" data-bind="text: current_customer_name"></span>
+    </div>
+    <div class="admin__table-wrapper">
+        <h2>Nothing to pay</h2>
+    </div>
+</div>
+
 <div id="invoice-form" style="display: none;">
     <input type="hidden" data-bind="attr: {name: 'customer_id', value: current_customer_id}" />
     <div class="fieldset-wrapper-title">
@@ -101,13 +110,18 @@
             <tbody class="even">
             <!-- ko foreach: customer_invoices -->
                 <!-- ko foreach: items -->
-                <tr data-bind="attr: {style: $parent.paid ? 'background-color:#bffcb5' : '', dataid: $parent.increment_id}">
+                <tr>
                     <td class="col-product">
                         <div class="product-title" data-bind="text: name">
                         </div>
+                        <!-- ko if: $parent.paid == '1' -->
                         <div class="product-sku-block">
-                            <span>SKU:</span> <span data-bind="text: sku"></span>
+                            <span>Invoice:</span>
+                            <a data-bind="attr: {href: $parent.invoice_url}" target="_blank" title="To the Invoice">
+                                <span data-bind="text: '#' + $parent.invoice_increment_id"></span>
+                            </a>
                         </div>
+                        <!-- /ko -->
                     </td>
                     <td class="col-price">
                         <div class="price-excl-tax">
@@ -121,7 +135,8 @@
                     </td>
                     <td class="col-qty-invoice">
                         <input data-bind="
-                            event: {change: $parents[1].changeQty.bind($parents[1])},
+                            disable: $parent.paid == '1',
+                            event: {change: $parents[1].onChangeQty.bind($parents[1])},
                             attr: {
                                 name: 'qtys[' + $parent.order_id + '][' + order_item_id + ']',
                                 value: qty,

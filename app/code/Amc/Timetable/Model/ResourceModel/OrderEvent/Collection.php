@@ -61,11 +61,12 @@ class Collection extends AbstractCollection
 
     public function joinOrderItemsInformation()
     {
+        // new \Zend_Db_Expr('order_item.qty_ordered - order_item.qty_invoiced')
         if (false === $this->_orderItemsTableJoined) {
             $this->getSelect()->joinInner(
                 ['order_item' => $this->getTable('sales_order_item')],
                 'main_table.order_item_id = order_item.item_id',
-                ['product_id', 'order_id', 'product_name' => 'name']
+                ['product_id', 'order_id', 'product_name' => 'name', 'qty_ordered', 'qty_invoiced']
             );
             $this->_orderItemsTableJoined = true;
         }

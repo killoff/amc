@@ -98,14 +98,14 @@ define(
                     this.current_customer_id(entity.customer.id);
                     this.current_customer_name(entity.customer.name);
 
-                    var invoiceForm = $("#invoice-form");
+                    var invoiceForm = response.invoices.length > 0 ? $("#invoice-form") : $("#invoice-form-empty");
                     invoiceForm.find('.customer-name').html(entity.customer.name);
                     invoiceForm.modal({
                         autoOpen: true,
                         buttons: [
                             {
                                 text: 'Pay',
-                                class: 'primary',
+                                class: 'primary' + (response.invoices.length > 0 ? '' : ' hidden'),
                                 id: 'pay-btn',
                                 click: this.pay.bind(this)
                             },
@@ -130,10 +130,10 @@ define(
 
             updateQty: function() {
                 var queryParams = jQuery('#invoice-form').find('input, select').serialize();
+                queryParams = queryParams + '&context=update_qty';
                 $.post(this.invoice_url, queryParams, function (response) {
                     this.customer_invoices(response.invoices);
                     this.customer_totals([response.totals]);
-                    this.log('update items qty', response.invoices);
                     $('.modal-footer .primary').removeClass('disabled');
                     $('#update-qty-btn').removeClass('primary');
                 }.bind(this))
@@ -142,41 +142,23 @@ define(
                 }.bind(this));
             },
 
-            changeQty: function() {
-                $('.modal-footer .primary').addClass('disabled');
-                $('#update-qty-btn').addClass('primary');
-            },
-
             pay: function() {
                 $('.modal-footer .primary').addClass('disabled');
                 $('#update-qty-btn').addClass('disabled');
                 var queryParams = jQuery('#invoice-form').find('input, select').serialize();
-                $.post(this.pay_url, queryParams, function (response) {
-                    var invoicedOrderItems = response.map(function(item) {
-                        return item.order_item_id;
-                    });
-                    var oldCustomerInvoices = this.customer_invoices();
-                    var newCustomerInvoices = [];
-                    var invoiceItems = [];
-                    $.each(oldCustomerInvoices, function(i, invoice) {
-                        invoiceItems = invoice.items.filter(function(item) {
-                            return invoicedOrderItems.indexOf(item.order_item_id) !== -1;
-                        });
-                        if (invoiceItems.length > 0) {
-
-                            invoice.items = invoiceItems;
-                            invoice.paid = true;
-                            newCustomerInvoices.push(invoice);
-                            console.log('new invoice:');
-                            console.log(invoice);
-                        }
-                    });
-                    this.customer_invoices(newCustomerInvoices);
-                    this.log('pay response', response);
+                queryParams = queryParams + '&context=pay';
+                $.post(this.invoice_url, queryParams, function (response) {
+                    this.customer_invoices(response.invoices);
+                    this.customer_totals([response.totals]);
                 }.bind(this))
                 .fail(function(exception) {
                     this._handleFail(exception);
                 }.bind(this));
+            },
+
+            onChangeQty: function() {
+                $('.modal-footer .primary').addClass('disabled');
+                $('#update-qty-btn').addClass('primary');
             },
 
             reload: function() {
