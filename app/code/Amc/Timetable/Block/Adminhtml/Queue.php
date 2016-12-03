@@ -35,21 +35,9 @@ class Queue extends Template
             'pay_url' => $this->urlBuilder->getUrl('timetable/queue/pay'),
             'change_status_url' => $this->urlBuilder->getUrl('timetable/queue/changeStatus'),
             'edit_customer_url_prefix' => $this->urlBuilder->getUrl('customer/index/edit') . 'id/',
-            'statuses' => $this->getStatuses()
-//            'add_to_cart_url' => $this->urlBuilder->getUrl('smc_checkout/cart/add'),
-//            'cart_url' => $this->urlBuilder->getUrl('checkout'),
         ];
 
         return \Zend_Json::encode($options);
-    }
-
-    private function getStatuses()
-    {
-        $result = [];
-        foreach ($this->customerStatus->getAllStatuses() as $status => $label) {
-            $result[] = ['status' => $status, 'label' => $label];
-        }
-        return $result;
     }
 
     /**

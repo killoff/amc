@@ -1,16 +1,33 @@
+<!--
+    Statuses:
+        0 => pending
+        1 => in
+        2 = late
+    debug:
+        data-bind="text: JSON.stringify(ko.toJS($parent), null, 2)"
+-->
+
 <div>
-    <div style="display:inline-block;">
-        <h1>В ожидании</h1>
+    <div style="display:inline-block;width: 33%;">
+        <h3>В ожидании</h3>
         <!-- ko foreach: queue -->
-            <!-- ko if: ['0','2'].indexOf(customer.status) != -1 -->
+            <!-- ko if: ['0'].indexOf(customer.status) != -1 -->
                 <div class="queue-customer" data-bind="template: {name: 'queue-customer-tpl'}"></div>
             <!-- /ko -->
         <!-- /ko -->
     </div>
-    <div style="display:inline-block; vertical-align: top;padding-left: 50px;">
-        <h1>На приеме</h1>
+    <div style="display:inline-block; vertical-align: top;padding-left: 20px;width: 33%;">
+        <h3>На приеме</h3>
         <!-- ko foreach: queue -->
             <!-- ko if: ['1'].indexOf(customer.status) != -1 -->
+                <div class="queue-customer" data-bind="template: {name: 'queue-customer-tpl'}"></div>
+            <!-- /ko -->
+        <!-- /ko -->
+    </div>
+    <div style="display:inline-block; vertical-align: top;padding-left: 20px;width: 33%;">
+        <h3>Опаздывает</h3>
+        <!-- ko foreach: queue -->
+            <!-- ko if: ['2'].indexOf(customer.status) != -1 -->
                 <div class="queue-customer" data-bind="template: {name: 'queue-customer-tpl'}"></div>
             <!-- /ko -->
         <!-- /ko -->
@@ -18,22 +35,35 @@
 </div>
 
 <script type="text/html" id="queue-customer-tpl">
-    <div class="queue-customer-name">
-        <a data-bind="attr: {href: customer.url}" target="_blank"><span data-bind="text: customer.name"></span></a>
-        <a href="" data-bind="click: $parent.changeStatus.bind($parent)">Change status</a>
-        (current is <span data-bind="text: customer.status"></span>)
-        <a href="" data-bind="click: $parent.invoice.bind($parent)">Invoice</a>
+    <div class="queue-customer-name" style="border-top: 1px solid #cccccc;">
+        <!-- ko if: customer.status == '0' -->
+            <a data-bind="attr: {href: customer.url}" target="_blank"><span data-bind="text: customer.name"></span></a>
+            <a href="" data-bind="click: $parent.makeIn.bind($parent)"><i class="fa fa-hand-o-right fa-lg" aria-hidden="true"></i></a>
+        <!-- /ko -->
+
+        <!-- ko if: customer.status == '1' -->
+            <a href="" data-bind="click: $parent.makePending.bind($parent)"><i class="fa fa-hand-o-left fa-lg" aria-hidden="true"></i></a>
+            <a data-bind="attr: {href: customer.url}" target="_blank"><span data-bind="text: customer.name"></span></a>
+            <a href="" data-bind="click: $parent.invoice.bind($parent)"><i class="fa fa-credit-card fa-lg" aria-hidden="true"></i></a>
+        <!-- /ko -->
+
+        <!-- ko if: customer.status == '2' -->
+            <a href="" data-bind="click: $parent.makeIn.bind($parent)"><i class="fa fa-hand-o-left fa-lg" aria-hidden="true"></i></a>
+            <a data-bind="attr: {href: customer.url}" target="_blank"><span data-bind="text: customer.name"></span></a>
+        <!-- /ko -->
     </div>
     <div class="queue-schedule">
-        <ul data-bind="foreach: events">
-            <li class="queue-schedule-item">
-                <span data-bind="text: start_at_time" /><sup data-bind="text: minutes + ' min'" /> <span data-bind="text: product_name" /> (<span data-bind="text: lastname + ' ' + firstname" />)
+        <ul data-bind="foreach: events" style="list-style-type:none;">
+            <li class="queue-schedule-item" style="margin-bottom: 10px;">
+                <span data-bind="text: start_at_time" /><sup data-bind="text: minutes + ' min'" />
+                <span class="product-name" data-bind="text: product_name"></span>
+                <div class="user-name" data-bind="text: user_fullname"></div>
             </li>
         </ul>
     </div>
 </script>
 
-<div id="change-status-form" style="display: none;">
+<!--div id="change-status-form" style="display: none;">
     <input type="hidden" id="customer_id">
     <div class="fieldset-wrapper-title">
         <span class="title" data-bind="i18n: 'Change status for'"></span>
@@ -47,7 +77,7 @@
             <input type="radio" name="status" data-bind="attr: {id: 'status' + status}, value: status"> <label data-bind="attr: {for: 'status' + status}, text: label"></label>
         </p>
     </div>
-</div>
+</div-->
 
 <div id="invoice-form" style="display: none;">
     <input type="hidden" data-bind="attr: {name: 'customer_id', value: current_customer_id}" />

@@ -11,17 +11,15 @@ class CustomerStatus extends AbstractDb
     const STATUS_LATE = 2;
     const STATUS_CANCELLED = 3;
 
-    protected function _construct()
-    {
-    }
+    protected function _construct() {}
 
     public function getAllStatuses()
     {
         return [
-            self::STATUS_IDLE   => __('None'),
-            self::STATUS_IN     => __('Arrived'),
-            self::STATUS_LATE   => __('Late'),
-            self::STATUS_IDLE   => __('Pending'),
+            self::STATUS_IDLE      => __('None'),
+            self::STATUS_IN        => __('Arrived'),
+            self::STATUS_LATE      => __('Late'),
+            self::STATUS_CANCELLED => __('Cancelled'),
         ];
     }
 

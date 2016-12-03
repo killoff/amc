@@ -30,6 +30,8 @@ class Index extends Action
      */
     public function execute()
     {
-        return $this->resultPageFactory->create();
+        $resultPage = $this->resultPageFactory->create();
+        $resultPage->getConfig()->getTitle()->prepend(__('Timetable'));
+        return $resultPage;
     }
 }

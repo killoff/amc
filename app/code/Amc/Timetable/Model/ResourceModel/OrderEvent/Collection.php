@@ -78,7 +78,7 @@ class Collection extends AbstractCollection
             $this->getSelect()->join(
                 ['user_table' => $this->getTable('admin_user')],
                 'user_table.user_id=main_table.user_id',
-                ['username', 'firstname', 'lastname', 'user_fathername', 'user_position']
+                ['username', 'user_firstname' => 'firstname', 'user_lastname' => 'lastname', 'user_fathername', 'user_position']
             );
             $this->_isUserTableJoined = true;
         }

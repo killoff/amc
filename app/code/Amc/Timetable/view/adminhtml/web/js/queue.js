@@ -20,6 +20,11 @@ define(
                 this.customer_totals = ko.observableArray([]);
                 this.form_key = $.cookie('form_key');
                 this.reload();
+
+                // reload queue every 30 seconds
+                window.setInterval(function() {
+                    this.reload();
+                }.bind(this), 30000);
             },
 
             changeStatus: function (entity) {
@@ -50,10 +55,15 @@ define(
                 statusForm.modal('openModal');
             },
 
-            changeStatusSubmit: function() {
-                var statusForm = $("#change-status-form");
-                var newStatus = statusForm.find('input[name="status"]:checked').val();
-                var customerId = statusForm.find('#customer_id').val();
+            makeIn: function(entity) {
+                this.submitStatus(entity.customer.id, '1');
+            },
+
+            makePending: function(entity) {
+                this.submitStatus(entity.customer.id, '0');
+            },
+
+            submitStatus: function(customerId, newStatus) {
                 var data = {customer_id: customerId, status: newStatus, form_key: FORM_KEY};
                 this.log('data', data);
                 this.log('form', FORM_KEY);
@@ -64,7 +74,6 @@ define(
                     success: function(response) {
                         this.log('response', response);
                         this.reload();
-                        statusForm.modal('closeModal');
                     }.bind(this)
                 })
                 .fail(function(exception) {

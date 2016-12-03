@@ -15,8 +15,9 @@
     </head>
     <body>
         <referenceContainer name="content">
-            <block class="Amc\Timetable\Block\Adminhtml\Schedule" name="index.schedule" template="Amc_Timetable::schedule.phtml"/>
-            <block class="Amc\Timetable\Block\Adminhtml\Queue" name="index.queue" template="Amc_Timetable::queue.phtml"/>
+            <block class="Magento\Backend\Block\Template" name="timetable.index.actions" template="Amc_Timetable::index/actions.phtml"/>
+            <block class="Amc\Timetable\Block\Adminhtml\Schedule" name="timetable.index.schedule" template="Amc_Timetable::index/schedule.phtml"/>
+            <block class="Amc\Timetable\Block\Adminhtml\Queue" name="timetable.index.queue" template="Amc_Timetable::index/queue.phtml"/>
         </referenceContainer>
     </body>
 </page> 
