@@ -58,7 +58,7 @@ class EventsJson extends Action
                     'title'      => '', // 'room '.$schedule->getRoomId()
                     'type'       => 'order',
                     'paid'       => $paid,
-                    'color'      => $paid ? '#3c992d' : '#8fdf82'
+                    'color'      => $paid ? '#3c992d' : '#1197C1'
                 ];
             }
 

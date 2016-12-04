@@ -150,6 +150,10 @@ define(
                 $.post(this.invoice_url, queryParams, function (response) {
                     this.customer_invoices(response.invoices);
                     this.customer_totals([response.totals]);
+                    // update fullcalendar with paid events
+                    if (window.index_timetable) {
+                        window.index_timetable.fullCalendar('refetchEvents');
+                    }
                 }.bind(this))
                 .fail(function(exception) {
                     this._handleFail(exception);
