@@ -6,10 +6,11 @@ use \Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 class QueueStatus extends AbstractDb
 {
-    const STATUS_IDLE = 0;
-    const STATUS_IN = 1;
-    const STATUS_LATE = 2;
-    const STATUS_CANCELLED = 3;
+    const STATUS_IDLE      = 0;
+    const STATUS_IN        = 1;
+    const STATUS_LATE      = 2;
+    const STATUS_PAID      = 3;
+    const STATUS_CANCELLED = 4;
 
     protected function _construct()
     {
@@ -18,26 +19,34 @@ class QueueStatus extends AbstractDb
     public function getAllStatuses()
     {
         return [
-            self::STATUS_IDLE   => __('None'),
-            self::STATUS_IN     => __('Arrived'),
-            self::STATUS_LATE   => __('Late'),
-            self::STATUS_IDLE   => __('Pending'),
+            self::STATUS_IDLE       => __('Pending'),
+            self::STATUS_IN         => __('Arrived'),
+            self::STATUS_LATE       => __('Late'),
+            self::STATUS_PAID       => __('Paid'),
+            self::STATUS_CANCELLED  => __('Cancelled'),
         ];
     }
 
-    public function updateStatus($customerId, $status)
+    public function updateStatus($customerId, $context, $status, $changedBy)
     {
-        $status = (string)$status;
+        $status = (int)$status;
         if (!array_key_exists($status, self::getAllStatuses())) {
             throw new \InvalidArgumentException("Status {$status} is not within allowed statuses to set");
         }
-        $affected = $this->getConnection()->update(
-            'customer_entity',
-            ['timetable_status' => $status],
-            ['entity_id = ?' => $customerId]
+        $context = (int)$context;
+        $this->getConnection()->delete(
+            $this->getTable('amc_timetable_queue_status'),
+            "customer_id={$customerId} AND context={$context}"
         );
-        if (1 !== $affected) {
-            throw new \Exception("Status {$status} was not updated for customer ID {$customerId}");
-        }
+        $this->getConnection()->insert(
+            $this->getTable('amc_timetable_queue_status'),
+            [
+                'customer_id' => $customerId,
+                'context' => $context,
+                'status' => $status,
+                'changed_by' => $changedBy,
+                'changed_at' => (new \DateTime())->format('Y-m-d H:i:s')
+            ]
+        );
     }
 }

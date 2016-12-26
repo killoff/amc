@@ -3,12 +3,13 @@
         0 => pending
         1 => in
         2 = late
+        3 = paid
     debug:
         data-bind="text: JSON.stringify(ko.toJS($parent), null, 2)"
 -->
 
 <div>
-    <div style="display:inline-block;width: 33%;">
+    <div style="display:inline-block;width: 25%;">
         <h3>В ожидании</h3>
         <!-- ko foreach: queue -->
             <!-- ko if: ['0'].indexOf(customer.status) != -1 -->
@@ -16,7 +17,7 @@
             <!-- /ko -->
         <!-- /ko -->
     </div>
-    <div style="display:inline-block; vertical-align: top;padding-left: 20px;width: 33%;">
+    <div style="display:inline-block; vertical-align: top;padding-left: 20px;width: 23%;">
         <h3>На приеме</h3>
         <!-- ko foreach: queue -->
             <!-- ko if: ['1'].indexOf(customer.status) != -1 -->
@@ -24,10 +25,18 @@
             <!-- /ko -->
         <!-- /ko -->
     </div>
-    <div style="display:inline-block; vertical-align: top;padding-left: 20px;width: 33%;">
+    <div style="display:inline-block; vertical-align: top;padding-left: 20px;width: 23%;">
         <h3>Опаздывает</h3>
         <!-- ko foreach: queue -->
             <!-- ko if: ['2'].indexOf(customer.status) != -1 -->
+                <div class="queue-customer" data-bind="template: {name: 'queue-customer-tpl'}"></div>
+            <!-- /ko -->
+        <!-- /ko -->
+    </div>
+    <div style="display:inline-block; vertical-align: top;padding-left: 20px;width: 23%;">
+        <h3>Расчитан</h3>
+        <!-- ko foreach: queue -->
+            <!-- ko if: ['3'].indexOf(customer.status) != -1 -->
                 <div class="queue-customer" data-bind="template: {name: 'queue-customer-tpl'}"></div>
             <!-- /ko -->
         <!-- /ko -->
@@ -50,6 +59,11 @@
         <!-- ko if: customer.status == '2' -->
             <a href="" data-bind="click: $parent.makeIn.bind($parent)"><i class="fa fa-hand-o-left fa-lg" aria-hidden="true"></i></a>
             <a data-bind="attr: {href: customer.url}" target="_blank"><span data-bind="text: customer.name"></span></a>
+        <!-- /ko -->
+
+        <!-- ko if: customer.status == '3' -->
+            <a data-bind="attr: {href: customer.url}" target="_blank"><span data-bind="text: customer.name"></span></a>
+            <a href="" data-bind="click: $parent.invoice.bind($parent)"><i class="fa fa-credit-card fa-lg" aria-hidden="true"></i></a>
         <!-- /ko -->
     </div>
     <div class="queue-schedule">

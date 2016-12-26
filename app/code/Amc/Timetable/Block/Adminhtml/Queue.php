@@ -3,26 +3,20 @@ namespace Amc\Timetable\Block\Adminhtml;
 
 use Magento\Backend\Block\Template;
 use Magento\Framework\UrlInterface;
-use Amc\Timetable\Model\ResourceModel\CustomerStatus;
 
 class Queue extends Template
 {
     /** @var UrlInterface */
     private $urlBuilder;
 
-    /** @var CustomerStatus */
-    private $customerStatus;
-
     public function __construct(
         Template\Context $context,
         UrlInterface $urlBuilder,
-        CustomerStatus $customerStatus,
         array $data
     )
     {
         parent::__construct($context, $data);
         $this->urlBuilder = $urlBuilder;
-        $this->customerStatus = $customerStatus;
     }
 
     public function getComponentOptionsJson()

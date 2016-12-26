@@ -3,6 +3,7 @@
 namespace Amc\Timetable\Model\ResourceModel\OrderEvent;
 
 use \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+use Amc\Timetable\Model\ResourceModel\QueueStatus;
 
 class Collection extends AbstractCollection
 {
@@ -93,12 +94,17 @@ class Collection extends AbstractCollection
                 'customers_grid.entity_id=main_table.customer_id',
                 ['customer_name' => 'name']
             );
-            $this->getSelect()->join(
-                ['customer' => $this->getTable('customer_entity')],
-                'customer.entity_id=main_table.customer_id',
-                ['timetable_status']
-            );
             $this->_isCustomerTableJoined = true;
         }
+    }
+
+    public function joinQueueStatus($context)
+    {
+        $statusIdle = QueueStatus::STATUS_IDLE;
+        $this->getSelect()->joinLeft(
+            ['queue_status' => $this->getTable('amc_timetable_queue_status')],
+            'queue_status.customer_id=main_table.customer_id AND queue_status.context=' . (int)$context,
+            ['timetable_status' => new \Zend_Db_Expr("IFNULL(status, {$statusIdle})")]
+        );
     }
 }

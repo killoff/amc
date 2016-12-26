@@ -64,9 +64,14 @@ define(
             },
 
             submitStatus: function(customerId, newStatus) {
-                var data = {customer_id: customerId, status: newStatus, form_key: FORM_KEY};
+
+                var data = {
+                    customer_id: customerId,
+                    context: moment().format('YYYYMMDD'),
+                    status: newStatus,
+                    form_key: FORM_KEY
+                };
                 this.log('data', data);
-                this.log('form', FORM_KEY);
                 $.ajax({
                     url: this.change_status_url,
                     method: 'POST',
