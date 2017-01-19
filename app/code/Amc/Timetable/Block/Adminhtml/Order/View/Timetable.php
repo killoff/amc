@@ -6,6 +6,8 @@ use \Magento\Backend\Block\Template;
 
 class Timetable extends Template implements TimetableInterface
 {
+    /** @var \Magento\Framework\Registry  */
+    private $coreRegistry;
 
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
@@ -16,13 +18,20 @@ class Timetable extends Template implements TimetableInterface
         parent::__construct($context, $data);
     }
 
+    // todo: very old orders will be fucked up - only 30 days schedule ahead
     public function getWidgetOptionsJson()
     {
+        // get resources from now for 30 days
+        $start = new \DateTime($this->getInitialDate());
+        $end = (clone $start)->add(new \DateInterval('P30D'));
+
         $options = [
             'resources' => [
                 'url' => $this->getUrl('timetable/order/resourcesJson'),
                 'data' => [
-                    'order_id' => $this->getOrderId()
+                    'order_id' => $this->getOrderId(),
+                    'start' => $start->format('Y-m-d'),
+                    'end' => $end->format('Y-m-d'),
                 ]
             ],
             'events' => [

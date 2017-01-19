@@ -85,7 +85,7 @@ class Aggregated
      */
     public function getForOrder(\Magento\Sales\Model\Order $order, $dateFrom, $dateTo)
     {
-        $items = $this->prepareItems($quote->getAllVisibleItems());
+        $items = $this->prepareItems($order->getAllVisibleItems());
         return $this->getAggregated($items, $dateFrom, $dateTo);
     }
 

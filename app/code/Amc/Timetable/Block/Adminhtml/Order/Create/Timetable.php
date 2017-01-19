@@ -6,6 +6,9 @@ use \Magento\Backend\Block\Template;
 
 class Timetable extends Template implements TimetableInterface
 {
+    /** @var \Magento\Backend\Model\Session\Quote */
+    private $sessionQuote;
+
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Backend\Model\Session\Quote $sessionQuote,
@@ -17,17 +20,23 @@ class Timetable extends Template implements TimetableInterface
 
     public function getWidgetOptionsJson()
     {
+        // get resources from now for 30 days
+        $start = new \DateTime($this->sessionQuote->getQuote()->getCreatedAt());
+        $end = (clone $start)->add(new \DateInterval('P30D'));
         $options = [
             'resources' => [
                 'url' => $this->getUrl('timetable/order/resourcesJson'),
                 'data' => [
-                    'quote_id' => $this->getQuoteId()
+                    'quote_id' => $this->getQuoteId(),
+                    'start' => $start->format('Y-m-d'),
+                    'end' => $end->format('Y-m-d'),
                 ]
             ],
             'events' => [
                 'url' => $this->getUrl('timetable/order/eventsJson'),
                 'data' => [
-                    'quote_id' => $this->getQuoteId()
+                    'quote_id' => $this->getQuoteId(),
+                    'day' => $start->format('Y-m-d'),
                 ]
             ],
             'defaultDate' => $this->getInitialDate(),

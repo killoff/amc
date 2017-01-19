@@ -43,5 +43,7 @@
         <add id="Amc_Menu::system_tax_rates" title="Tax Zones and Rates" module="Amc_Menu" sortOrder="50" parent="Amc_Menu::system_settings" action="tax/rate" resource="Magento_Tax::manage_tax"/>
         <add id="Amc_Menu::system_users_locks" title="Locked Users" module="Amc_Menu" sortOrder="100" parent="Magento_Backend::system_tools" action="adminhtml/locks" resource="Magento_User::locks"/>
 
+        <add id="Amc_Clinic::clinic_marketing" title="Marketing" module="Amc_Menu" sortOrder="100" parent="Amc_Clinic::clinic" resource="Amc_Clinic::clinic_marketing"/>
+        <add id="Amc_Menu::discount" title="Discount" translate="title" module="Amc_Menu" parent="Amc_Clinic::clinic_marketing" action="sales_rule/promo_quote" sortOrder="10" resource="Magento_CatalogRule::promo"/>
     </menu>
 </config>

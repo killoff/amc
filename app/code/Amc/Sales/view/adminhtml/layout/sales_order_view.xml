@@ -5,7 +5,7 @@
             <action method="setTemplate">
                 <argument name="template" xsi:type="string">Amc_Sales::order/view/tab/info.phtml</argument>
             </action>
-            <container name="items_after_container" htmlTag="div" htmlClass="order-payment-additional" />
+            <container name="items_before_container" htmlTag="div" htmlClass="order-payment-additional" />
         </referenceBlock>
         <referenceBlock name="order_info">
             <action method="setTemplate">

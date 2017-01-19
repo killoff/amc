@@ -17,8 +17,8 @@
 <input type="hidden" name="order_id" value="<?php /* @escapeNotVerified */ echo $_order->getId() ?>"/>
 
 <section class="admin__page-section">
+    <?php echo $block->getChildHtml('items_before_container') ?>
     <?php echo $block->getItemsHtml() ?>
-    <?php echo $block->getChildHtml('items_after_container') ?>
 </section>
 
 

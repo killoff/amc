@@ -6,7 +6,7 @@
         <css src="Amc_Timetable::css/order-timetable.css"/>
     </head>
     <body>
-        <referenceBlock name="items_after_container">
+        <referenceBlock name="items_before_container">
             <block class="Amc\Timetable\Block\Adminhtml\Order\View\Timetable" name="order_timetable" template="Amc_Timetable::order/view/timetable.phtml" />
         </referenceBlock>
     </body>
