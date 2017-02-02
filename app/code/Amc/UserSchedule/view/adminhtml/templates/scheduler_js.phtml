@@ -35,11 +35,11 @@
                 eventOverlap: false,
                 businessHours: {
                     start: '9:00',
-                    end: '20:00',
+                    end: '19:00',
                     dow: [ 1, 2, 3, 4, 5 ]
                 },
                 minTime: '09:00',
-                maxTime: '20:00',
+                maxTime: '19:00',
                 slotDuration: '00:15',
                 slotWidth: 20,
                 slotLabelFormat: 'HH:mm',
@@ -55,28 +55,55 @@
                         duration: { days: 3 }
                     }
                 },
+                height: 'auto',
                 resourceAreaWidth: '200px',
                 resourceLabelText: '<?php echo $block->getResourceLabel(); ?>',
                 resources: <?php echo $block->getRoomsCollectionJson(); ?>,
-                events: <?php echo $block->getEventsCollectionJson(); ?>,
+                events: {
+                    url: '<?php echo $block->getUrl('user_schedule/schedule/eventsJson') ?>',
+                    type: 'GET'
+                },
                 drop: function() {
                     scheduleEvent.registry.pushRegistry('userId', $(this).data('userId'));
                 },
                 eventReceive: function(event) {
                     event.userId = scheduleEvent.registry.popRegistry('userId');
                     $('#calendar').fullCalendar('updateEvent', event);
-
                     scheduleEvent.registry.registerEvent(event);
+                    $('#timetable-save').removeClass('disabled');
+                    $('.not-saved').show();
+                    console.log('eventReceive');
+                    console.log(event);
+                    console.log(scheduleEvent.registry.getEvents());
                 },
                 eventResize: function(event) {
                     scheduleEvent.registry.registerEvent(event);
+                    $('#timetable-save').removeClass('disabled');
+                    $('.not-saved').show();
+                    console.log('eventResize');
+                    console.log(event);
+                    console.log(scheduleEvent.registry.getEvents());
                 },
                 eventDrop: function(event) {
                     scheduleEvent.registry.registerEvent(event);
+                    $('#timetable-save').removeClass('disabled');
+                    $('.not-saved').show();
+                    console.log('eventDrop');
+                    console.log(event);
+                    console.log(scheduleEvent.registry.getEvents());
+                },
+                eventClick: function(event) {
+                    if (window.confirm('Delete?')) {
+                        scheduleEvent.registry.delete(event);
+                        $('#calendar').fullCalendar('removeEvents', event._id);
+                        $('#timetable-save').removeClass('disabled');
+                        $('.not-saved').show();
+                    }
                 }
             });
 
-            $('.save-schedule').on('click', function(event) {
+
+            $('#timetable-save').on('click', function(event) {
 
                 event.preventDefault();
 
@@ -89,7 +116,8 @@
                         room_id: item.resourceId,
                         all_day: item.allDay,
                         start_at: item.start,
-                        end_at: item.end
+                        end_at: item.end,
+                        deleted: item.deleted
                     });
                 });
 
@@ -99,9 +127,16 @@
                         .done(function( data ) {
                             scheduleEvent.registry.reset();
                             jQuery('body').trigger('processStop');
+                            // remove in-memory events and refetch everything from the server
+                            $('#calendar').fullCalendar('removeEvents');
+                            $('#calendar').fullCalendar('refetchEvents');
+                            $('#timetable-save').addClass('disabled');
+                            $('.not-saved').hide();
                         })
                         .fail(function() {
                             jQuery('body').trigger('processStop');
+                            // todo: output error message instead of 'Changes not saved...'
+                            /*
                             $('body').notification('clear').notification('add', {
                                 error: true,
                                 message: $.mage.__('Error happened during schedule save.'),
@@ -109,6 +144,7 @@
                                     $('.page-main-actions').after(message);
                                 }
                             });
+                            */
                         });
                 }
             });

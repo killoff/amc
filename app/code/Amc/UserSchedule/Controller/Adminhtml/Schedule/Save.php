@@ -51,8 +51,15 @@ class Save extends Action
 
             foreach ($data as $scheduleItem) {
                 $model = $this->scheduleItemFactory->create();
-                if (isset($scheduleItem['entity_id'])) {
+                if (!empty($scheduleItem['entity_id'])) {
                     $model->load($scheduleItem['entity_id']);
+                }
+                if (isset($scheduleItem['deleted']) && $scheduleItem['deleted']) {
+                    if ($model->getId()) {
+                        $model->delete();
+                    }
+                    // we want to continue if event deleted, that's why not ($scheduleItem['deleted'] && $model->getId())
+                    continue;
                 }
                 $model->setData($scheduleItem);
                 $startAt = $this->timezone->date($scheduleItem['start_at'])->setTimezone(new \DateTimeZone('UTC'));

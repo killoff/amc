@@ -3,9 +3,11 @@ define(function() {
         registry: {
             events: {},
             registerEvent: function(event) {
-                if (!this.events[event._id]) {
-                    this.events[event._id] = event;
-                }
+                this.events[event._id] = event;
+            },
+            delete: function(event) {
+                event.deleted = 1;
+                this.events[event._id] = event;
             },
             getEvents: function () {
                 return this.events;

@@ -2,8 +2,16 @@
     <div class="users-list">
         <h4><?php echo $block->getUsersListLabel(); ?></h4>
         <?php foreach ($block->getUsersData() as $user): ?>
-        <div class='fc-event' data-duration='04:00' data-user-id='<?php echo $user['value']; ?>'><?php echo $user['label']; ?></div>
+            <div class='fc-event bigger' data-duration='04:00' data-user-id='<?php echo $user['id']; ?>'><?php echo $user['name']; ?></div>
         <?php endforeach; ?>
     </div>
+
     <div id='calendar'></div>
+
+    <div class="timetable-save">
+        <span class="not-saved"><?php echo __('Changes not saved...') ?></span>
+        <button id="timetable-save" title="<?php echo __('Save') ?>" type="button" class="action-default scalable save primary disabled">
+            <span><?php echo __('Save') ?></span>
+        </button>
+    </div>
 </div>

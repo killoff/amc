@@ -8,10 +8,10 @@
     </head>
     <body>
         <referenceContainer name="js">
-            <block class="Amc\UserSchedule\Block\Adminhtml\Schedule\Edit\Js" name="userschedule.scheduler.js" template="Amc_UserSchedule::scheduler_js.phtml"/>
+            <block class="Amc\UserSchedule\Block\Adminhtml\Schedule\Js" name="userschedule.scheduler.js" template="Amc_UserSchedule::scheduler_js.phtml"/>
         </referenceContainer>
         <referenceContainer name="content">
-            <block class="Amc\UserSchedule\Block\Adminhtml\Schedule\Edit" name="userschedule.scheduler" template="Amc_UserSchedule::scheduler.phtml"/>
+            <block class="Amc\UserSchedule\Block\Adminhtml\Schedule" name="userschedule.scheduler" template="Amc_UserSchedule::scheduler.phtml"/>
         </referenceContainer>
     </body>
 </page>
