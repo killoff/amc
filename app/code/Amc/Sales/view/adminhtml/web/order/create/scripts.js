@@ -66,9 +66,9 @@ define([
 
         searchProducts: function() {
             var searchModalOptions = {
-                type: 'popup',
-                responsive: true,
-                innerScroll: true,
+                // type: 'popup',
+                // responsive: true,
+                // innerScroll: true,
                 buttons: [{
                     text: jQuery.mage.__('Continue'),
                     click: function () {
@@ -77,8 +77,8 @@ define([
                     }
                 }]
             };
-            var searchAreaId = this.getAreaId('search'),
-                searchModal = modal(searchModalOptions, jQuery('#' + searchAreaId));
+            var searchAreaId = this.getAreaId('search');
+            var searchModal = modal(searchModalOptions, jQuery('#' + searchAreaId));
 
             $(searchAreaId).show();
             searchModal.openModal();

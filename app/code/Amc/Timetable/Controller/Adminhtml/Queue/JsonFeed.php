@@ -68,6 +68,7 @@ class JsonFeed extends \Magento\Backend\App\Action
     private function prepareEvents(array $collectionData)
     {
         $result = [];
+        // group by customer
         foreach($collectionData as $item) {
             $customerId = $item['customer_id'];
             if (!isset($result[$customerId])) {
@@ -75,7 +76,7 @@ class JsonFeed extends \Magento\Backend\App\Action
                     'customer' => [
                         'id' => $customerId,
                         'name' => $item['customer_name'],
-                        'status' => (string)QueueStatus::STATUS_PAID, // initialize as paid, will be redefined later
+                        'status' => $item['timetable_status'],
                         'nearest_time' => false
                     ],
                     'events' => []
@@ -84,24 +85,28 @@ class JsonFeed extends \Magento\Backend\App\Action
             unset($item['customer_name']);
             $result[$customerId]['events'][] = $item;
 
-            // there are unpaid items - reset status to queue.status
-            if ($item['qty_ordered'] > $item['qty_invoiced']) {
-                $result[$customerId]['customer']['status'] = $item['timetable_status'];
-            }
-
             // in case of 'idle' status check if customer is late
             if (false === $result[$customerId]['customer']['nearest_time']
                 || (new \DateTime($item['start_at'])) < (new \DateTime($result[$customerId]['customer']['nearest_time']))
             ) {
                 $result[$customerId]['customer']['nearest_time'] = $item['start_at'];
-                if ($result[$customerId]['customer']['status'] == (string)QueueStatus::STATUS_IDLE
-                    && (new \DateTime($result[$customerId]['customer']['nearest_time'])) < $this->now
-                ) {
-                    $result[$customerId]['customer']['status'] = (string)QueueStatus::STATUS_LATE;
-                }
             }
-
         }
+
+        // refine status
+        foreach ($result as &$entry) {
+            $customer = $entry['customer'];
+            $events = $entry['events'];
+            $qtyOrdered = array_sum(array_column($events, 'qty_ordered'));
+            $qtyInvoiced = array_sum(array_column($events, 'qty_invoiced'));
+            if ($qtyOrdered === $qtyInvoiced) {
+                $entry['customer']['status'] = (string)QueueStatus::STATUS_PAID;
+            }
+            if ($customer['status'] == (string)QueueStatus::STATUS_IDLE && (new \DateTime($customer['nearest_time'])) < $this->now) {
+                $entry['customer']['status'] = (string)QueueStatus::STATUS_LATE;
+            }
+        }
+
         return $result;
     }
 }

@@ -75,6 +75,12 @@
                     $timetable.fullCalendar('refetchResources');
                 }
             });
+            $('.fc-center').append('<input type="text" id="fc_date_picker" style="display: none;" />');
+
+            $('#fc_date_picker').calendar({});
+            $('#fc_date_picker').change(function() {
+                $timetable.fullCalendar('gotoDate', this.value);
+            });
         });
     });
 </script>

@@ -31,7 +31,7 @@ $orderStoreDate = $block->formatDate(
 
             <?php if ($_customerUrl = $block->getCustomerViewUrl()) : ?>
                 <a href="<?php /* @escapeNotVerified */ echo $_customerUrl ?>" target="_blank">
-                    <span><?php echo $block->escapeHtml($_order->getCustomerName()) ?></span>
+                    <span><?php echo $block->escapeHtml($_order->getCustomerLastname() . ' ' . $_order->getCustomerFirstname() . ' ' . $_order->getCustomerMiddlename()) ?></span>
                 </a>
             <?php else: ?>
                 <?php echo $block->escapeHtml($_order->getCustomerName()) ?>

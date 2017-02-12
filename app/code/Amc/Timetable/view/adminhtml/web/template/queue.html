@@ -15,20 +15,15 @@
             <!-- ko if: ['0'].indexOf(customer.status) != -1 -->
                 <div class="queue-customer" data-bind="template: {name: 'queue-customer-tpl'}"></div>
             <!-- /ko -->
+            <!-- ko if: ['2'].indexOf(customer.status) != -1 -->
+                <div class="queue-customer" style="background-color: #ffccbc;" data-bind="template: {name: 'queue-customer-tpl'}"></div>
+            <!-- /ko -->
         <!-- /ko -->
     </div>
     <div style="display:inline-block; vertical-align: top;padding-left: 20px;width: 23%;">
         <h3>На приеме</h3>
         <!-- ko foreach: queue -->
             <!-- ko if: ['1'].indexOf(customer.status) != -1 -->
-                <div class="queue-customer" data-bind="template: {name: 'queue-customer-tpl'}"></div>
-            <!-- /ko -->
-        <!-- /ko -->
-    </div>
-    <div style="display:inline-block; vertical-align: top;padding-left: 20px;width: 23%;">
-        <h3>Опаздывает</h3>
-        <!-- ko foreach: queue -->
-            <!-- ko if: ['2'].indexOf(customer.status) != -1 -->
                 <div class="queue-customer" data-bind="template: {name: 'queue-customer-tpl'}"></div>
             <!-- /ko -->
         <!-- /ko -->
@@ -57,8 +52,8 @@
         <!-- /ko -->
 
         <!-- ko if: customer.status == '2' -->
-            <a href="" data-bind="click: $parent.makeIn.bind($parent)"><i class="fa fa-hand-o-left fa-lg" aria-hidden="true"></i></a>
             <a data-bind="attr: {href: customer.url}" target="_blank"><span data-bind="text: customer.name"></span></a>
+            <a href="" data-bind="click: $parent.makeIn.bind($parent)"><i class="fa fa-hand-o-right fa-lg" aria-hidden="true"></i></a>
         <!-- /ko -->
 
         <!-- ko if: customer.status == '3' -->
@@ -70,8 +65,8 @@
         <ul data-bind="foreach: events" style="list-style-type:none;">
             <li class="queue-schedule-item" style="margin-bottom: 10px;">
                 <span data-bind="text: start_at_time" /><sup data-bind="text: minutes + ' min'" />
-                <span class="product-name" data-bind="text: product_name"></span>
-                <div class="user-name" data-bind="text: user_fullname"></div>
+                <span class="product-name" style="font-size: 12px;" data-bind="text: product_name"></span>
+                <div class="user-name" style="font-size: 12px;" data-bind="text: user_fullname"></div>
             </li>
         </ul>
     </div>
