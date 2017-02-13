@@ -71,7 +71,6 @@
                 },
 
                 viewRender: function () {
-                    console.log('viewRender');
                     $timetable.fullCalendar('refetchResources');
                 }
             });
@@ -79,10 +78,7 @@
 
             $('#fc_date_picker').calendar({});
             $('#fc_date_picker').change(function() {
-                console.log($timetable);
-                console.log(this);
-                console.log(this.value);
-                    $timetable.fullCalendar('gotoDate', this.value);
+                $timetable.fullCalendar('gotoDate', $('#fc_date_picker').datepicker('getDate'));
             });
         });
     });
