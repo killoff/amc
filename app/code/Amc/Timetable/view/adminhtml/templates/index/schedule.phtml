@@ -79,7 +79,10 @@
 
             $('#fc_date_picker').calendar({});
             $('#fc_date_picker').change(function() {
-                $timetable.fullCalendar('gotoDate', this.value);
+                console.log($timetable);
+                console.log(this);
+                console.log(this.value);
+                    $timetable.fullCalendar('gotoDate', this.value);
             });
         });
     });
