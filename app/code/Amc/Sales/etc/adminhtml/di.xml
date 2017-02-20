@@ -7,4 +7,5 @@
     <type name="Magento\Backend\Block\Widget\Button\Toolbar">
         <plugin name="amc_sales_order_buttons" type="Amc\Sales\Model\Plugin\Order\Buttons" />
     </type>
+    <preference for="Magento\Sales\Block\Adminhtml\Order\Create\Form\Account" type="Amc\Sales\Block\Adminhtml\Order\Create\Form\Account" />
 </config>

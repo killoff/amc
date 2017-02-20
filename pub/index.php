@@ -34,4 +34,9 @@ $params[Bootstrap::INIT_PARAM_FILESYSTEM_DIR_PATHS] = [
 $bootstrap = \Magento\Framework\App\Bootstrap::create(BP, $params);
 /** @var \Magento\Framework\App\Http $app */
 $app = $bootstrap->createApplication('Magento\Framework\App\Http');
+function logme($data) {
+    $f = fopen('/vagrant/var/log/dmitro.log', 'a');
+    fwrite($f, '['.date('Y-m-d H:i:s').']'.(is_array($data) ? print_r($data,1) : $data)."\n");
+    fclose($f);
+}
 $bootstrap->run($app);
