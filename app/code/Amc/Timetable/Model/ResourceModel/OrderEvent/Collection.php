@@ -4,6 +4,7 @@ namespace Amc\Timetable\Model\ResourceModel\OrderEvent;
 
 use \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
 use Amc\Timetable\Model\ResourceModel\QueueStatus;
+use Magento\Sales\Model\Order;
 
 class Collection extends AbstractCollection
 {
@@ -74,6 +75,18 @@ class Collection extends AbstractCollection
         return $this;
     }
 
+    public function excludeCancelledOrderItems()
+    {
+        $this->joinOrderItemsInformation();
+        $this->getSelect()->joinInner(
+            ['order' => $this->getTable('sales_order')],
+            'order_item.order_id = order.entity_id',
+            []
+        );
+        $this->getSelect()->where('order.status<>?', Order::STATE_CANCELED);
+        return $this;
+    }
+
     public function joinUsersInformation()
     {
         if (!$this->_isUserTableJoined) {
@@ -104,7 +117,7 @@ class Collection extends AbstractCollection
         $this->getSelect()->joinLeft(
             ['queue_status' => $this->getTable('amc_timetable_queue_status')],
             'queue_status.customer_id=main_table.customer_id AND queue_status.context=' . (int)$context,
-            ['timetable_status' => new \Zend_Db_Expr("IFNULL(status, {$statusIdle})")]
+            ['timetable_status' => new \Zend_Db_Expr("IFNULL(queue_status.status, {$statusIdle})")]
         );
     }
 }

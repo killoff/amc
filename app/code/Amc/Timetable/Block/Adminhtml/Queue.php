@@ -25,7 +25,12 @@ class Queue extends Template
      */
     public function getTodayDate()
     {
-        return (new \DateTime())->setTime(0, 0, 0);
+        return $this->_localeDate->date()->setTime(0, 0, 0);
+    }
+
+    public function getTodayDateTimeFormat()
+    {
+        return $this->_localeDate->date()->format('D, j.m H:i');
     }
 
     public function getTodayDateFormat()

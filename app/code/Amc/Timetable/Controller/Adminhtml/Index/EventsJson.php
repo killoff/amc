@@ -43,6 +43,7 @@ class EventsJson extends Action
             /** @var \Amc\Timetable\Model\ResourceModel\OrderEvent\Collection $orderEventCollection */
             $orderEventCollection = $this->orderEventCollectionFactory->create();
             $orderEventCollection->joinOrderItemsInformation();
+            $orderEventCollection->excludeCancelledOrderItems();
             $orderEventCollection->addFieldToFilter('end_at', ['gt' => $start->format('Y-m-d H:i:s')]);
             $orderEventCollection->addFieldToFilter('start_at', ['lt' => $end->format('Y-m-d H:i:s')]);
             foreach ($orderEventCollection->getItems() as $event) {

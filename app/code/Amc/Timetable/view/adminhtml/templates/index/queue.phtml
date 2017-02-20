@@ -1,7 +1,7 @@
 <?php /** @var $block \Amc\Timetable\Block\Adminhtml\Queue */ ?>
 
 <div class="fieldset-wrapper-title" style="margin: 50px 0px 20px;">
-    <span class="title"><?php echo __('Schedule for today %1', $block->getTodayDateFormat()) ?></span>
+    <span class="title" data-datetime="<?php echo $block->getTodayDateTimeFormat() ?>"><?php echo __('Schedule for today %1', $block->getTodayDateFormat()) ?></span>
 </div>
 
 <div data-bind="scope: 'timetableQueue'">
