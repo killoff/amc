@@ -180,6 +180,7 @@ class Aggregated
         $orderEventCollection
             ->whereUserIdIn($userIds)
             ->joinOrderItemsInformation()
+            ->excludeCancelledOrderItems()
             ->whereStartIsBefore(new \DateTime($dateTo))
             ->whereEndIsAfter(new \DateTime($dateFrom));
         foreach ($orderEventCollection->getItems() as $orderEvent) {

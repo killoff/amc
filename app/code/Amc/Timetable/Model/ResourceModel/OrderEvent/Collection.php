@@ -89,7 +89,10 @@ class Collection extends AbstractCollection
             'order_item.order_id = order.entity_id',
             []
         );
+        // either entire order is cancelled
         $this->getSelect()->where('order.status<>?', Order::STATE_CANCELED);
+        // or individual items got cancelled (yes, we support partially cancelled items)
+        $this->getSelect()->where('order_item.qty_ordered > order_item.qty_canceled');
         return $this;
     }
 

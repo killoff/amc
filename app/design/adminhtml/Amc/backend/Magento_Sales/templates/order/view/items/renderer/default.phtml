@@ -7,7 +7,7 @@
     $lastItemNumber = count($columns) ?>
     <?php foreach ($columns as $columnName => $columnClass):?>
         <?php $i++; ?>
-        <td class="dmitro111 <?php echo /* @noEscape */ $columnClass?><?php /* @noEscape */ echo ($i === $lastItemNumber ? ' last' : '')?>">
+        <td class="<?php echo /* @noEscape */ $columnClass?><?php /* @noEscape */ echo ($i === $lastItemNumber ? ' last' : '')?>">
             <?php /* @escapeNotVerified */ echo $block->getColumnHtml($_item, $columnName) ?>
             <?php if ($columnName === 'product'): ?>
                 <div id="timetable-state-<?php /* @escapeNotVerified */ echo $_item->getId() ?>" class="timetable-state"></div>

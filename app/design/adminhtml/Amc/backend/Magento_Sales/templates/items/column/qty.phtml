@@ -1,0 +1,57 @@
+<?php
+/**
+ * Copyright © 2016 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+
+// @codingStandardsIgnoreFile
+
+?>
+<?php
+/** @var \Magento\Sales\Model\Order\Item $_item */
+/** @var \Magento\Backend\Block\Template $block */
+if ($_item = $block->getItem()): ?>
+    <table class="qty-table">
+        <tr>
+            <th><?php /* @escapeNotVerified */ echo __('Ordered') ?></th>
+            <td><?php /* @escapeNotVerified */ echo $_item->getQtyOrdered()*1 ?></td>
+        </tr>
+
+        <?php if ((float) $_item->getQtyInvoiced()): ?>
+            <tr>
+                <th><?php /* @escapeNotVerified */ echo __('Invoiced') ?></th>
+                <td><?php /* @escapeNotVerified */ echo $_item->getQtyInvoiced()*1 ?></td>
+            </tr>
+        <?php endif; ?>
+
+        <?php if ((float) $_item->getQtyShipped()): ?>
+            <tr>
+                <th><?php /* @escapeNotVerified */ echo __('Shipped') ?></th>
+                <td><?php /* @escapeNotVerified */ echo $_item->getQtyShipped()*1 ?></td>
+            </tr>
+        <?php endif; ?>
+
+        <?php if ((float) $_item->getQtyRefunded()): ?>
+            <tr>
+                <th><?php /* @escapeNotVerified */ echo __('Refunded') ?></th>
+                <td><?php /* @escapeNotVerified */ echo $_item->getQtyRefunded()*1 ?></td>
+            </tr>
+        <?php endif; ?>
+
+        <?php if ((float) $_item->getQtyCanceled()): ?>
+            <tr>
+                <th><?php /* @escapeNotVerified */ echo __('Canceled') ?></th>
+                <td><?php /* @escapeNotVerified */ echo $_item->getQtyCanceled()*1 ?></td>
+            </tr>
+        <?php endif; ?>
+
+        <?php if ($_item->getQtyToCancel() > 0 && $_item->getQtyInvoiced()*1 == 0): ?>
+            <tr>
+                <th><a href="#"
+                       data-mage-init="{&quot;orderItemCancelDialog&quot;:{}}"
+                       onclick="jQuery('#order_edit').orderItemCancelDialog({message: '<?php echo $block->escapeJsQuote($_item->getName()) ?>', url: '<?php echo $block->getUrl('amc_sales/order/item_cancel', ['item_id' => $_item->getId()]) ?>'}).orderItemCancelDialog('showDialog');"><?php echo __('Cancel') ?></a></th>
+                <td><?php /* @escapeNotVerified */ echo $_item->getQtyToCancel()*1 ?></td>
+            </tr>
+        <?php endif; ?>
+    </table>
+<?php endif; ?>
