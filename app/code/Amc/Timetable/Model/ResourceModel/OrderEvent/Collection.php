@@ -49,6 +49,12 @@ class Collection extends AbstractCollection
         return $this;
     }
 
+    public function whereOrderId($orderId)
+    {
+        $this->joinOrderItemsInformation();
+        $this->getSelect()->where('order_item.order_id=?', $orderId);
+    }
+
     public function whereStartIsBefore(\DateTime $date)
     {
         $this->addFieldToFilter('start_at', ['lt' => $date->format('Y-m-d H:i:s')]);

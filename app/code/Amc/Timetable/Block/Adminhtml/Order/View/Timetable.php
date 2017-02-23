@@ -2,23 +2,29 @@
 namespace Amc\Timetable\Block\Adminhtml\Order\View;
 
 use \Amc\Timetable\Block\Adminhtml\Order\TimetableInterface;
+use \Amc\Timetable\Model\ResourceModel\OrderEvent\Collection as OrderEventCollection;
+use \Amc\Timetable\Model\ResourceModel\OrderEvent\CollectionFactory as OrderEventCollectionFactory;
 use \Magento\Backend\Block\Template;
 
 class Timetable extends Template implements TimetableInterface
 {
+    /** @var OrderEventCollectionFactory */
+    private $orderEventCollectionFactory;
+
     /** @var \Magento\Framework\Registry  */
     private $coreRegistry;
 
     public function __construct(
         \Magento\Backend\Block\Template\Context $context,
         \Magento\Framework\Registry $registry,
+        OrderEventCollectionFactory $orderEventCollectionFactory,
         array $data = []
     ) {
         $this->coreRegistry = $registry;
+        $this->orderEventCollectionFactory = $orderEventCollectionFactory;
         parent::__construct($context, $data);
     }
 
-    // todo: very old orders will be fucked up - only 30 days schedule ahead
     public function getWidgetOptionsJson()
     {
         // get resources from now for 30 days
@@ -47,9 +53,22 @@ class Timetable extends Template implements TimetableInterface
         return \Zend_Json::encode($options);
     }
 
+    /**
+     * Return datetime for order calendar - either first appointment or order creation date if there is no appointments
+     * @return string yyyy-mm-dd hh:i:s
+     */
     private function getInitialDate()
     {
-        return $this->getData('initial_date') ? $this->getData('initial_date') : $this->getOrder()->getCreatedAt();
+        /** @var OrderEventCollection $orderEventsCollection */
+        $orderEventsCollection = $this->orderEventCollectionFactory->create();
+        $orderEventsCollection->whereOrderId($this->getOrderId());
+        $orderEventsCollection->setOrder('main_table.start_at', 'ASC');
+        $nearestEvent = $orderEventsCollection->getFirstItem();
+        if ($nearestEvent->getId()) {
+            return $nearestEvent->getData('start_at');
+        } else {
+            return $this->getData('initial_date') ? $this->getData('initial_date') : $this->getOrder()->getCreatedAt();
+        }
     }
 
     private function getOrder()
