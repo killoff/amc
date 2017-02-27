@@ -27,6 +27,7 @@ class Timetable extends Template implements TimetableInterface
 
     public function getWidgetOptionsJson()
     {
+        // todo:
         // get resources from now for 30 days
         $start = new \DateTime($this->getInitialDate());
         $end = (clone $start)->add(new \DateInterval('P30D'));
@@ -47,6 +48,7 @@ class Timetable extends Template implements TimetableInterface
                 ]
             ],
             'defaultDate' => $this->getInitialDate(),
+            'init_registry_url' => $this->getUrl('timetable/order/orderEventsJson', ['order_id' => $this->getOrderId()]),
             'resourceLabelText' => __('Executant'),
             'registry_json_field_name' => 'order[timetable_json]',
         ];

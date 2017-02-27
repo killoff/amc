@@ -171,7 +171,7 @@ class Aggregated
         }
 
         /**
-         * Finally, collect events of type 'order' = datetime intervals during witch users already assigned for execution
+         * Collect events of other orders: type 'order' = datetime intervals during witch users already assigned for execution
          * These events will be marked as taken/occupied by other appointments (orders)
          * Results are limited to interval $dateFrom .. $dateTo
          */
