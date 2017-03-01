@@ -31,3 +31,6 @@
     margin-left: 10px;
     color: #fe7834;
 }
+.timetable-state .cancelled {
+    color: #ff8a80;
+}

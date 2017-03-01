@@ -191,7 +191,8 @@ class Aggregated
                 'end_at' => $orderEvent->getData('end_at'),
                 'type' => 'order',
                 'order_id' => $orderEvent->getData('order_id'),
-                'order_item_id' => $orderEvent->getData('order_item_id')
+                'order_item_id' => $orderEvent->getData('order_item_id'),
+                'uuid' => $orderEvent->getData('uuid')
             ];
         }
 

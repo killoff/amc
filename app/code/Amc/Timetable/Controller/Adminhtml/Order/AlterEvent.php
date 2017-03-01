@@ -32,30 +32,28 @@ class AlterEvent extends \Magento\Backend\App\Action
 
         try {
             $response = array('error' => false, 'saved' => []);
-            $event = $this->jsonDecoder->decode(
+            $eventData = $this->jsonDecoder->decode(
                 $this->getRequest()->getParam('event')
             );
-            $this->validate($event);
-
-            $saved = [];
-            $eventData = $event;
-            $uuid = isset($eventData['uuid']) ? $eventData['uuid'] : '';
-//            if (! $uuid) {
-//                continue;
-//            }
-            $eventData['room_id'] = 1; // todo: cannot define room_id so far
-            $eventData['customer_id'] = $data['customer_id'];
-            /** @var \Amc\Timetable\Model\OrderEvent $eventModel */
-            $eventModel = $this->orderEventFactory->create();
-            $eventModel->load($uuid,'uuid');
-            if (isset($eventData['deleted']) && $eventData['deleted']) {
-                $eventModel->delete();
+            $this->validate($eventData);
+            $uuid = $eventData['uuid'];
+            /** @var \Amc\Timetable\Model\OrderEvent $event */
+            $event = $this->orderEventFactory->create();
+            $event->load($uuid,'uuid');
+            if ($event->getId()) {
+                if (isset($eventData['deleted']) && $eventData['deleted']) {
+                    $event->delete();
+                } else {
+                    $event->addData([
+                        'start_at' => $eventData['start_at'],
+                        'end_at' => $eventData['end_at'],
+                    ]);
+                    $event->save();
+                }
             } else {
-                $eventModel->addData($eventData);
-                $eventModel->save();
+
             }
-            $saved[$uuid] = $eventModel->getId();
-            $response['saved'] = $saved;
+            $response['event'] = [];
         } catch (\Exception $e) {
             $response['error'] = true;
             $response['message'] = $e->getMessage();
@@ -68,11 +66,8 @@ class AlterEvent extends \Magento\Backend\App\Action
         if (!is_array($data)) {
             throw new \DomainException('Timetable data must be json encoded.');
         }
-//        if (!isset($data['customer_id']) || !isset($data['events'])) {
-//            throw new \DomainException('Customer ID and events collection must exist.');
-//        }
-//        if (!is_array($data['events'])) {
-//            throw new \DomainException('Events must be type of array.');
-//        }
+        if (!isset($data['uuid']) || empty($data['uuid'])) {
+            throw new \DomainException('Event uuid is missing or empty.');
+        }
     }
 }

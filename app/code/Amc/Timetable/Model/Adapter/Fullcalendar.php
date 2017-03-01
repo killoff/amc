@@ -79,6 +79,7 @@ class Fullcalendar
                         'room_id'    => $event['room_id'],
                         'user_id'    => $event['user_id'],
                         'sales_item_id' => $userResource['sales_item_id'],
+                        'uuid'       => isset($event['uuid']) ? $event['uuid'] : '',
                     ];
                 }
             }

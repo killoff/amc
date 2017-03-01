@@ -20,7 +20,7 @@ define([
                 data: {}
             },
             sync_url: false, // url for sending events changes immediately == server instant updates
-            init_registry_url: false, // url to initialize registry on load (used on order view)
+            order_events_url: false, // url to read order items timetable from server (used on order view)
             defaultDate: '',
             businessHours: {
                 start: '9:00',
@@ -45,6 +45,11 @@ define([
                     this.render();
                 }
             }.bind(this));
+
+            // render order items schedule on load
+            if (this.options.order_events_url) {
+                this.renderProductsTimetableServerSide(this.options.order_events_url);
+            }
         },
 
         render: function() {
@@ -91,6 +96,11 @@ define([
                 }.bind(this),
 
                 eventDrop: function(event, delta, revertFunc) {
+                    // todo: user and product can change
+                    // if (this.options.sync_url) {
+                    //     revertFunc();
+                    //     return false;
+                    // }
                     // do not allow to drop out of slot range
                     if (this.isEventOutOfSlot(event) || this.isEventOverlap(event)) {
                         revertFunc();
@@ -224,18 +234,16 @@ define([
         },
 
         gotoEvent: function(event) {
-            var targetEventUuid = $(event.target).attr('data-event-id');
-            var targetEvent = this.registry.event(targetEventUuid);
-            if (targetEvent.uuid) {
-                this.element.fullCalendar( 'gotoDate', targetEvent.start);
-            }
+            var targetDate = $(event.target).attr('data-event-date');
+            this.element.fullCalendar( 'gotoDate', targetDate);
         },
 
-        renderStateOnItemsGrid: function (events) {
+        renderProductsTimetable: function(events) {
 
             var aggregated = {},
                 salesItemHtml,
-                timeStart,
+                eventStartTime,
+                eventClassName,
                 i;
 
             // aggregate events, users and products
@@ -263,7 +271,6 @@ define([
             // first remove all timetable for order items
             $('.timetable-state').remove();
             $.each(aggregated, function(key, salesItem) {
-                console.log(salesItem);
                 salesItemHtml = '';
                 $.each(salesItem.users, function(uKey, user) {
                     salesItemHtml += '<div class="child">'
@@ -271,8 +278,9 @@ define([
                     events = user.events;
                     salesItemHtml += '<span class="times">';
                     for(i = 0; i < events.length; i++) {
-                        timeStart = moment(events[i].start);
-                        salesItemHtml += '<span class="time" data-event-id="' + events[i].uuid + '">' + timeStart.format("ddd D.MM, HH:mm") + '</span>';
+                        eventStartTime = moment(events[i].start);
+                        eventClassName = 'time' + (events[i].cancelled ? ' cancelled' : '');
+                        salesItemHtml += '<span class="' + eventClassName + '" data-event-date="' + eventStartTime.format('YYYY-MM-DD') + '">' + eventStartTime.format("ddd D.MM, HH:mm") + '</span>';
                     }
                     salesItemHtml.replace(/;$/g, '');
                     salesItemHtml += '</span>';
@@ -283,49 +291,79 @@ define([
 
             }.bind(this));
             // attach 'click' event to all events under order items
-            $('.timetable-state').find('[data-event-id]').click(this.gotoEvent.bind(this));
+            $('.timetable-state').find('[data-event-date]').click(this.gotoEvent.bind(this));
+        },
+
+        renderProductsTimetableServerSide: function(url) {
+            $.getJSON(url, {}, function (response) {
+                this.renderProductsTimetable(response);
+            }.bind(this))
+            .fail(function (exception) {
+                this._handleFail(exception);
+            }.bind(this));
+        },
+
+        renderProductsTimetableClientSide: function(events) {
+            var eventsToRender = [];
+            $.each(events, function(uuid, event) {
+                var userResource = this.element.fullCalendar('getResourceById', event.resourceId);
+                var productResource = userResource.parent;
+                event.sales_item_id = productResource.sales_item_id;
+                event.product_id = productResource.product_id;
+                event.user_name = userResource.title;
+                event.user_id = userResource.user_id;
+                event.product_unique_id = productResource.id;
+                event.user_unique_id = userResource.id;
+                eventsToRender.push(event);
+            }.bind(this));
+            this.renderProductsTimetable(eventsToRender);
+        },
+
+        prepareEventDataForServer: function (uuid, event) {
+            return {
+                user_id: event.user_id,
+                room_id: event.room_id,
+                sales_item_id: event.sales_item_id,
+                start_at: event.start.format('YYYY-MM-DD HH:mm:00'),
+                end_at: event.end.format('YYYY-MM-DD HH:mm:00'),
+                uuid: uuid,
+                deleted: event.deleted
+            }
         },
 
         onRegistryChange: function(events, contextEvent) {
 
+            // todo refactor
+            if (this.options.sync_url) {
+                var eventData = this.prepareEventDataForServer(contextEvent.uuid, contextEvent);
+                $.post(this.options.sync_url, { event: JSON.stringify(eventData) }, function (response) {
 
-            if (this.options.init_registry_url) {
-                $.getJSON( this.options.init_registry_url, {}, function(response) {
-                    this.renderStateOnItemsGrid(response);
+                    console.log(response);
+
+                    if (this.options.order_events_url) {
+                        this.renderProductsTimetableServerSide(this.options.order_events_url);
+                    } else {
+                        this.renderProductsTimetableClientSide(events);
+                    }
+
                 }.bind(this))
-                .fail(function(exception) {
+                .fail(function (exception) {
                     this._handleFail(exception);
                 }.bind(this));
-
             } else {
-                var eventsForState = [];
-                $.each(events, function(uuid, event) {
-                    var userResource = this.element.fullCalendar('getResourceById', event.resourceId);
-                    var productResource = userResource.parent;
-                    event.sales_item_id = productResource.sales_item_id;
-                    event.product_id = productResource.product_id;
-                    event.user_name = userResource.title;
-                    event.user_id = userResource.user_id;
-                    event.product_unique_id = productResource.id;
-                    event.user_unique_id = userResource.id;
-                    eventsForState.push(event);
-                }.bind(this));
-                this.renderStateOnItemsGrid(eventsForState);
+                if (this.options.order_events_url) {
+                    this.renderProductsTimetableServerSide(this.options.order_events_url);
+                } else {
+                    this.renderProductsTimetableClientSide(events);
+                }
+
             }
 
             // write all the changes to hidden field for backend processing
             var changedEvents = [];
             $.each(this.registry.events(), function(uuid, event) {
-                changedEvents.push({
-                    user_id: event.user_id,
-                    room_id: event.room_id,
-                    sales_item_id: event.sales_item_id,
-                    start_at: event.start.format('YYYY-MM-DD HH:mm:00'),
-                    end_at: event.end.format('YYYY-MM-DD HH:mm:00'),
-                    uuid: uuid,
-                    deleted: event.deleted
-                });
-            });
+                changedEvents.push( this.prepareEventDataForServer(uuid, event) );
+            }.bind(this));
             var hiddenFieldId = 'registry_json' + this.uuid;
             var hiddenField = $('#' + hiddenFieldId);
             if (hiddenField.length == 0) {
@@ -374,16 +412,10 @@ define([
             events: function() {
                 return this._events;
             },
-            setEvents: function(events) {
-                this._events = events;
-                this.dispatchChange({});
-            },
             subscribe: function(handler, context) {
                 this._listeners.push(handler.bind(context));
             },
             dispatchChange: function(contextEvent) {
-                //console.log('events in registry:')
-                //console.log(this._events);
                 $.each(this._listeners, function(i, listener) {
                     listener(this._events, contextEvent);
                 }.bind(this));
